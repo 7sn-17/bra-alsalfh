@@ -4418,27 +4418,38 @@ if (OS.refreshInterval) {
 window.shareTo = function(platform) {
     const code = document.getElementById('share-room-code').textContent;
     const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
-    const shareText = encodeURIComponent(`🎮 انضم معي في لعبة "برا السالفة"! كود الغرفة: ${code}`);
-    const url = encodeURIComponent(inviteUrl);
+    
+    // النص المنسق بالأسطر الجديدة
+    const message = `تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول: ${inviteUrl}`;
+    const encodedMessage = encodeURIComponent(message);
+    const encodedUrl = encodeURIComponent(inviteUrl);
+
     let targetUrl = "";
 
     switch(platform) {
         case 'whatsapp':
-            targetUrl = `https://api.whatsapp.com/send?text=${shareText}%20${url}`;
+            targetUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
             break;
         case 'twitter':
-            targetUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${url}`;
-            break;
-        case 'discord':
-            targetUrl = `https://discord.com/channels/@me`; // يفتح ديسكورد
+            // تويتر يفضل فصل النص عن الرابط حتى يظهر بشكل أرتّب
+            const twitterText = encodeURIComponent(`تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول:`);
+            targetUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedUrl}`;
             break;
         case 'telegram':
-            targetUrl = `https://t.me/share/url?url=${url}&text=${shareText}`;
+            targetUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}`)}`;
+            break;
+        case 'discord':
+            // إمكانية نسخ النص تلقائيًا للحافظة لسهولة اللصق في ديسكورد
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(message);
+                alert("تم نسخ الرسالة! يمكنك لصقها في ديسكورد الآن.");
+            }
+            targetUrl = `https://discord.com/channels/@me`;
             break;
     }
 
     if (targetUrl) window.open(targetUrl, '_blank');
-    hapticLight();
+    if (typeof hapticLight === 'function') hapticLight();
 };
         }
 
