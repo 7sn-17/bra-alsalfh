@@ -1099,6 +1099,110 @@
             font-weight: 500;
             color: #f1f5f9;
         }
+
+        /* ===== تاريخ الأسئلة ===== */
+        .qa-history-container {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 12px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .qa-history-container::-webkit-scrollbar {
+            width: 3px;
+        }
+        .qa-history-container::-webkit-scrollbar-thumb {
+            background: rgba(6, 182, 212, 0.2);
+            border-radius: 8px;
+        }
+        .qa-history-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .qa-history-item:last-child {
+            border-bottom: none;
+        }
+        .qa-history-item .h-round {
+            font-size: 0.55rem;
+            color: #64748b;
+            font-weight: 700;
+        }
+        .qa-history-item .h-q {
+            font-size: 0.8rem;
+            color: #e6ecf7;
+            font-weight: 500;
+        }
+        .qa-history-item .h-a {
+            font-size: 0.75rem;
+            color: #8892a6;
+            font-style: italic;
+        }
+        .qa-history-item .h-pair {
+            font-size: 0.6rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* ===== أنماط الإجابة الحالية ===== */
+        .qa-current-answer-box {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+        .qa-current-answer-box .label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #34d399;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .qa-current-answer-box .text {
+            font-size: 0.95rem;
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+
+        /* ===== استعادة الحالة ===== */
+        #reconnect-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: rgba(3, 7, 18, 0.92);
+            backdrop-filter: blur(20px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #reconnect-overlay.active {
+            display: flex;
+        }
+        #reconnect-overlay .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(6, 182, 212, 0.15);
+            border-top-color: #00e0ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        #reconnect-overlay p {
+            color: #8892a6;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1144,6 +1248,12 @@
             </div>
             <p id="auth-error" class="text-rose-400 text-xs mt-3 hidden"></p>
         </div>
+    </div>
+
+    <!-- ====== شاشة استعادة الحالة ====== -->
+    <div id="reconnect-overlay">
+        <div class="spinner"></div>
+        <p>⏳ جاري استعادة الجلسة...</p>
     </div>
 
     <!-- ====== الشريط العلوي العالمي ====== -->
@@ -1256,56 +1366,50 @@
             <p class="text-[#525b6e] text-xs mt-6">تحتاج ٣ لاعبين على الأقل • وضعان للعب</p>
         </div>
 
-<!-- ===== شاشة التعليمات ===== -->
-<div id="screen-instructions" class="screen flex-col flex-1 py-4 screen-sticky-padding">
-    <div class="glass-panel rounded-3xl p-6 flex flex-col gap-5 max-w-4xl mx-auto w-full h-full overflow-y-auto">
-        
-        <!-- رأس الشاشة -->
-        <div class="flex items-center gap-3 mb-2 shrink-0">
-            <button id="btn-inst-back" class="w-10 h-10 rounded-full bg-transparent border border-white/15 flex items-center justify-center text-white transition-all hover:border-cyan-400 hover:bg-white/5 active:scale-95">
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-            <h2 class="font-extrabold text-2xl text-white">📖 كيف تلعب "برا السالفة"؟</h2>
+        <!-- ===== شاشة التعليمات ===== -->
+        <div id="screen-instructions" class="screen flex-col flex-1 py-4 screen-sticky-padding">
+            <div class="glass-panel rounded-3xl p-6 flex flex-col gap-5 max-w-4xl mx-auto w-full h-full overflow-y-auto">
+                <div class="flex items-center gap-3 mb-2 shrink-0">
+                    <button id="btn-inst-back" class="w-10 h-10 rounded-full bg-transparent border border-white/15 flex items-center justify-center text-white transition-all hover:border-cyan-400 hover:bg-white/5 active:scale-95">
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                    <h2 class="font-extrabold text-2xl text-white">📖 كيف تلعب "برا السالفة"؟</h2>
+                </div>
+                <div class="flex-1 overflow-y-auto space-y-4 pb-2">
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">👥</span> ١. أضف اللاعبين</h3>
+                        <p class="text-slate-300 text-sm mt-1">(٣ على الأقل) واختر الفئة ووضع اللعبة المناسب</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">📱</span> ٢. مرر الهاتف</h3>
+                        <p class="text-slate-300 text-sm mt-1">كل لاعب يضغط ليكشف دوره سراً ولا يراه الآخرون</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🎤</span> ٣. مرحلة الأسئلة</h3>
+                        <p class="text-slate-300 text-sm mt-1">٦ أو ٧ جولات، كل جولة يسأل لاعب زميله سؤالاً واحداً</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🗳️</span> ٤. التصويت السري</h3>
+                        <p class="text-slate-300 text-sm mt-1">كل لاعب يصوّت بسرية على من يشتبه به</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🔮</span> ٥. كشف الحقيقة</h3>
+                        <p class="text-slate-300 text-sm mt-1">شاشة تشويقية تكشف النتيجة تلقائياً</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🏆</span> ٦. النقاط التراكمية</h3>
+                        <p class="text-slate-300 text-sm mt-1">تكسبون نقاطاً وتستمر المتعة عبر الجولات</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30">
+                        <h3 class="font-extrabold text-purple-400 text-lg flex items-center gap-2"><span class="text-2xl">🌐</span> ٧. اللعب أونلاين</h3>
+                        <p class="text-slate-300 text-sm mt-1">كل لاعب على جهازه، أسئلة مكتوبة وتصويت سري فوري</p>
+                    </div>
+                </div>
+                <button id="btn-inst-back-bottom" class="btn-primary w-full text-lg py-4 shrink-0 flex items-center justify-center gap-2">
+                    <span>فهمت! 🎉</span>
+                </button>
+            </div>
         </div>
-
-        <!-- المحتوى (قابل للتمرير) -->
-        <div class="flex-1 overflow-y-auto space-y-4 pb-2">
-            <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">👥</span> ١. أضف اللاعبين</h3>
-                <p class="text-slate-300 text-sm mt-1">(٣ على الأقل) واختر الفئة ووضع اللعبة المناسب</p>
-            </div>
-            <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">📱</span> ٢. مرر الهاتف</h3>
-                <p class="text-slate-300 text-sm mt-1">كل لاعب يضغط ليكشف دوره سراً ولا يراه الآخرون</p>
-            </div>
-            <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🎤</span> ٣. مرحلة الأسئلة</h3>
-                <p class="text-slate-300 text-sm mt-1">٦ أو ٧ جولات، كل جولة يسأل لاعب زميله سؤالاً واحداً</p>
-            </div>
-            <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🗳️</span> ٤. التصويت السري</h3>
-                <p class="text-slate-300 text-sm mt-1">كل لاعب يصوّت بسرية على من يشتبه به</p>
-            </div>
-            <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🔮</span> ٥. كشف الحقيقة</h3>
-                <p class="text-slate-300 text-sm mt-1">شاشة تشويقية تكشف النتيجة تلقائياً</p>
-            </div>
-            <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
-                <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🏆</span> ٦. النقاط التراكمية</h3>
-                <p class="text-slate-300 text-sm mt-1">تكسبون نقاطاً وتستمر المتعة عبر الجولات</p>
-            </div>
-            <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30">
-                <h3 class="font-extrabold text-purple-400 text-lg flex items-center gap-2"><span class="text-2xl">🌐</span> ٧. اللعب أونلاين</h3>
-                <p class="text-slate-300 text-sm mt-1">كل لاعب على جهازه، أسئلة مكتوبة وتصويت سري فوري</p>
-            </div>
-        </div>
-
-        <!-- زر العودة -->
-        <button id="btn-inst-back-bottom" class="btn-primary w-full text-lg py-4 shrink-0 flex items-center justify-center gap-2">
-            <span>فهمت! 🎉</span>
-        </button>
-    </div>
-</div>
 
         <!-- ===== شاشة اختيار النمط ===== -->
         <div id="screen-modepicker" class="screen flex-col items-center justify-center flex-1 py-8">
@@ -1583,6 +1687,14 @@
                     </div>
                 </div>
 
+                <!-- ===== سجل الأسئلة (يظهر للجميع) ===== -->
+                <div id="qa-history-container" class="qa-history-container hidden">
+                    <div class="text-[10px] text-slate-500 font-bold mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> سجل الأسئلة السابقة
+                    </div>
+                    <div id="qa-history-list"></div>
+                </div>
+
                 <!-- منظور السائل -->
                 <div id="online-qa-asker-view" class="hidden flex flex-col gap-4 bg-cyan-950/20 border border-cyan-500/30 rounded-2xl p-4 transition-all flex-1">
                     <div class="flex items-center justify-between">
@@ -1598,12 +1710,17 @@
                             <span id="online-qa-timer" class="timer-ring">60</span>
                         </div>
                     </div>
-                    <div id="qa-asker-response-box" class="hidden flex flex-col gap-2 bg-emerald-950/30 border border-emerald-500/40 rounded-xl p-3.5">
-                        <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
-                            <span><i class="fa-solid fa-comment-dots"></i> إجابة المجيب:</span>
-                            <span class="text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-300">تمت الإجابة</span>
+                    <!-- الإجابة الحالية (منفصلة عن السجل) -->
+                    <div id="qa-asker-response-box" class="hidden flex flex-col gap-2 qa-current-answer-box">
+                        <div class="label"><i class="fa-solid fa-comment-dots"></i> إجابة المجيب الحالية:</div>
+                        <p id="qa-asker-response-text" class="text text-slate-100 font-semibold">"..."</p>
+                    </div>
+                    <!-- سجل الأسئلة للسائل -->
+                    <div id="qa-history-asker" class="hidden qa-history-container">
+                        <div class="text-[10px] text-slate-500 font-bold mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> سجل الأسئلة
                         </div>
-                        <p id="qa-asker-response-text" class="text-sm text-slate-100 font-semibold bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">"..."</p>
+                        <div id="qa-history-asker-list"></div>
                     </div>
                 </div>
 
@@ -1624,6 +1741,13 @@
                             <button id="btn-online-qa-send-a" class="btn-success flex items-center gap-2 text-sm py-3 px-6" disabled>إرسال الإجابة 📤</button>
                             <span id="online-qa-timer-respondent" class="timer-ring">60</span>
                         </div>
+                    </div>
+                    <!-- سجل الأسئلة للمجيب -->
+                    <div id="qa-history-respondent" class="hidden qa-history-container">
+                        <div class="text-[10px] text-slate-500 font-bold mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i> سجل الأسئلة
+                        </div>
+                        <div id="qa-history-respondent-list"></div>
                     </div>
                 </div>
 
@@ -1653,6 +1777,13 @@
                             </div>
                             <p id="qa-spectator-a-text" class="text-slate-400 font-medium pr-1 italic">...في انتظار الرد</p>
                         </div>
+                    </div>
+                    <!-- سجل الأسئلة للمتفرج -->
+                    <div id="qa-history-spectator" class="hidden qa-history-container">
+                        <div class="text-[10px] text-slate-500 font-bold mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-purple-400"></i> سجل الأسئلة
+                        </div>
+                        <div id="qa-history-spectator-list"></div>
                     </div>
                 </div>
 
@@ -1861,7 +1992,7 @@
     </div>
 
     <!-- ================================================================= -->
-    <!-- جافا سكريبت - الكود الكامل المعدل والمُحسَّن -->
+    <!-- جافا سكريبت - الكود الكامل المعدل والمُحسَّن مع حل جميع المشاكل -->
     <!-- ================================================================= -->
     <script>
         // ===== تكوين Supabase =====
@@ -1992,7 +2123,110 @@
             ]
         };
 
+        // ==============================================================
+        // ===== نظام إدارة المؤقتات المركزية (TimerManager) =====
+        // ==============================================================
+        const TimerManager = {
+            timers: {},
+            idCounter: 0,
+
+            set(callback, interval, key) {
+                const id = key || ('timer_' + (++this.idCounter));
+                if (this.timers[id]) {
+                    clearInterval(this.timers[id]);
+                    delete this.timers[id];
+                }
+                this.timers[id] = setInterval(callback, interval);
+                return id;
+            },
+
+            clear(id) {
+                if (this.timers[id]) {
+                    clearInterval(this.timers[id]);
+                    delete this.timers[id];
+                    return true;
+                }
+                return false;
+            },
+
+            clearAll() {
+                Object.keys(this.timers).forEach(id => {
+                    clearInterval(this.timers[id]);
+                    delete this.timers[id];
+                });
+                this.timers = {};
+            },
+
+            clearByPrefix(prefix) {
+                Object.keys(this.timers).forEach(id => {
+                    if (id.startsWith(prefix)) {
+                        clearInterval(this.timers[id]);
+                        delete this.timers[id];
+                    }
+                });
+            },
+
+            exists(id) {
+                return !!this.timers[id];
+            }
+        };
+
+        // ==============================================================
+        // ===== نظام إدارة الأزرار المركزية (ButtonManager) =====
+        // ==============================================================
+        const ButtonManager = {
+            states: {},
+
+            disable(btnId, loadingText) {
+                const btn = document.getElementById(btnId);
+                if (!btn) return false;
+                if (this.states[btnId]) return false; // already disabled
+                this.states[btnId] = {
+                    html: btn.innerHTML,
+                    disabled: btn.disabled,
+                    classes: btn.className
+                };
+                btn.disabled = true;
+                btn.classList.add('opacity-70', 'cursor-wait');
+                if (loadingText) {
+                    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${loadingText}`;
+                } else {
+                    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري التنفيذ...`;
+                }
+                return true;
+            },
+
+            enable(btnId) {
+                const btn = document.getElementById(btnId);
+                if (!btn) return false;
+                if (!this.states[btnId]) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-70', 'cursor-wait');
+                    return true;
+                }
+                const state = this.states[btnId];
+                btn.disabled = state.disabled;
+                btn.className = state.classes;
+                btn.innerHTML = state.html;
+                delete this.states[btnId];
+                return true;
+            },
+
+            isDisabled(btnId) {
+                return !!this.states[btnId];
+            },
+
+            resetAll() {
+                Object.keys(this.states).forEach(id => {
+                    this.enable(id);
+                });
+                this.states = {};
+            }
+        };
+
+        // ==============================================================
         // ===== الحالة العامة =====
+        // ==============================================================
         const S = {
             players: [],
             selectedCategory: null,
@@ -2067,10 +2301,13 @@
             _qaTimerInterval: null,
             realtimeActive: true,
             _voteInterval: null,
-            // --- إضافات جديدة للتحكم المركز بالهوست ---
             hostAdvanceLock: false,
             pendingStageTransition: null,
-            stageLock: false
+            stageLock: false,
+            // --- استعادة الحالة ---
+            isReconnecting: false,
+            reconnectAttempts: 0,
+            stateRestored: false
         };
 
         // ===== دوال مساعدة =====
@@ -2094,6 +2331,7 @@
                 joinBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-sm"></i> <span>انضمام الآن</span>`;
                 joinBtn.classList.remove('opacity-70', 'cursor-wait');
             }
+            ButtonManager.resetAll();
         }
 
         function cleanAlertText(text) {
@@ -2123,7 +2361,7 @@
             if (window.lucide) lucide.createIcons();
             const bp = $('#bg-particles');
             if (bp) bp.style.display = (name === 'landing' || name === 'modepicker' || name === 'online-lobby') ? 'block' :
-            'none';
+                'none';
             const shareFab = document.getElementById('share-fab');
             if (shareFab) {
                 if (name === 'online-room') {
@@ -2248,6 +2486,7 @@
 
         function leaveOnlineRoomSilent() {
             try {
+                TimerManager.clearAll();
                 if (OS.subscriptions) {
                     OS.subscriptions.forEach(sub => {
                         try { sub.unsubscribe(); } catch (e) {}
@@ -3093,6 +3332,7 @@
                     try { sub.unsubscribe(); } catch (e) { console.error('Error unsubscribing:', e); }
                 });
                 OS.subscriptions = [];
+                TimerManager.clearAll();
 
                 if (OS.refreshInterval) {
                     clearInterval(OS.refreshInterval);
@@ -3258,11 +3498,19 @@
                             if (OS.currentPhase === 'lobby') {
                                 renderOnlineRoom();
                                 document.getElementById('online-room-player-count').textContent = `${data.length} لاعب`;
+                                // الهوست: تحديث واجهة التحكم فقط (لا بدء تلقائي)
+                                if (OS.isHost) {
+                                    hostUpdateUIControls(data, OS.gameData?.room);
+                                }
                             }
 
                             if (OS.currentPhase === 'reveal') {
                                 renderOnlineRoom();
                                 updateOnlineRevealProgress();
+                                // الهوست: تحقق من اكتمال الكشف
+                                if (OS.isHost) {
+                                    hostCheckRevealComplete(data, OS.gameData?.room);
+                                }
                             }
 
                             if (OS.currentPhase === 'voting') {
@@ -3274,17 +3522,10 @@
                                             refreshVotingView(OS.gameData.room, data);
                                         }
                                     });
-                            }
-
-                            // ==== تحسين: التحقق من الجاهزية والانتقال التلقائي (الهوست فقط) ====
-                            if (OS.isHost && OS.currentPhase === 'lobby') {
-                                hostCheckAndAdvance(data, OS.gameData.room);
-                            }
-                            if (OS.isHost && OS.currentPhase === 'reveal') {
-                                hostCheckRevealComplete(data, OS.gameData.room);
-                            }
-                            if (OS.isHost && OS.currentPhase === 'voting') {
-                                hostCheckVotingComplete(data, OS.gameData.room);
+                                // الهوست: تحقق من اكتمال التصويت
+                                if (OS.isHost) {
+                                    hostCheckVotingComplete(data, OS.gameData?.room);
+                                }
                             }
                         }
                     });
@@ -3318,52 +3559,71 @@
         // ==============================================================
 
         /**
-         * الهوست يتحقق من جاهزية جميع اللاعبين في مرحلة اللوبي
-         * عند اكتمال الجاهزية، يوزع الأدوار ويبدأ اللعبة
+         * الهوست: تحديث واجهة التحكم فقط (تمكين/تعطيل زر البدء)
+         * لا يبدأ اللعبة تلقائياً
          */
-        async function hostCheckAndAdvance(players, room) {
-            if (!OS.isHost || !room || OS.stageLock) return;
+        function hostUpdateUIControls(players, room) {
+            if (!OS.isHost || !room) return;
             if (room.status !== 'lobby') return;
+
+            const hostHint = document.getElementById('online-host-hint');
+            const startBtn = document.getElementById('btn-online-host-start');
+
+            if (!hostHint || !startBtn) return;
 
             const allReady = players.every(p => p.is_ready === true);
             const enoughPlayers = players.length >= CFG.MIN_PLAYERS;
 
-            if (!allReady || !enoughPlayers) {
-                // تحديث واجهة المضيف
-                const hostHint = document.getElementById('online-host-hint');
-                const startBtn = document.getElementById('btn-online-host-start');
-                if (hostHint && startBtn) {
-                    if (players.length < CFG.MIN_PLAYERS) {
-                        hostHint.textContent = `⏳ يحتاج ${CFG.MIN_PLAYERS} لاعبين على الأقل (${players.length} حالياً)`;
-                        startBtn.disabled = true;
-                    } else if (!allReady) {
-                        const readyCount = players.filter(p => p.is_ready).length;
-                        hostHint.textContent =
-                        `⏳ في انتظار ${players.length - readyCount} لاعبين للاستعداد (${readyCount}/${players.length})`;
-                        startBtn.disabled = true;
-                    }
-                }
-                return;
+            if (players.length < CFG.MIN_PLAYERS) {
+                startBtn.disabled = true;
+                hostHint.textContent = `⏳ يحتاج ${CFG.MIN_PLAYERS} لاعبين على الأقل (${players.length} حالياً)`;
+            } else if (!allReady) {
+                const readyCount = players.filter(p => p.is_ready).length;
+                startBtn.disabled = true;
+                hostHint.textContent =
+                    `⏳ في انتظار ${players.length - readyCount} لاعبين للاستعداد (${readyCount}/${players.length})`;
+            } else {
+                startBtn.disabled = false;
+                hostHint.textContent = '✅ جميع اللاعبين جاهزون! اضغط للبدء';
             }
+        }
 
-            // كل اللاعبين جاهزون والعدد كافٍ -> الهوست يوزع الأدوار
-            console.log('🎯 جميع اللاعبين جاهزون، الهوست يوزع الأدوار...');
-            OS.stageLock = true;
+        /**
+         * الهوست: بدء اللعبة (يُستدعى من زر "بدء اللعبة" فقط)
+         * يقرأ الفئة والنمط من واجهة المستخدم
+         */
+        async function hostStartGame() {
+            const sb = OS.supabase;
+            if (!sb || !OS.roomId || !OS.isHost) return;
+
+            const startBtn = document.getElementById('btn-online-host-start');
+            if (startBtn.disabled) return;
+
+            // منع الضغط المتكرر
+            if (ButtonManager.isDisabled('btn-online-host-start')) return;
+            ButtonManager.disable('btn-online-host-start', 'جاري البدء...');
 
             try {
-                const sb = OS.supabase;
-                if (!sb) return;
+                // قراءة الفئة والنمط من واجهة المستخدم
+                const categorySelect = document.getElementById('online-host-category');
+                const modeSelect = document.getElementById('online-host-mode');
+                const selectedCategory = categorySelect ? categorySelect.value : Object.keys(WORD_CLUSTERS)[0];
+                const selectedMode = modeSelect ? modeSelect.value : 'traditional';
 
-                // اختيار الفئة والوضع
-                const category = document.getElementById('online-host-category')?.value || room.category || Object.keys(
-                    WORD_CLUSTERS)[0];
-                const mode = document.getElementById('online-host-mode')?.value || room.mode || 'traditional';
+                console.log(`🎯 المضيف بدأ اللعبة: الفئة=${selectedCategory}, النمط=${selectedMode}`);
 
-                // اختيار كلمة سرية
-                const clusters = WORD_CLUSTERS[category];
+                const { data: players, error: pErr } = await sb.from('room_players').select('*').eq('room_id', OS.roomId);
+                if (pErr || !players || players.length < CFG.MIN_PLAYERS) {
+                    showToast(`⚠️ تحتاج ${CFG.MIN_PLAYERS} لاعبين على الأقل`, 'warning');
+                    ButtonManager.enable('btn-online-host-start');
+                    return;
+                }
+
+                // اختيار كلمة سرية من الفئة المختارة
+                const clusters = WORD_CLUSTERS[selectedCategory];
                 if (!clusters || clusters.length === 0) {
-                    showAlert('⚠️ لا توجد كلمات لهذه الفئة', 'error');
-                    OS.stageLock = false;
+                    showToast(`⚠️ لا توجد كلمات في الفئة "${selectedCategory}"`, 'error');
+                    ButtonManager.enable('btn-online-host-start');
                     return;
                 }
 
@@ -3383,7 +3643,7 @@
                 const oddIdx = randInt(0, players.length - 1);
                 const oddPlayerId = players[oddIdx].id;
                 let oddWord = null;
-                if (mode === 'mindbending') {
+                if (selectedMode === 'mindbending') {
                     const related = cluster.slice(1);
                     oddWord = related[randInt(0, related.length - 1)];
                 }
@@ -3391,19 +3651,19 @@
                 // تحديث حالة الغرفة
                 await sb.from('rooms').update({
                     status: 'reveal',
-                    category,
-                    mode,
+                    category: selectedCategory,
+                    mode: selectedMode,
                     secret_word: secretWord,
                     odd_player_id: oddPlayerId,
                     odd_word: oddWord,
                     current_round: 0,
                     total_rounds: randInt(6, 7),
                     updated_at: new Date().toISOString()
-                }).eq('id', room.id);
+                }).eq('id', OS.roomId);
 
                 // تحديث اللاعبين
                 await sb.from('room_players').update({ is_odd: true, has_revealed: false }).eq('id', oddPlayerId);
-                await sb.from('room_players').update({ is_odd: false, has_revealed: false }).eq('room_id', room.id).neq(
+                await sb.from('room_players').update({ is_odd: false, has_revealed: false }).eq('room_id', OS.roomId).neq(
                     'id', oddPlayerId);
 
                 // تأكيد التحديث
@@ -3411,7 +3671,7 @@
                 let confirmed = false;
                 while (retries < 10 && !confirmed) {
                     await new Promise(resolve => setTimeout(resolve, 300));
-                    const { data: check } = await sb.from('rooms').select('status').eq('id', room.id).single();
+                    const { data: check } = await sb.from('rooms').select('status').eq('id', OS.roomId).single();
                     if (check && check.status === 'reveal') {
                         confirmed = true;
                         break;
@@ -3430,15 +3690,16 @@
                 }
 
             } catch (e) {
-                console.error('hostCheckAndAdvance error:', e);
+                console.error('hostStartGame error:', e);
                 showAlert('❌ فشل بدء اللعبة: ' + e.message, 'error');
             } finally {
-                OS.stageLock = false;
+                ButtonManager.enable('btn-online-host-start');
             }
         }
 
         /**
-         * الهوست يتحقق من اكتمال مرحلة الكشف (جميع اللاعبين شاهدوا دورهم)
+         * الهوست: التحقق من اكتمال مرحلة الكشف
+         * ينتقل تلقائياً إلى الأسئلة عند اكتمال جميع اللاعبين
          */
         async function hostCheckRevealComplete(players, room) {
             if (!OS.isHost || !room || OS.stageLock) return;
@@ -3447,14 +3708,12 @@
             const allRevealed = players.every(p => p.has_revealed === true);
 
             if (!allRevealed) {
-                // تحديث التقدم
                 const revealed = players.filter(p => p.has_revealed).length;
                 const progress = document.getElementById('online-reveal-progress');
                 if (progress) progress.textContent = `✅ ${revealed}/${players.length} لاعبين اطلعوا على دورهم`;
                 return;
             }
 
-            // جميع اللاعبين اطلعوا على دورهم -> الهوست ينتقل لمرحلة الأسئلة
             console.log('🎯 جميع اللاعبين اطلعوا على دورهم، الهوست ينتقل للأسئلة...');
             OS.stageLock = true;
 
@@ -3498,7 +3757,8 @@
         }
 
         /**
-         * الهوست يتحقق من اكتمال التصويت
+         * الهوست: التحقق من اكتمال التصويت
+         * ينتقل تلقائياً إلى التشويق عند اكتمال جميع اللاعبين
          */
         async function hostCheckVotingComplete(players, room) {
             if (!OS.isHost || !room || OS.stageLock) return;
@@ -3524,7 +3784,6 @@
                 return;
             }
 
-            // جميع اللاعبين صوّتوا -> الهوست يحسب النتيجة وينتقل للتشويق
             console.log('🎯 جميع اللاعبين صوّتوا، الهوست ينتقل للتشويق...');
             OS.stageLock = true;
 
@@ -3560,6 +3819,85 @@
             } finally {
                 OS.stageLock = false;
             }
+        }
+
+        // ==============================================================
+        // ===== إدارة سجل الأسئلة (QA History) =====
+        // ==============================================================
+
+        /**
+         * حفظ سؤال وإجابة في جدول qa_history
+         */
+        async function saveQAHistory(roomId, round, askerId, respondentId, question, answer) {
+            const sb = OS.supabase;
+            if (!sb) return;
+            try {
+                await sb.from('qa_history').insert({
+                    room_id: roomId,
+                    round_number: round,
+                    asker_id: askerId,
+                    respondent_id: respondentId,
+                    question: question,
+                    answer: answer,
+                    created_at: new Date().toISOString()
+                });
+                console.log('📝 تم حفظ السؤال في السجل:', { round, question, answer });
+            } catch (e) {
+                console.error('❌ فشل حفظ السجل:', e);
+            }
+        }
+
+        /**
+         * جلب سجل الأسئلة للغرفة
+         */
+        async function loadQAHistory(roomId) {
+            const sb = OS.supabase;
+            if (!sb) return [];
+            try {
+                const { data, error } = await sb.from('qa_history')
+                    .select('*')
+                    .eq('room_id', roomId)
+                    .order('round_number', { ascending: true })
+                    .order('created_at', { ascending: true });
+                if (error) {
+                    console.error('❌ فشل جلب السجل:', error);
+                    return [];
+                }
+                return data || [];
+            } catch (e) {
+                console.error('❌ فشل جلب السجل:', e);
+                return [];
+            }
+        }
+
+        /**
+         * عرض سجل الأسئلة في واجهة المستخدم
+         */
+        function displayQAHistory(history, containerId, players) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!history || history.length === 0) {
+                container.parentElement?.classList.add('hidden');
+                return;
+            }
+
+            container.parentElement?.classList.remove('hidden');
+
+            let html = '';
+            history.forEach(h => {
+                const asker = players?.find(p => p.id === h.asker_id)?.player_name || '???';
+                const respondent = players?.find(p => p.id === h.respondent_id)?.player_name || '???';
+                html += `
+                    <div class="qa-history-item">
+                        <span class="h-round">الجولة ${h.round_number+1}</span>
+                        <span class="h-pair">${esc(asker)} → ${esc(respondent)}</span>
+                        <span class="h-q">❓ ${esc(h.question)}</span>
+                        <span class="h-a">💬 ${esc(h.answer)}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
         // ==============================================================
@@ -3649,25 +3987,11 @@
                     const modeSelect = document.getElementById('online-host-mode');
                     modeSelect.value = room.mode || 'traditional';
 
-                    const enoughPlayers = players.length >= CFG.MIN_PLAYERS;
-                    const allReady = players.every(p => p.is_ready === true);
+                    // تحديث واجهة التحكم (تمكين/تعطيل الزر)
+                    hostUpdateUIControls(players, room);
+
+                    // ربط زر البدء (يُستدعى فقط من الضغط)
                     const startBtn = document.getElementById('btn-online-host-start');
-                    const hostHint = document.getElementById('online-host-hint');
-
-                    if (players.length < CFG.MIN_PLAYERS) {
-                        startBtn.disabled = true;
-                        hostHint.textContent = `⏳ يحتاج ${CFG.MIN_PLAYERS} لاعبين على الأقل (${players.length} حالياً)`;
-                    } else if (!allReady) {
-                        const readyCount = players.filter(p => p.is_ready).length;
-                        startBtn.disabled = true;
-                        hostHint.textContent =
-                            `⏳ في انتظار ${players.length - readyCount} لاعبين للاستعداد (${readyCount}/${players.length})`;
-                    } else {
-                        startBtn.disabled = false;
-                        hostHint.textContent = '✅ جميع اللاعبين جاهزون! اضغط للبدء';
-                    }
-
-                    // ربط زر البدء
                     startBtn.onclick = () => {
                         hostStartGame();
                     };
@@ -3678,7 +4002,7 @@
                 const waitMsg = document.getElementById('online-room-waiting');
                 if (room.status === 'lobby') {
                     waitMsg.textContent =
-                    `⏳ في انتظار وصول باقي اللاعبين... (${players.length}/${room.max_players||6})`;
+                        `⏳ في انتظار وصول باقي اللاعبين... (${players.length}/${room.max_players||6})`;
                     waitMsg.style.display = 'block';
                 } else {
                     waitMsg.style.display = 'none';
@@ -3691,36 +4015,6 @@
 
                 if (window.lucide) lucide.createIcons();
             } catch (e) { console.error('Render room error:', e); }
-        }
-
-        // ---- بدء اللعبة من الهوست (زر البدء) ----
-        async function hostStartGame() {
-            const sb = OS.supabase;
-            if (!sb || !OS.roomId || !OS.isHost) return;
-
-            const startBtn = document.getElementById('btn-online-host-start');
-            startBtn.disabled = true;
-            startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري البدء...';
-
-            try {
-                const { data: players, error: pErr } = await sb.from('room_players').select('*').eq('room_id', OS.roomId);
-                if (pErr || !players || players.length < CFG.MIN_PLAYERS) {
-                    showToast(`⚠️ تحتاج ${CFG.MIN_PLAYERS} لاعبين على الأقل`, 'warning');
-                    startBtn.disabled = false;
-                    startBtn.innerHTML = '<i class="fa-solid fa-circle-play"></i> بدء اللعبة';
-                    return;
-                }
-
-                // استدعاء دالة التحقق والانتقال
-                await hostCheckAndAdvance(players, OS.gameData?.room);
-
-            } catch (e) {
-                console.error('Start game error:', e);
-                showAlert('❌ فشل بدء اللعبة: ' + e.message, 'error');
-            } finally {
-                startBtn.disabled = false;
-                startBtn.innerHTML = '<i class="fa-solid fa-circle-play"></i> بدء اللعبة';
-            }
         }
 
         // ==============================================================
@@ -3791,27 +4085,28 @@
                     const sb = OS.supabase;
                     if (!sb) return;
 
-                    readyBtn.textContent = '⏳ جاري التجهيز...';
-                    readyBtn.disabled = true;
+                    if (ButtonManager.isDisabled('btn-online-reveal-ready')) return;
+                    ButtonManager.disable('btn-online-reveal-ready', 'جاري التجهيز...');
 
                     try {
                         await sb.from('room_players').update({ has_revealed: true }).eq('id', OS.myPlayerId);
                         hapticSuccess();
                         readyBtn.textContent = '✅ تم';
+                        readyBtn.disabled = true;
+                        ButtonManager.enable('btn-online-reveal-ready');
 
-                        // الهوست سيتولى الباقي عبر hostCheckRevealComplete
                         showToast('✅ تم تجهيزك! في انتظار الآخرين...', 'success');
 
                     } catch (e) {
                         console.error('Ready button error:', e);
                         showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                        ButtonManager.enable('btn-online-reveal-ready');
                         readyBtn.textContent = '✅ جاهز للمرحلة التالية';
                         readyBtn.disabled = false;
                     }
                 };
             }
 
-            // إذا كان الهوست، تحقق من اكتمال الكشف فوراً
             if (OS.isHost) {
                 setTimeout(() => {
                     hostCheckRevealComplete(players, room);
@@ -3826,25 +4121,14 @@
             if (progress) progress.textContent = `✅ ${revealed}/${players.length} لاعبين اطلعوا على دورهم`;
         }
 
-        // ---- مرحلة الأسئلة والأجوبة (مُحسَّنة) ----
+        // ---- مرحلة الأسئلة والأجوبة (مُحسَّنة مع سجل) ----
         async function showOnlineQA() {
             showScreen('online-qa');
             const sb = OS.supabase;
             if (!sb || !OS.roomId) return;
 
-            // تنظيف المؤقتات السابقة
-            if (OS.qaTimerInterval) {
-                clearInterval(OS.qaTimerInterval);
-                OS.qaTimerInterval = null;
-            }
-            if (OS._qaSpectatorInterval) {
-                clearInterval(OS._qaSpectatorInterval);
-                OS._qaSpectatorInterval = null;
-            }
-            if (OS._qaWaitInterval) {
-                clearInterval(OS._qaWaitInterval);
-                OS._qaWaitInterval = null;
-            }
+            // تنظيف المؤقتات القديمة
+            TimerManager.clearAll();
 
             // إعادة ربط زر الخروج
             const leaveBtn = document.getElementById('btn-online-qa-leave');
@@ -3852,9 +4136,7 @@
             leaveBtn.parentNode.replaceChild(newLeaveBtn, leaveBtn);
 
             newLeaveBtn.addEventListener('click', async () => {
-                if (OS.qaTimerInterval) clearInterval(OS.qaTimerInterval);
-                if (OS._qaSpectatorInterval) clearInterval(OS._qaSpectatorInterval);
-                if (OS._qaWaitInterval) clearInterval(OS._qaWaitInterval);
+                TimerManager.clearAll();
                 await leaveOnlineRoom();
                 showScreen('online-room');
                 renderOnlineRoom();
@@ -3964,23 +4246,57 @@
             voteBtn.classList.add('hidden');
             askerResponseBox.classList.add('hidden');
 
-            if (OS.qaTimerInterval) {
-                clearInterval(OS.qaTimerInterval);
-                OS.qaTimerInterval = null;
+            // ===== تحميل وعرض سجل الأسئلة =====
+            const history = await loadQAHistory(OS.roomId);
+            const historyContainer = document.getElementById('qa-history-container');
+            const historyList = document.getElementById('qa-history-list');
+
+            if (history && history.length > 0) {
+                historyContainer.classList.remove('hidden');
+                displayQAHistory(history, 'qa-history-list', players);
+            } else {
+                historyContainer.classList.add('hidden');
             }
-            if (OS._qaSpectatorInterval) {
-                clearInterval(OS._qaSpectatorInterval);
-                OS._qaSpectatorInterval = null;
+
+            // عرض السجل في كل منظور
+            const isAsker = myPlayer.id === asker.id;
+            const isRespondent = myPlayer.id === respondent.id;
+
+            if (isAsker) {
+                const histAsker = document.getElementById('qa-history-asker');
+                const histAskerList = document.getElementById('qa-history-asker-list');
+                if (history && history.length > 0) {
+                    histAsker.classList.remove('hidden');
+                    displayQAHistory(history, 'qa-history-asker-list', players);
+                } else {
+                    histAsker.classList.add('hidden');
+                }
             }
-            if (OS._qaWaitInterval) {
-                clearInterval(OS._qaWaitInterval);
-                OS._qaWaitInterval = null;
+
+            if (isRespondent) {
+                const histResp = document.getElementById('qa-history-respondent');
+                const histRespList = document.getElementById('qa-history-respondent-list');
+                if (history && history.length > 0) {
+                    histResp.classList.remove('hidden');
+                    displayQAHistory(history, 'qa-history-respondent-list', players);
+                } else {
+                    histResp.classList.add('hidden');
+                }
+            }
+
+            // المتفرجين
+            if (!isAsker && !isRespondent) {
+                const histSpec = document.getElementById('qa-history-spectator');
+                const histSpecList = document.getElementById('qa-history-spectator-list');
+                if (history && history.length > 0) {
+                    histSpec.classList.remove('hidden');
+                    displayQAHistory(history, 'qa-history-spectator-list', players);
+                } else {
+                    histSpec.classList.add('hidden');
+                }
             }
 
             let timeoutTriggered = false;
-
-            const isAsker = myPlayer.id === asker.id;
-            const isRespondent = myPlayer.id === respondent.id;
 
             if (isAsker) {
                 roleBadge.textContent = '🎤 سائل';
@@ -4002,7 +4318,7 @@
                     const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
 
                     if (remaining <= 0) {
-                        clearInterval(OS.qaTimerInterval);
+                        TimerManager.clear('qa_asker_timer');
                         timerEl.textContent = '0';
                         timerEl.className = 'timer-ring warning';
                         if (!timeoutTriggered) {
@@ -4022,18 +4338,23 @@
                 };
 
                 updateTimer();
-                OS.qaTimerInterval = setInterval(updateTimer, 1000);
+                TimerManager.set(updateTimer, 1000, 'qa_asker_timer');
 
                 sendQuestionBtn.onclick = async () => {
+                    if (ButtonManager.isDisabled('btn-online-qa-send-q')) return;
+                    ButtonManager.disable('btn-online-qa-send-q', 'جاري الإرسال...');
+
                     const q = questionInput.value.trim();
-                    if (!q) { showToast('✏️ اكتب سؤالاً أولاً!', 'warning'); return; }
+                    if (!q) {
+                        showToast('✏️ اكتب سؤالاً أولاً!', 'warning');
+                        ButtonManager.enable('btn-online-qa-send-q');
+                        return;
+                    }
                     OS.qaQuestionText = q;
                     sendQuestionBtn.disabled = true;
                     questionInput.disabled = true;
-                    if (OS.qaTimerInterval) {
-                        clearInterval(OS.qaTimerInterval);
-                        OS.qaTimerInterval = null;
-                    }
+                    TimerManager.clear('qa_asker_timer');
+
                     await sb.from('rooms').update({
                         qa_question: q,
                         qa_asker_id: asker.id,
@@ -4041,10 +4362,11 @@
                         qa_answered: false,
                         updated_at: new Date().toISOString()
                     }).eq('id', room.id);
+
                     showToast('✅ تم إرسال السؤال!', 'success');
                     hapticSuccess();
+                    ButtonManager.enable('btn-online-qa-send-q');
 
-                    // تحديث واجهة المتفرجين
                     const specQ = document.getElementById('qa-spectator-q-text');
                     if (specQ) specQ.textContent = `"${esc(q)}"`;
                 };
@@ -4058,19 +4380,37 @@
                     if (r && r.qa_answer && r.qa_answered) {
                         clearInterval(OS._qaWaitInterval);
                         OS._qaWaitInterval = null;
+
+                        // حفظ السؤال والإجابة في السجل
+                        await saveQAHistory(room.id, OS.qaRound, asker.id, respondent.id, OS.qaQuestionText, r
+                            .qa_answer);
+
+                        // تحديث السجل في الواجهة
+                        const updatedHistory = await loadQAHistory(OS.roomId);
+                        displayQAHistory(updatedHistory, 'qa-history-list', players);
+                        displayQAHistory(updatedHistory, 'qa-history-asker-list', players);
+
                         askerResponseText.textContent = `"${esc(r.qa_answer)}"`;
                         askerResponseBox.classList.remove('hidden');
+
                         const isLast = OS.qaRound + 1 >= OS.qaTotalRounds;
                         if (isLast) {
                             voteBtn.classList.remove('hidden');
                             voteBtn.onclick = async () => {
-                                await sb.from('rooms').update({ status: 'voting',
-                                    updated_at: new Date().toISOString() }).eq('id', room.id);
+                                if (ButtonManager.isDisabled('btn-online-qa-to-vote')) return;
+                                ButtonManager.disable('btn-online-qa-to-vote', 'جاري الانتقال...');
+                                await sb.from('rooms').update({
+                                    status: 'voting',
+                                    updated_at: new Date().toISOString()
+                                }).eq('id', room.id);
                                 showToast('🗳️ بدء التصويت!', 'success');
+                                ButtonManager.enable('btn-online-qa-to-vote');
                             };
                         } else {
                             nextBtn.classList.remove('hidden');
                             nextBtn.onclick = async () => {
+                                if (ButtonManager.isDisabled('btn-online-qa-next')) return;
+                                ButtonManager.disable('btn-online-qa-next', 'جاري التقدم...');
                                 await sb.from('rooms').update({
                                     current_round: OS.qaRound + 1,
                                     qa_question: null,
@@ -4082,6 +4422,7 @@
                                     updated_at: new Date().toISOString()
                                 }).eq('id', room.id);
                                 showToast('➡️ جولة جديدة!', 'success');
+                                ButtonManager.enable('btn-online-qa-next');
                             };
                         }
                     }
@@ -4125,7 +4466,7 @@
                             const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
 
                             if (remaining <= 0) {
-                                clearInterval(OS.qaTimerInterval);
+                                TimerManager.clear('qa_resp_timer');
                                 timerResp.textContent = '0';
                                 timerResp.className = 'timer-ring warning';
                                 if (!localTimeoutTriggered) {
@@ -4145,25 +4486,32 @@
                         };
 
                         updateTimerResp();
-                        OS.qaTimerInterval = setInterval(updateTimerResp, 1000);
+                        TimerManager.set(updateTimerResp, 1000, 'qa_resp_timer');
 
                         sendAnswerBtn.onclick = async () => {
+                            if (ButtonManager.isDisabled('btn-online-qa-send-a')) return;
+                            ButtonManager.disable('btn-online-qa-send-a', 'جاري الإرسال...');
+
                             const a = answerInput.value.trim();
-                            if (!a) { showToast('✏️ اكتب إجابة!', 'warning'); return; }
+                            if (!a) {
+                                showToast('✏️ اكتب إجابة!', 'warning');
+                                ButtonManager.enable('btn-online-qa-send-a');
+                                return;
+                            }
                             OS.qaAnswerText = a;
                             sendAnswerBtn.disabled = true;
                             answerInput.disabled = true;
-                            if (OS.qaTimerInterval) {
-                                clearInterval(OS.qaTimerInterval);
-                                OS.qaTimerInterval = null;
-                            }
+                            TimerManager.clear('qa_resp_timer');
+
                             await sb.from('rooms').update({
                                 qa_answer: a,
                                 qa_answered: true,
                                 updated_at: new Date().toISOString()
                             }).eq('id', room.id);
+
                             showToast('✅ تم إرسال الإجابة!', 'success');
                             hapticSuccess();
+                            ButtonManager.enable('btn-online-qa-send-a');
                         };
                     }
                 }, 500);
@@ -4197,13 +4545,19 @@
                             specStatusTag.className = 'text-[10px] text-emerald-400 font-bold';
                             clearInterval(OS._qaSpectatorInterval);
                             OS._qaSpectatorInterval = null;
+
+                            // تحديث السجل للمتفرج
+                            const updatedHistory = await loadQAHistory(OS.roomId);
+                            displayQAHistory(updatedHistory, 'qa-history-spectator-list', players);
                         }
                     }
                 }, 500);
             }
         }
 
-        // ---- تقدم الأسئلة ----
+        /**
+         * تقدم الأسئلة (تُستدعى عند انتهاء المؤقت أو الضغط على التالي)
+         */
         async function advanceQA(sb, roomId) {
             if (OS.isAdvancing) return;
             OS.isAdvancing = true;
@@ -4215,10 +4569,13 @@
                     OS.isAdvancing = false;
                     return;
                 }
-                const isLast = room.current_round + 1 >= room.total_rounds;
+
+                const currentRound = room.current_round || 0;
+                const nextRound = currentRound + 1;
+                const isLast = nextRound >= (room.total_rounds || 6);
 
                 await sb.from('rooms').update({
-                    current_round: room.current_round + 1,
+                    current_round: nextRound,
                     qa_question: null,
                     qa_answer: null,
                     qa_answered: false,
@@ -4233,7 +4590,7 @@
                     showToast('🗳️ الانتقال للتصويت!', 'success');
                     hapticSuccess();
                 } else {
-                    showToast('➡️ جولة جديدة!', 'success');
+                    showToast(`➡️ جولة ${nextRound+1}!`, 'success');
                 }
             } catch (e) {
                 console.error('advanceQA error:', e);
@@ -4325,7 +4682,6 @@
                         optionsDiv.innerHTML = '';
                         await refreshVotingView(room, players);
 
-                        // الهوست سيتولى التحقق من اكتمال التصويت
                         if (OS.isHost) {
                             setTimeout(() => {
                                 hostCheckVotingComplete(players, room);
@@ -4353,11 +4709,14 @@
                 doneBtn.classList.remove('hidden');
                 doneBtn.textContent = '⚡ تسريع النتيجة';
                 doneBtn.onclick = async () => {
+                    if (ButtonManager.isDisabled('btn-online-voting-done')) return;
+                    ButtonManager.disable('btn-online-voting-done', 'جاري الكشف...');
                     await sb.from('rooms').update({
                         status: 'suspense',
                         updated_at: new Date().toISOString()
                     }).eq('id', room.id);
                     showToast('🔮 جارٍ كشف النتيجة...', 'success');
+                    ButtonManager.enable('btn-online-voting-done');
                 };
             }
         }
@@ -4417,17 +4776,23 @@
                 continueBtn.textContent = '🎯 فرصة الإنقاذ';
                 continueBtn.classList.remove('hidden');
                 continueBtn.onclick = async () => {
+                    if (ButtonManager.isDisabled('btn-online-suspense-continue')) return;
+                    ButtonManager.disable('btn-online-suspense-continue', 'جاري الانتقال...');
                     await sb.from('rooms').update({ status: 'secondchance', updated_at: new Date().toISOString() }).eq(
                         'id', room.id);
                     showToast('🎯 فرصة الإنقاذ!', 'success');
+                    ButtonManager.enable('btn-online-suspense-continue');
                 };
             } else {
                 continueBtn.textContent = '🏆 عرض النتائج';
                 continueBtn.classList.remove('hidden');
                 continueBtn.onclick = async () => {
+                    if (ButtonManager.isDisabled('btn-online-suspense-continue')) return;
+                    ButtonManager.disable('btn-online-suspense-continue', 'جاري الانتقال...');
                     await sb.from('rooms').update({ status: 'leaderboard', updated_at: new Date().toISOString() }).eq(
                         'id', room.id);
                     showToast('🏆 النتائج النهائية!', 'success');
+                    ButtonManager.enable('btn-online-suspense-continue');
                 };
             }
 
@@ -4507,6 +4872,9 @@
                     return;
                 }
 
+                if (ButtonManager.isDisabled('btn-online-sc-confirm')) return;
+                ButtonManager.disable('btn-online-sc-confirm', 'جاري التحقق...');
+
                 const correctAns = room.secret_word || '???';
                 const isCorrect = (selected === correctAns);
 
@@ -4534,6 +4902,7 @@
                 }).eq('id', room.id);
 
                 hapticSuccess();
+                ButtonManager.enable('btn-online-sc-confirm');
 
                 if (OS.isHost) {
                     setTimeout(async () => {
@@ -4610,11 +4979,8 @@
             content.innerHTML = html;
 
             newRoundBtn.onclick = async () => {
-                const btn = newRoundBtn;
-                const originalHTML = btn.innerHTML;
-
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحضير...';
+                if (ButtonManager.isDisabled('btn-online-lb-newround')) return;
+                ButtonManager.disable('btn-online-lb-newround', 'جاري التحضير...');
 
                 try {
                     await sb.from('rooms').update({
@@ -4658,8 +5024,7 @@
                     console.error('New round error:', e);
                     showToast('❌ فشل بدء جولة جديدة: ' + e.message, 'error');
                 } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = originalHTML;
+                    ButtonManager.enable('btn-online-lb-newround');
                 }
             };
 
@@ -4817,7 +5182,7 @@
                 'نعم، حذف الكل', 'إلغاء', deleteAllRooms);
         }
 
-        // ===== إعادة الاتصال =====
+        // ===== استعادة الحالة (State Recovery) =====
         async function attemptReconnect() {
             const storedUser = getStoredUser();
             if (!storedUser) return false;
@@ -4832,14 +5197,26 @@
             const roomId = localStorage.getItem('barra_room_id');
             if (!roomId) return false;
 
+            // عرض شاشة التحميل
+            const overlay = document.getElementById('reconnect-overlay');
+            if (overlay) overlay.classList.add('active');
+
             try {
                 const { data: room, error: roomErr } = await sb.from('rooms').select('*').eq('id', roomId).maybeSingle();
-                if (roomErr || !room) { localStorage.removeItem('barra_room_id'); return false; }
+                if (roomErr || !room) {
+                    localStorage.removeItem('barra_room_id');
+                    if (overlay) overlay.classList.remove('active');
+                    return false;
+                }
 
                 const clientId = getClientId();
                 const { data: player, error: playerErr } = await sb.from('room_players').select('*').eq('room_id', roomId)
                     .eq('client_id', clientId).maybeSingle();
-                if (playerErr || !player) { localStorage.removeItem('barra_room_id'); return false; }
+                if (playerErr || !player) {
+                    localStorage.removeItem('barra_room_id');
+                    if (overlay) overlay.classList.remove('active');
+                    return false;
+                }
 
                 OS.roomId = room.id;
                 OS.roomCode = room.code;
@@ -4863,6 +5240,28 @@
                 if (OS.refreshInterval) {
                     clearInterval(OS.refreshInterval);
                     OS.refreshInterval = null;
+                }
+
+                // استعادة المؤقتات إذا كانت في مرحلة الأسئلة
+                if (room.status === 'qa') {
+                    // إعادة تعيين المؤقتات
+                    TimerManager.clearAll();
+                    // استعادة بيانات الأسئلة
+                    if (room.qa_question && !room.qa_answered) {
+                        // إعادة ضبط المؤقت
+                        const startTime = room.qa_start_time ? new Date(room.qa_start_time).getTime() : Date.now();
+                        const duration = 60;
+                        const endTime = startTime + (duration * 1000);
+                        const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+                        if (remaining > 0) {
+                            // سيتم إعادة إنشاء المؤقت في showOnlineQA
+                        }
+                    }
+                }
+
+                // استعادة السجل المحلي للكلمات المستخدمة
+                if (room.used_words) {
+                    try { OS.usedWords = JSON.parse(room.used_words) || []; } catch (e) { OS.usedWords = []; }
                 }
 
                 switch (OS.currentPhase) {
@@ -4892,9 +5291,15 @@
                         renderOnlineRoom();
                         showScreen('online-room');
                 }
+
+                OS.stateRestored = true;
+                if (overlay) overlay.classList.remove('active');
+                showToast(`✅ تم استعادة الجلسة في "${room.name}"`, 'success');
                 return true;
+
             } catch (e) {
                 console.error('Reconnect error:', e);
+                if (overlay) overlay.classList.remove('active');
                 return false;
             }
         }
@@ -5713,18 +6118,18 @@
                 btnLbLeave.onclick = () => { leaveOnlineRoom(); };
             }
 
-// أزرار العودة من شاشة التعليمات
-const btnInstBack = document.getElementById('btn-inst-back');
-const btnInstBackBottom = document.getElementById('btn-inst-back-bottom');
+            // أزرار العودة من شاشة التعليمات
+            const btnInstBack = document.getElementById('btn-inst-back');
+            const btnInstBackBottom = document.getElementById('btn-inst-back-bottom');
 
-if (btnInstBack) {
-    btnInstBack.addEventListener('click', () => { hapticLight();
-        showScreen('landing'); });
-}
-if (btnInstBackBottom) {
-    btnInstBackBottom.addEventListener('click', () => { hapticLight();
-        showScreen('landing'); });
-}
+            if (btnInstBack) {
+                btnInstBack.addEventListener('click', () => { hapticLight();
+                    showScreen('landing'); });
+            }
+            if (btnInstBackBottom) {
+                btnInstBackBottom.addEventListener('click', () => { hapticLight();
+                    showScreen('landing'); });
+            }
 
             // أحداث زر المشاركة
             const shareToggle = document.getElementById('btn-share-toggle');
@@ -5882,6 +6287,7 @@ if (btnInstBackBottom) {
             bindEvents();
             console.log('🔮 برا السالفة v11.0 — نظام مزامنة محسّن بالكامل');
             console.log('✅ تم تفعيل التحكم المركزي عبر الهوست وجميع المراحل');
+            console.log('✅ تم حل جميع المشاكل: بدء يدوي، اختيارات المضيف، الفئة، الجولات، المؤقتات، السجل، الأزرار، الاستعادة');
             console.log('📌 اللعبة جاهزة للعب السلس مع 4 لاعبين فما فوق');
         }
 
@@ -5976,5 +6382,6 @@ if (btnInstBackBottom) {
 
         setTimeout(makeShareFabDraggable, 500);
     </script>
+
 </body>
 </html>
