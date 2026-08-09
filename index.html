@@ -5,19 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, maximum-scale=1.0" />
     <title>برا السالفة</title>
 
-<link rel="icon" href="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" type="image/png" />
-<link rel="apple-touch-icon" href="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" />
-<!-- ===== ميتا تاغس لوسائل التواصل الاجتماعي (Open Graph) ===== -->
-<meta property="og:title" content="برا السالفة - لعبة جماعية ممتعة" />
-<meta property="og:description" content="اكتشفوا من برا السالفة فيكم!" />
-<meta property="og:image" content="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" />
-<meta property="og:image:width" content="1080" />
-<meta property="og:image:height" content="1080" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="برا السالفة - لعبة جماعية ممتعة" />
-<meta name="twitter:description" content="اكتشفوا من برا السالفة فيكم!" />
-<meta name="twitter:image" content="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" />
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome 6 -->
@@ -27,29 +14,23 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <link rel="icon" href="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" type="image/png" />
+    <link rel="apple-touch-icon" href="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" />
+    
+    <!-- ===== ميتا تاغس لوسائل التواصل الاجتماعي (Open Graph) ===== -->
+    <meta property="og:title" content="برا السالفة - لعبة جماعية ممتعة" />
+    <meta property="og:description" content="اكتشفوا من برا السالفة فيكم!" />
+    <meta property="og:image" content="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="برا السالفة - لعبة جماعية ممتعة" />
+    <meta name="twitter:description" content="اكتشفوا من برا السالفة فيكم!" />
+    <meta name="twitter:image" content="https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png" />
+    
     <style>
-  /* ===== خلفية الموقع ===== */
-body {
-    background-image: url('https://i.ibb.co/4c0yyq2/IMG-20260809-091556.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    position: relative;
-}
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(3, 7, 18, 0.78);
-    z-index: 0;
-    pointer-events: none;
-}
-#app {
-    position: relative;
-    z-index: 1;
-}
-      /* ===== أنماط عامة ===== */
+        /* ===== أنماط عامة ===== */
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap');
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Tajawal',sans-serif; background:#030712; color:#f8fafc; min-height:100vh; min-height:100dvh; overflow-x:hidden; }
@@ -155,7 +136,7 @@ body::before {
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 99999;
+            z-index: 999999;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -364,290 +345,222 @@ body::before {
             position: fixed;
             bottom: 28px;
             right: 20px;
-            z-index: 999;
-            transition: all 0.3s ease;
+            z-index: 9999;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: none;
+        }
+        #share-fab:active {
+            cursor: grabbing;
         }
         #share-fab.hidden {
             display: none !important;
         }
         #share-fab button {
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #00e0ff, #0099cc);
-    border: none;
-    color: #ffffff;
-    font-size: 26px;
-    cursor: grab;
-    box-shadow: 0 4px 16px rgba(0, 224, 255, 0.15); /* توهج أخف */
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#share-fab button:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 24px rgba(0, 224, 255, 0.25); /* توهج أخف عند التمرير */
-}
-#share-fab button:active {
-    transform: scale(0.92);
-    cursor: grabbing;
-}
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00e0ff, #0099cc);
+            border: none;
+            color: #ffffff;
+            font-size: 26px;
+            cursor: grab;
+            box-shadow: 0 8px 32px rgba(0, 224, 255, 0.35);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #share-fab button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 40px rgba(0, 224, 255, 0.5);
+        }
+        #share-fab button:active {
+            transform: scale(0.92);
+            cursor: grabbing;
+        }
 
-/* ===== زر المشاركة العائم ===== */
-#share-fab {
-    position: fixed;
-    bottom: 28px;
-    right: 20px;
-    z-index: 9999;
-    transition: all 0.3s ease;
-}
-#share-fab.hidden {
-    display: none !important;
-}
-#share-fab button {
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #00e0ff, #0099cc);
-    border: none;
-    color: #ffffff; /* لون الأيقونة أبيض */
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: none; /* إزالة التوهج */
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#share-fab button:hover {
-    transform: scale(1.12) translateY(-3px);
-    box-shadow: none; /* إزالة التوهج عند التمرير */
-}
-#share-fab button:active {
-    transform: scale(0.92);
-}
+        /* ===== نافذة المشاركة المنبثقة ===== */
+        #share-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            animation: fadeInModal 0.3s ease forwards;
+        }
+        #share-modal.active {
+            display: flex;
+        }
+        #share-modal .share-box {
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            max-width: 420px;
+            width: 100%;
+            padding: 28px 24px 24px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            animation: slideUpModal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .share-box .share-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .share-box .share-header h3 {
+            font-size: 20px;
+            font-weight: 900;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .share-box .share-header h3 i {
+            color: #00e0ff;
+        }
+        .share-box .share-close {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #8892a6;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .share-box .share-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
+        .share-box .code-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 20px;
+        }
+        .share-box .code-box .label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .share-box .code-box .code-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .share-box .code-box .code-row span {
+            font-family: monospace;
+            font-size: 26px;
+            font-weight: 900;
+            color: #00e0ff;
+            letter-spacing: 4px;
+        }
+        .share-box .code-box .code-row button {
+            padding: 8px 18px;
+            background: rgba(0, 224, 255, 0.12);
+            border: 1px solid rgba(0, 224, 255, 0.15);
+            border-radius: 12px;
+            color: #00e0ff;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .share-box .code-box .code-row button:hover {
+            background: rgba(0, 224, 255, 0.2);
+            transform: scale(1.03);
+        }
+        .share-box .code-box .code-row button:active {
+            transform: scale(0.94);
+        }
+        .share-box .social-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .share-box .social-grid button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 14px 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+            color: #8892a6;
+            font-size: 11px;
+        }
+        .share-box .social-grid button:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+        .share-box .social-grid button i {
+            font-size: 24px;
+        }
+        .share-box .social-grid button span {
+            font-weight: 600;
+        }
+        .share-box .share-copy-main {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00e0ff, #0099cc);
+            border: none;
+            border-radius: 16px;
+            color: #0a0e1a;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: none;
+        }
+        .share-box .share-copy-main:hover {
+            transform: translateY(-2px);
+            box-shadow: none;
+        }
+        .share-box .share-copy-main:active {
+            transform: scale(0.96);
+        }
 
-/* ===== نافذة المشاركة المنبثقة ===== */
-#share-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 99999;
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(3, 7, 18, 0.85);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    animation: fadeInModal 0.3s ease forwards;
-}
-#share-modal.active {
-    display: flex;
-}
-#share-modal .share-box {
-    background: rgba(15, 23, 42, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 32px;
-    max-width: 420px;
-    width: 100%;
-    padding: 28px 24px 24px;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
-    animation: slideUpModal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.share-box .share-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.share-box .share-header h3 {
-    font-size: 20px;
-    font-weight: 900;
-    color: #f8fafc;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.share-box .share-header h3 i {
-    color: #00e0ff;
-}
-.share-box .share-close {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: #8892a6;
-    font-size: 18px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.share-box .share-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #f8fafc;
-}
-.share-box .code-box {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    padding: 16px 18px;
-    margin-bottom: 20px;
-}
-.share-box .code-box .label {
-    font-size: 11px;
-    color: #64748b;
-    font-weight: 700;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.share-box .code-box .code-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-.share-box .code-box .code-row span {
-    font-family: monospace;
-    font-size: 26px;
-    font-weight: 900;
-    color: #00e0ff;
-    letter-spacing: 4px;
-}
-.share-box .code-box .code-row button {
-    padding: 8px 18px;
-    background: rgba(0, 224, 255, 0.12);
-    border: 1px solid rgba(0, 224, 255, 0.15);
-    border-radius: 12px;
-    color: #00e0ff;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Tajawal', sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-}
-.share-box .code-box .code-row button:hover {
-    background: rgba(0, 224, 255, 0.2);
-    transform: scale(1.03);
-}
-.share-box .code-box .code-row button:active {
-    transform: scale(0.94);
-}
-.share-box .social-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
-}
-.share-box .social-grid button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 14px 6px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Tajawal', sans-serif;
-    color: #8892a6;
-    font-size: 11px;
-}
-.share-box .social-grid button:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(255, 255, 255, 0.12);
-    transform: translateY(-2px);
-}
-.share-box .social-grid button i {
-    font-size: 24px;
-}
-.share-box .social-grid button span {
-    font-weight: 600;
-}
-.share-box .share-copy-main {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #00e0ff, #0099cc);
-    border: none;
-    border-radius: 16px;
-    color: #0a0e1a;
-    font-weight: 800;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Tajawal', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: none; /* إزالة التوهج من الزر الرئيسي داخل النافذة */
-}
-.share-box .share-copy-main:hover {
-    transform: translateY(-2px);
-    box-shadow: none;
-}
-.share-box .share-copy-main:active {
-    transform: scale(0.96);
-}
-
-@keyframes fadeInModal {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-@keyframes slideUpModal {
-    from { transform: translateY(40px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-/* ===== زر المشاركة العائم القابل للسحب ===== */
-#share-fab {
-    position: fixed;
-    bottom: 28px;
-    right: 20px;
-    z-index: 9999;
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
-    transition: none;
-}
-#share-fab:active {
-    cursor: grabbing;
-}
-#share-fab.hidden {
-    display: none !important;
-}
-#share-fab button {
-    width: 58px;
-    height: 58px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #00e0ff, #0099cc);
-    border: none;
-    color: #ffffff;
-    font-size: 26px;
-    cursor: grab;
-    box-shadow: 0 8px 32px rgba(0, 224, 255, 0.35);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#share-fab button:hover {
-    transform: scale(1.08);
-    box-shadow: 0 12px 40px rgba(0, 224, 255, 0.5);
-}
-#share-fab button:active {
-    transform: scale(0.92);
-    cursor: grabbing;
-}
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUpModal {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -762,21 +675,21 @@ body::before {
                 <div>
                     <p class="font-bold text-sm text-white mb-3">اختر وضع اللعبة:</p>
                     <div class="flex flex-col gap-3" id="mode-selector">
-    <div class="mode-card" data-mode="traditional" tabindex="0" role="radio">
-        <span class="text-2xl"><i class="fa-solid fa-masks-theater text-cyan-400"></i></span>
-        <span class="font-extrabold">الوضع التقليدي</span>
-        <span class="text-[#8892a6] text-xs">لاعب واحد لا يعرف الكلمة السرية</span>
-    </div>
-    <div class="mode-card" data-mode="mindbending" tabindex="0" role="radio">
-        <span class="text-2xl"><i class="fa-solid fa-brain text-purple-400"></i></span>
-        <span class="font-extrabold">الوضع الذهني</span>
-        <span class="text-[#8892a6] text-xs">لاعب واحد يحصل على كلمة مختلفة</span>
-    </div>
-</div>
+                        <div class="mode-card" data-mode="traditional" tabindex="0" role="radio">
+                            <span class="text-2xl"><i class="fa-solid fa-masks-theater text-cyan-400"></i></span>
+                            <span class="font-extrabold">الوضع التقليدي</span>
+                            <span class="text-[#8892a6] text-xs">لاعب واحد لا يعرف الكلمة السرية</span>
+                        </div>
+                        <div class="mode-card" data-mode="mindbending" tabindex="0" role="radio">
+                            <span class="text-2xl"><i class="fa-solid fa-brain text-purple-400"></i></span>
+                            <span class="font-extrabold">الوضع الذهني</span>
+                            <span class="text-[#8892a6] text-xs">لاعب واحد يحصل على كلمة مختلفة</span>
+                        </div>
+                    </div>
                 </div>
                 <button id="btn-setup-start" class="btn-primary w-full text-lg flex items-center justify-center gap-2 mt-2" disabled>
-    <i class="fa-solid fa-play"></i> ابدأ اللعبة
-</button>
+                    <i class="fa-solid fa-play"></i> ابدأ اللعبة
+                </button>
             </div>
         </div>
 
@@ -948,8 +861,8 @@ body::before {
                         </div>
                     </div>
                     <button id="btn-online-host-start" class="btn-success w-full text-lg flex items-center justify-center gap-2 mt-4 disabled:opacity-30 disabled:grayscale disabled:pointer-events-none">
-    <i class="fa-solid fa-circle-play"></i> بدء اللعبة
-</button>
+                        <i class="fa-solid fa-circle-play"></i> بدء اللعبة
+                    </button>
                     <p id="online-host-hint" class="text-slate-400 text-xs mt-2 text-center">يجب أن يكون عدد اللاعبين كافياً (٣ على الأقل)</p>
                 </div>
 
@@ -975,21 +888,17 @@ body::before {
             </div>
         </div>
 
-        <!-- ===== شاشة الأسئلة الأونلاين (النظام الجديد - 3 مناظير) ===== -->
+        <!-- ===== شاشة الأسئلة الأونلاين ===== -->
         <div id="screen-online-qa" class="screen flex-col flex-1 py-2">
             <div class="glass-panel rounded-3xl p-4 flex flex-col gap-4 flex-1 w-full px-2 max-w-full">
-
-                <!-- شريط المعلومات العلوي مع زر الخروج -->
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <span id="online-qa-round" class="bg-yellow-500/15 text-yellow-400 font-bold text-sm px-4 py-1 rounded-full">الجولة 1</span>
                     <span id="online-qa-role-badge" class="text-[#8892a6] text-sm">🎤 سائل</span>
-                    <!-- زر الخروج الجديد -->
                     <button id="btn-online-qa-leave" class="text-rose-400/70 hover:text-rose-400 text-sm bg-slate-800/30 hover:bg-slate-800/60 px-3 py-1.5 rounded-xl border border-rose-500/20 transition-all flex items-center gap-1.5 shadow-lg" title="مغادرة الغرفة وإعادة التوزيع">
                         <i class="fa-solid fa-right-from-bracket text-xs"></i> خروج
                     </button>
                 </div>
 
-                <!-- شريط المواجهة (من يسأل من) -->
                 <div id="online-qa-faceoff" class="bg-gradient-to-r from-cyan-950/30 via-slate-900 to-emerald-950/30 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-inner">
                     <div class="flex items-center gap-3">
                         <div id="qa-asker-avatar" class="w-10 h-10 rounded-full bg-cyan-500/20 border-2 border-cyan-400 text-cyan-300 flex items-center justify-center font-black text-sm">?</div>
@@ -1011,9 +920,7 @@ body::before {
                     </div>
                 </div>
 
-                <!-- ========================================================== -->
-                <!-- 🎤 منظور السائل (Asker View) -->
-                <!-- ========================================================== -->
+                <!-- منظور السائل -->
                 <div id="online-qa-asker-view" class="hidden flex flex-col gap-4 bg-cyan-950/20 border border-cyan-500/30 rounded-2xl p-4 transition-all flex-1">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-cyan-400 flex items-center gap-2">
@@ -1028,7 +935,6 @@ body::before {
                             <span id="online-qa-timer" class="timer-ring">60</span>
                         </div>
                     </div>
-                    <!-- كارت ظهور إجابة المجيب -->
                     <div id="qa-asker-response-box" class="hidden flex flex-col gap-2 bg-emerald-950/30 border border-emerald-500/40 rounded-xl p-3.5">
                         <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
                             <span><i class="fa-solid fa-comment-dots"></i> إجابة المجيب:</span>
@@ -1038,9 +944,7 @@ body::before {
                     </div>
                 </div>
 
-                <!-- ========================================================== -->
-                <!-- 💬 منظور المجيب (Respondent View) -->
-                <!-- ========================================================== -->
+                <!-- منظور المجيب -->
                 <div id="online-qa-respondent-view" class="hidden flex flex-col gap-4 bg-emerald-950/20 border border-emerald-500/30 rounded-2xl p-4 transition-all flex-1">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-emerald-400 flex items-center gap-2">
@@ -1048,11 +952,9 @@ body::before {
                         </span>
                         <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">أنت المجيب</span>
                     </div>
-                    <!-- السؤال الموجه -->
                     <div id="qa-received-q-box" class="bg-slate-900 border-r-4 border-r-cyan-400 border border-slate-800 rounded-xl p-3.5 text-slate-200 text-sm font-medium leading-relaxed shadow-sm">
                         <span id="online-qa-received-q">⏳ في انتظار السؤال...</span>
                     </div>
-                    <!-- حقل كتابة الإجابة -->
                     <div class="flex flex-col gap-3 flex-1">
                         <textarea id="online-qa-answer-input" class="input-dark w-full bg-slate-900/90 border border-emerald-500/40 focus:border-emerald-400 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none h-20" placeholder="اكتب إجابتك الذكية هنا..." maxlength="200" disabled></textarea>
                         <div class="flex items-center gap-4">
@@ -1062,9 +964,7 @@ body::before {
                     </div>
                 </div>
 
-                <!-- ========================================================== -->
-                <!-- 👁️ منظور المتفرج (Spectator View) -->
-                <!-- ========================================================== -->
+                <!-- منظور المتفرج -->
                 <div id="online-qa-spectator-view" class="hidden flex flex-col gap-3 bg-purple-950/20 border border-purple-500/30 rounded-2xl p-4 transition-all flex-1">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-bold text-purple-400 flex items-center gap-2">
@@ -1075,7 +975,6 @@ body::before {
                         </span>
                     </div>
                     <div class="space-y-3 flex-1">
-                        <!-- فقاعة السؤال -->
                         <div class="bg-slate-900/90 border border-cyan-500/30 rounded-xl p-3 text-xs flex flex-col gap-1.5 relative overflow-hidden">
                             <div class="absolute top-0 right-0 w-1 h-full bg-cyan-400"></div>
                             <div class="flex items-center justify-between text-[11px] text-cyan-400 font-bold">
@@ -1083,7 +982,6 @@ body::before {
                             </div>
                             <p id="qa-spectator-q-text" class="text-slate-200 font-medium pr-1">⏳ في انتظار السؤال...</p>
                         </div>
-                        <!-- فقاعة الإجابة -->
                         <div class="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-3 text-xs flex flex-col gap-1.5 relative overflow-hidden">
                             <div class="absolute top-0 right-0 w-1 h-full bg-emerald-400"></div>
                             <div class="flex items-center justify-between text-[11px] text-emerald-400 font-bold">
@@ -1095,9 +993,6 @@ body::before {
                     </div>
                 </div>
 
-                <!-- ========================================================== -->
-                <!-- أزرار التحكم السفلية -->
-                <!-- ========================================================== -->
                 <button id="btn-online-qa-next" class="hidden btn-primary w-full text-lg">➡️ السؤال التالي</button>
                 <button id="btn-online-qa-to-vote" class="hidden btn-purple w-full text-lg">🗳️ الانتقال للتصويت</button>
             </div>
@@ -1136,16 +1031,16 @@ body::before {
         </div>
 
         <!-- ===== شاشة لوحة المتصدرين الأونلاين ===== -->
-<div id="screen-online-leaderboard" class="screen flex-col flex-1 py-4">
-    <div class="glass-panel rounded-3xl p-5 flex flex-col gap-5 flex-1 max-w-4xl mx-auto w-full px-4">
-        <h2 id="online-lb-headline" class="font-extrabold text-2xl text-center text-white"><i class="fa-solid fa-trophy text-yellow-400 ml-2"></i> النتائج النهائية</h2>
-        <div id="online-lb-content" class="flex flex-col gap-4 w-full flex-1 overflow-y-auto"></div>
-        <div class="flex flex-col gap-3">
-            <button id="btn-online-lb-newround" class="btn-primary w-full text-lg"><i class="fa-solid fa-rotate ml-2"></i> جولة جديدة</button>
-            <button id="btn-online-lb-leave" class="btn-secondary w-full"><i class="fa-solid fa-right-from-bracket text-rose-400 ml-2"></i> مغادرة الغرفة</button>
+        <div id="screen-online-leaderboard" class="screen flex-col flex-1 py-4">
+            <div class="glass-panel rounded-3xl p-5 flex flex-col gap-5 flex-1 max-w-4xl mx-auto w-full px-4">
+                <h2 id="online-lb-headline" class="font-extrabold text-2xl text-center text-white"><i class="fa-solid fa-trophy text-yellow-400 ml-2"></i> النتائج النهائية</h2>
+                <div id="online-lb-content" class="flex flex-col gap-4 w-full flex-1 overflow-y-auto"></div>
+                <div class="flex flex-col gap-3">
+                    <button id="btn-online-lb-newround" class="btn-primary w-full text-lg"><i class="fa-solid fa-rotate ml-2"></i> جولة جديدة</button>
+                    <button id="btn-online-lb-leave" class="btn-secondary w-full"><i class="fa-solid fa-right-from-bracket text-rose-400 ml-2"></i> مغادرة الغرفة</button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
         <!-- ===== شاشات اللعبة المحلية ===== -->
         <!-- شاشة الكشف المحلي -->
@@ -1210,43 +1105,43 @@ body::before {
         </div>
 
         <!-- شاشة لوحة المتصدرين المحلية -->
-<div id="screen-leaderboard" class="screen flex-col flex-1 py-4">
-    <div class="glass-panel rounded-3xl p-5 flex flex-col gap-5 flex-1 max-w-4xl mx-auto w-full px-4">
-        <h2 id="lb-headline" class="font-extrabold text-2xl text-center text-white"><i class="fa-solid fa-trophy text-yellow-400 ml-2"></i> النتائج النهائية</h2>
-        <div id="lb-content" class="flex flex-col gap-4 w-full flex-1 overflow-y-auto"></div>
-        <button id="btn-new-round" class="btn-primary w-full text-lg"><i class="fa-solid fa-rotate ml-2"></i> جولة جديدة</button>
-        <button id="btn-end-game" class="btn-secondary w-full text-lg"><i class="fa-solid fa-house ml-2"></i> القائمة الرئيسية</button>
-    </div>
-</div>
-
-        <!-- شاشة جولة جديدة محلية -->
-<div id="screen-newround" class="screen flex-col flex-1 py-4">
-    <div class="glass-panel rounded-3xl p-5 flex flex-col gap-5 flex-1 max-w-4xl mx-auto w-full px-4">
-        <h3 class="font-extrabold text-2xl text-center text-white"><i class="fa-solid fa-rotate text-cyan-400 ml-2"></i> اختر فئة الجولة الجديدة</h3>
-        <div id="newround-cat-grid" class="grid-auto-fill"></div>
-        <div>
-            <p class="font-bold text-sm text-white mb-3"><i class="fa-solid fa-sliders-h text-purple-400 ml-2"></i> الوضع:</p>
-            <div class="flex flex-col gap-3" id="newround-mode-selector">
-                <div class="mode-card" data-mode="traditional">
-                    <span class="text-2xl"><i class="fa-solid fa-masks-theater text-cyan-400"></i></span>
-                    <span class="font-extrabold">تقليدي</span>
-                    <span class="text-[#8892a6] text-xs">لاعب واحد لا يعرف الكلمة</span>
-                </div>
-                <div class="mode-card" data-mode="mindbending">
-                    <span class="text-2xl"><i class="fa-solid fa-brain text-purple-400"></i></span>
-                    <span class="font-extrabold">ذهني</span>
-                    <span class="text-[#8892a6] text-xs">لاعب واحد يحصل على كلمة مختلفة</span>
-                </div>
+        <div id="screen-leaderboard" class="screen flex-col flex-1 py-4">
+            <div class="glass-panel rounded-3xl p-5 flex flex-col gap-5 flex-1 max-w-4xl mx-auto w-full px-4">
+                <h2 id="lb-headline" class="font-extrabold text-2xl text-center text-white"><i class="fa-solid fa-trophy text-yellow-400 ml-2"></i> النتائج النهائية</h2>
+                <div id="lb-content" class="flex flex-col gap-4 w-full flex-1 overflow-y-auto"></div>
+                <button id="btn-new-round" class="btn-primary w-full text-lg"><i class="fa-solid fa-rotate ml-2"></i> جولة جديدة</button>
+                <button id="btn-end-game" class="btn-secondary w-full text-lg"><i class="fa-solid fa-house ml-2"></i> القائمة الرئيسية</button>
             </div>
         </div>
-        <button id="btn-newround-start" class="btn-primary w-full text-lg disabled:opacity-30 disabled:grayscale disabled:pointer-events-none" disabled><i class="fa-solid fa-rocket ml-2"></i> ابدأ الجولة الجديدة</button>
-        <button id="btn-newround-cancel" class="btn-secondary w-full"><i class="fa-solid fa-xmark ml-2"></i> إلغاء والعودة للنتائج</button>
+
+        <!-- شاشة جولة جديدة محلية -->
+        <div id="screen-newround" class="screen flex-col flex-1 py-4">
+            <div class="glass-panel rounded-3xl p-5 flex flex-col gap-5 flex-1 max-w-4xl mx-auto w-full px-4">
+                <h3 class="font-extrabold text-2xl text-center text-white"><i class="fa-solid fa-rotate text-cyan-400 ml-2"></i> اختر فئة الجولة الجديدة</h3>
+                <div id="newround-cat-grid" class="grid-auto-fill"></div>
+                <div>
+                    <p class="font-bold text-sm text-white mb-3"><i class="fa-solid fa-sliders-h text-purple-400 ml-2"></i> الوضع:</p>
+                    <div class="flex flex-col gap-3" id="newround-mode-selector">
+                        <div class="mode-card" data-mode="traditional">
+                            <span class="text-2xl"><i class="fa-solid fa-masks-theater text-cyan-400"></i></span>
+                            <span class="font-extrabold">تقليدي</span>
+                            <span class="text-[#8892a6] text-xs">لاعب واحد لا يعرف الكلمة</span>
+                        </div>
+                        <div class="mode-card" data-mode="mindbending">
+                            <span class="text-2xl"><i class="fa-solid fa-brain text-purple-400"></i></span>
+                            <span class="font-extrabold">ذهني</span>
+                            <span class="text-[#8892a6] text-xs">لاعب واحد يحصل على كلمة مختلفة</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-newround-start" class="btn-primary w-full text-lg disabled:opacity-30 disabled:grayscale disabled:pointer-events-none" disabled><i class="fa-solid fa-rocket ml-2"></i> ابدأ الجولة الجديدة</button>
+                <button id="btn-newround-cancel" class="btn-secondary w-full"><i class="fa-solid fa-xmark ml-2"></i> إلغاء والعودة للنتائج</button>
+            </div>
+        </div>
+
     </div>
-</div>
 
-    </div> <!-- نهاية #app -->
-
-    <!-- ===== زر المشاركة العائم (يظهر فقط في الغرفة) ===== -->
+    <!-- ===== زر المشاركة العائم ===== -->
     <div id="share-fab" class="hidden">
         <button id="btn-share-toggle" title="مشاركة الغرفة">
             <i class="fa-solid fa-share-nodes"></i>
@@ -1286,9 +1181,9 @@ body::before {
                     <span>تويتر</span>
                 </button>
                 <button onclick="shareTo('discord')">
-    <i class="fa-brands fa-discord" style="color:#5865F2;"></i>
-    <span>ديسكورد</span>
-</button>
+                    <i class="fa-brands fa-discord" style="color:#5865F2;"></i>
+                    <span>ديسكورد</span>
+                </button>
                 <button onclick="shareTo('telegram')">
                     <i class="fa-brands fa-telegram" style="color:#26A5E4;"></i>
                     <span>تيليجرام</span>
@@ -1303,7 +1198,7 @@ body::before {
     </div>
 
     <!-- ================================================================= -->
-    <!-- جافا سكريبت -->
+    <!-- جافا سكريبت - الكود الكامل المعدل -->
     <!-- ================================================================= -->
     <script>
         // ===== تكوين Supabase =====
@@ -1323,7 +1218,7 @@ body::before {
             }
         };
 
-        // ===== كلمات اللعبة (كاملة) =====
+        // ===== كلمات اللعبة =====
         const WORD_CLUSTERS = {
             'أكلات': [
                 ['برجر','شاورما','تاكو','ساندويتش','هوت دوغ'],
@@ -1443,64 +1338,65 @@ body::before {
             rngSeed: Date.now(),
             currentRevealIdx: 0,
             revealFlipped: false,
-            usedWords: [] // تتبع الكلمات المستخدمة لمنع التكرار
+            usedWords: []
         };
 
         const OS = {
-    supabase: null,
-    clientId: null,
-    playerName: null,
-    roomId: null,
-    roomCode: null,
-    isHost: false,
-    isReady: true,
-    myPlayerId: null,
-    currentPhase: 'lobby',
-    subscriptions: [],
-    gameData: null,
-    myRole: null,
-    myWord: null,
-    hasRevealed: false,
-    qaRound: 0,
-    qaTotalRounds: 6,
-    qaRole: null,
-    qaQuestion: null,
-    qaAnswer: null,
-    qaAnswered: false,
-    qaTimer: 45,
-    qaTimerInterval: null,
-    voteSelection: null,
-    votesCast: 0,
-    suspenseData: null,
-    scChosen: null,
-    scCorrect: false,
-    lbData: null,
-    visibility: 'public',
-    playerLimit: 6,
-    refreshInterval: null,
-    authUser: null,
-    qaAskerId: null,
-    qaRespondentId: null,
-    qaQuestionText: null,
-    qaAnswerText: null,
-    qaPhase: 'waiting',
-    qaSpectatorLog: [],
-    votingVoters: [],
-    votingTargets: [],
-    votingIndex: 0,
-    votingResults: null,
-    suspenseRevealed: false,
-    scWordOptions: [],
-    scSelected: null,
-    scCorrectAnswer: null,
-    lastUpdateTimestamp: null,
-    usedWords: [],
-    isAdvancing: false,
-    _qaSpectatorInterval: null,
-    _qaWaitInterval: null,
-    _qaTimerInterval: null,
-    realtimeActive: true // <-- أضف هذا السطر
-};
+            supabase: null,
+            clientId: null,
+            playerName: null,
+            roomId: null,
+            roomCode: null,
+            isHost: false,
+            isReady: true,
+            myPlayerId: null,
+            currentPhase: 'lobby',
+            subscriptions: [],
+            gameData: null,
+            myRole: null,
+            myWord: null,
+            hasRevealed: false,
+            qaRound: 0,
+            qaTotalRounds: 6,
+            qaRole: null,
+            qaQuestion: null,
+            qaAnswer: null,
+            qaAnswered: false,
+            qaTimer: 45,
+            qaTimerInterval: null,
+            voteSelection: null,
+            votesCast: 0,
+            suspenseData: null,
+            scChosen: null,
+            scCorrect: false,
+            lbData: null,
+            visibility: 'public',
+            playerLimit: 6,
+            refreshInterval: null,
+            authUser: null,
+            qaAskerId: null,
+            qaRespondentId: null,
+            qaQuestionText: null,
+            qaAnswerText: null,
+            qaPhase: 'waiting',
+            qaSpectatorLog: [],
+            votingVoters: [],
+            votingTargets: [],
+            votingIndex: 0,
+            votingResults: null,
+            suspenseRevealed: false,
+            scWordOptions: [],
+            scSelected: null,
+            scCorrectAnswer: null,
+            lastUpdateTimestamp: null,
+            usedWords: [],
+            isAdvancing: false,
+            _qaSpectatorInterval: null,
+            _qaWaitInterval: null,
+            _qaTimerInterval: null,
+            realtimeActive: true,
+            _voteInterval: null
+        };
 
         // ===== دوال مساعدة =====
         function resetButtons() {
@@ -1510,14 +1406,12 @@ body::before {
                 createBtn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>إنشاء الغرفة الآن</span>`;
                 createBtn.classList.remove('opacity-70', 'cursor-wait');
             }
-            
             const quickBtn = document.getElementById('btn-online-quick');
             if (quickBtn) {
                 quickBtn.disabled = false;
                 quickBtn.innerHTML = `<i class="fa-solid fa-bolt text-sm"></i> <span>دخول مباشر</span>`;
                 quickBtn.classList.remove('opacity-70', 'cursor-wait');
             }
-            
             const joinBtn = document.getElementById('btn-online-join');
             if (joinBtn) {
                 joinBtn.disabled = false;
@@ -1546,8 +1440,6 @@ body::before {
             if (window.lucide) lucide.createIcons();
             const bp = $('#bg-particles');
             if (bp) bp.style.display = (name === 'landing' || name === 'modepicker' || name === 'online-lobby') ? 'block' : 'none';
-            
-            // إظهار/إخفاء زر المشاركة حسب الشاشة
             const shareFab = document.getElementById('share-fab');
             if (shareFab) {
                 if (name === 'online-room') {
@@ -1578,12 +1470,10 @@ body::before {
                 error: 'fa-solid fa-circle-exclamation text-rose-400',
                 warning: 'fa-solid fa-triangle-exclamation text-yellow-400'
             };
-            
             function cleanText(text) {
                 if (!text) return '';
                 return text.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}]/gu, '').trim();
             }
-            
             const cleanMessage = cleanText(message) || 'تنبيه';
             const item = document.createElement('div');
             item.className = `toast-item ${type}`;
@@ -1600,15 +1490,12 @@ body::before {
         
         function showCustomModal(title, message, type = 'info', confirmText = 'تأكيد', cancelText = 'إلغاء', callback = null) {
             const modal = document.getElementById('custom-alert-modal');
-            
             function cleanText(text) {
                 if (!text) return '';
                 return text.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}]/gu, '').trim();
             }
-            
             const cleanTitle = cleanText(title) || 'تنبيه';
             const cleanMessage = cleanText(message) || 'تفاصيل التنبيه...';
-            
             document.getElementById('modal-title').innerText = cleanTitle;
             document.getElementById('modal-message').innerText = cleanMessage;
             modalCallback = callback;
@@ -1625,9 +1512,7 @@ body::before {
 
         function closeCustomAlert() { document.getElementById('custom-alert-modal').classList.add('hidden'); modalCallback = null; }
         function confirmModalAction() { if (modalCallback) { const cb = modalCallback; modalCallback = null; closeCustomAlert(); cb(); } else closeCustomAlert(); }
-        function showAlert(msg, type = 'info') { 
-            showCustomModal('تنبيه', msg, type, 'حسناً', 'إلغاء', null); 
-        }
+        function showAlert(msg, type = 'info') { showCustomModal('تنبيه', msg, type, 'حسناً', 'إلغاء', null); }
 
         // ===== المصادقة =====
         function getStoredUser() {
@@ -1804,6 +1689,265 @@ body::before {
         }
 
         function generateRoomCode() { return String(100000 + Math.floor(Math.random() * 900000)); }
+
+        // ==============================================================
+        // ===== نظام Polling الاحتياطي القوي (النسخة المعدلة) =====
+        // ==============================================================
+        let pollingInterval = null;
+        let lastPhase = null;
+        let lastQaData = null;
+        let lastVoteData = null;
+        let lastScData = null;
+
+        function startPolling(roomId) {
+            if (pollingInterval) clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(async () => {
+                if (!OS.roomId || !OS.supabase) return;
+                
+                const activeScreens = ['online-room', 'online-reveal', 'online-qa', 'online-voting', 'online-suspense', 'online-secondchance', 'online-leaderboard'];
+                const isGameScreen = activeScreens.some(id => document.getElementById(`screen-${id}`)?.classList.contains('active'));
+                if (!isGameScreen) return;
+                
+                try {
+                    const { data: room, error } = await OS.supabase
+                        .from('rooms')
+                        .select('*, room_players(*)')
+                        .eq('id', OS.roomId)
+                        .single();
+                    
+                    if (error || !room) return;
+                    
+                    OS.gameData = { room, players: room.room_players || [] };
+                    
+                    if (room.status !== lastPhase) {
+                        lastPhase = room.status;
+                        console.log('🔄 Polling detected phase change:', room.status);
+                        handlePhaseChange(room);
+                        return;
+                    }
+                    
+                    if (room.status === 'qa') {
+                        const qaChanged = (
+                            room.qa_question !== lastQaData?.question ||
+                            room.qa_answer !== lastQaData?.answer ||
+                            room.qa_answered !== lastQaData?.answered ||
+                            room.qa_asker_id !== lastQaData?.askerId ||
+                            room.qa_respondent_id !== lastQaData?.respondentId
+                        );
+                        if (qaChanged) {
+                            lastQaData = {
+                                question: room.qa_question,
+                                answer: room.qa_answer,
+                                answered: room.qa_answered,
+                                askerId: room.qa_asker_id,
+                                respondentId: room.qa_respondent_id
+                            };
+                            console.log('🔄 QA data changed, refreshing...');
+                            if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
+                                refreshQAView(room);
+                            }
+                        }
+                    }
+                    
+                    if (room.status === 'voting') {
+                        const round = room.current_round || 0;
+                        const { data: votes } = await OS.supabase
+                            .from('votes')
+                            .select('voter_id, target_id')
+                            .eq('room_id', OS.roomId)
+                            .eq('round_number', round);
+                        
+                        const voteData = votes ? votes.map(v => `${v.voter_id}-${v.target_id}`).join(',') : '';
+                        if (voteData !== lastVoteData) {
+                            lastVoteData = voteData;
+                            console.log('🔄 Vote data changed, refreshing...');
+                            if (document.getElementById('screen-online-voting')?.classList.contains('active')) {
+                                refreshVotingView(room, room.room_players || []);
+                            }
+                        }
+                    }
+                    
+                    if (room.status === 'secondchance') {
+                        if (room.sc_chosen !== lastScData?.chosen || room.sc_correct !== lastScData?.correct) {
+                            lastScData = {
+                                chosen: room.sc_chosen,
+                                correct: room.sc_correct
+                            };
+                            console.log('🔄 Second chance data changed, refreshing...');
+                            if (document.getElementById('screen-online-secondchance')?.classList.contains('active')) {
+                                refreshSCView(room);
+                            }
+                        }
+                    }
+                    
+                } catch(e) {
+                    console.error('Polling error:', e);
+                }
+            }, 1500);
+        }
+
+        function handlePhaseChange(room) {
+            OS.currentPhase = room.status;
+            OS.gameData = { room, players: room.room_players || [] };
+            lastPhase = room.status;
+            
+            if (room.status === 'qa') {
+                lastQaData = {
+                    question: room.qa_question,
+                    answer: room.qa_answer,
+                    answered: room.qa_answered,
+                    askerId: room.qa_asker_id,
+                    respondentId: room.qa_respondent_id
+                };
+            }
+            if (room.status === 'voting') {
+                lastVoteData = null;
+            }
+            if (room.status === 'secondchance') {
+                lastScData = {
+                    chosen: room.sc_chosen,
+                    correct: room.sc_correct
+                };
+            }
+            
+            switch(room.status) {
+                case 'lobby':
+                    renderOnlineRoom();
+                    showScreen('online-room');
+                    break;
+                case 'reveal':
+                    showOnlineReveal();
+                    break;
+                case 'qa':
+                    showOnlineQA();
+                    break;
+                case 'voting':
+                    showOnlineVoting();
+                    break;
+                case 'suspense':
+                    showOnlineSuspense();
+                    break;
+                case 'secondchance':
+                    showOnlineSecondChance();
+                    break;
+                case 'leaderboard':
+                    showOnlineLeaderboard();
+                    break;
+            }
+        }
+
+        // ===== دوال تحديث الواجهة =====
+        function refreshQAView(room) {
+            const players = room.room_players || [];
+            const myPlayer = players.find(p => p.client_id === OS.clientId);
+            if (!myPlayer) return;
+            
+            const askerId = room.qa_asker_id;
+            const respondentId = room.qa_respondent_id;
+            if (!askerId || !respondentId) return;
+            
+            const asker = players.find(p => p.id === askerId);
+            const respondent = players.find(p => p.id === respondentId);
+            if (!asker || !respondent) return;
+            
+            const isAsker = myPlayer.id === asker.id;
+            const isRespondent = myPlayer.id === respondent.id;
+            
+            document.getElementById('qa-asker-name').textContent = asker.player_name;
+            document.getElementById('qa-respondent-name').textContent = respondent.player_name;
+            document.getElementById('qa-asker-avatar').textContent = asker.player_name.charAt(0).toUpperCase();
+            document.getElementById('qa-respondent-avatar').textContent = respondent.player_name.charAt(0).toUpperCase();
+            
+            if (room.qa_question) {
+                if (isAsker) {
+                    if (room.qa_answer && room.qa_answered) {
+                        document.getElementById('qa-asker-response-text').textContent = `"${esc(room.qa_answer)}"`;
+                        document.getElementById('qa-asker-response-box').classList.remove('hidden');
+                        const isLast = (room.current_round || 0) + 1 >= (room.total_rounds || 6);
+                        if (isLast) {
+                            document.getElementById('btn-online-qa-to-vote').classList.remove('hidden');
+                            document.getElementById('btn-online-qa-next').classList.add('hidden');
+                        } else {
+                            document.getElementById('btn-online-qa-next').classList.remove('hidden');
+                            document.getElementById('btn-online-qa-to-vote').classList.add('hidden');
+                        }
+                    }
+                }
+                if (isRespondent) {
+                    document.getElementById('online-qa-received-q').textContent = `"${esc(room.qa_question)}"`;
+                    document.getElementById('online-qa-answer-input').disabled = false;
+                    document.getElementById('btn-online-qa-send-a').disabled = false;
+                }
+                if (!isAsker && !isRespondent) {
+                    document.getElementById('qa-spectator-q-text').textContent = `"${esc(room.qa_question)}"`;
+                    if (room.qa_answer && room.qa_answered) {
+                        document.getElementById('qa-spectator-a-text').textContent = `"${esc(room.qa_answer)}"`;
+                        document.getElementById('qa-spectator-status-tag').textContent = 'تمت الإجابة ✓';
+                        document.getElementById('qa-spectator-status-tag').className = 'text-[10px] text-emerald-400 font-bold';
+                    }
+                }
+            }
+        }
+
+        async function refreshVotingView(room, players) {
+            const round = room.current_round || 0;
+            const myPlayer = players.find(p => p.client_id === OS.clientId);
+            if (!myPlayer) return;
+            
+            const { data: votes } = await OS.supabase
+                .from('votes')
+                .select('voter_id, target_id')
+                .eq('room_id', OS.roomId)
+                .eq('round_number', round);
+            
+            const votedIds = votes ? votes.map(v => v.voter_id) : [];
+            const allPlayers = players.map(p => p.id);
+            const allVoted = allPlayers.every(id => votedIds.includes(id));
+            
+            const statusDiv = document.getElementById('online-voting-status');
+            const doneBtn = document.getElementById('btn-online-voting-done');
+            
+            if (allVoted) {
+                statusDiv.textContent = '✅ الجميع صوّت! اكشف النتيجة.';
+                if (OS.isHost) {
+                    doneBtn.classList.remove('hidden');
+                }
+            } else {
+                statusDiv.textContent = `⏳ في انتظار تصويت الجميع... (${votedIds.length}/${allPlayers.length})`;
+                doneBtn.classList.add('hidden');
+            }
+        }
+
+        function refreshSCView(room) {
+            const resultDiv = document.getElementById('online-sc-result');
+            const nextBtn = document.getElementById('btn-online-sc-next');
+            
+            if (room.sc_chosen) {
+                if (room.sc_correct) {
+                    resultDiv.innerHTML = '<span class="text-lime-400 font-extrabold">✅ تم الإنقاذ! +20 نقطة</span>';
+                    spawnCF(50);
+                } else {
+                    resultDiv.innerHTML = `<span class="text-rose-500 font-extrabold">❌ خطأ! الكلمة الصحيحة: ${esc(room.secret_word || '???')}</span>`;
+                }
+                document.querySelectorAll('#online-sc-options .vote-opt-option').forEach(el => {
+                    el.style.pointerEvents = 'none';
+                });
+                document.getElementById('btn-online-sc-confirm').classList.add('hidden');
+                if (OS.isHost) {
+                    setTimeout(async () => {
+                        await OS.supabase.from('rooms').update({
+                            status: 'leaderboard',
+                            updated_at: new Date().toISOString()
+                        }).eq('id', OS.roomId);
+                    }, 3000);
+                } else {
+                    nextBtn.classList.remove('hidden');
+                    nextBtn.textContent = '⏳ جاري عرض النتائج...';
+                    nextBtn.disabled = true;
+                }
+            }
+        }
 
         // ===== دوال الأونلاين =====
 
@@ -1983,59 +2127,62 @@ body::before {
         }
 
         async function leaveOnlineRoom() {
-    const sb = OS.supabase;
-    if (!sb || !OS.roomId) { 
-        showScreen('online-lobby'); 
-        resetButtons();
-        renderPublicRooms();
-        showToast('🚪 غادرت الغرفة', 'info');
-        return; 
-    }
-
-    const room = OS.gameData?.room;
-    if (room && room.host_id === OS.clientId) {
-        await transferHost(OS.roomId, OS.clientId);
-    }
-
-    showCustomModal('🚪 مغادرة الغرفة', 'هل أنت متأكد من مغادرة الغرفة؟', 'info', 'نعم، غادر', 'إلغاء', async () => {
-        try {
-            if (OS.myPlayerId) {
-                await sb.from('room_players').delete().eq('id', OS.myPlayerId);
+            const sb = OS.supabase;
+            if (!sb || !OS.roomId) { 
+                showScreen('online-lobby'); 
+                resetButtons();
+                renderPublicRooms();
+                showToast('🚪 غادرت الغرفة', 'info');
+                return; 
             }
-        } catch(e) {
-            console.error('Error deleting player:', e);
+
+            const room = OS.gameData?.room;
+            if (room && room.host_id === OS.clientId) {
+                await transferHost(OS.roomId, OS.clientId);
+            }
+
+            showCustomModal('🚪 مغادرة الغرفة', 'هل أنت متأكد من مغادرة الغرفة؟', 'info', 'نعم، غادر', 'إلغاء', async () => {
+                try {
+                    if (OS.myPlayerId) {
+                        await sb.from('room_players').delete().eq('id', OS.myPlayerId);
+                    }
+                } catch(e) {
+                    console.error('Error deleting player:', e);
+                }
+                
+                OS.subscriptions.forEach(sub => { 
+                    try { 
+                        sub.unsubscribe(); 
+                    } catch(e) {
+                        console.error('Error unsubscribing:', e);
+                    } 
+                });
+                OS.subscriptions = [];
+                
+                if (OS.refreshInterval) { 
+                    clearInterval(OS.refreshInterval); 
+                    OS.refreshInterval = null; 
+                }
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                    pollingInterval = null;
+                }
+                OS.realtimeActive = true;
+                
+                OS.roomId = null; 
+                OS.roomCode = null; 
+                OS.isHost = false; 
+                OS.myPlayerId = null;
+                OS.currentPhase = 'lobby';
+                OS.gameData = null;
+                localStorage.removeItem('barra_room_id');
+                
+                showScreen('online-lobby');
+                resetButtons();
+                renderPublicRooms();
+                showToast('🚪 غادرت الغرفة', 'info');
+            });
         }
-        
-        OS.subscriptions.forEach(sub => { 
-            try { 
-                sub.unsubscribe(); 
-            } catch(e) {
-                console.error('Error unsubscribing:', e);
-            } 
-        });
-        OS.subscriptions = [];
-        
-        // ===== تنظيف interval عند المغادرة =====
-        if (OS.refreshInterval) { 
-            clearInterval(OS.refreshInterval); 
-            OS.refreshInterval = null; 
-        }
-        OS.realtimeActive = true; // إعادة تعيين الحالة
-        
-        OS.roomId = null; 
-        OS.roomCode = null; 
-        OS.isHost = false; 
-        OS.myPlayerId = null;
-        OS.currentPhase = 'lobby';
-        OS.gameData = null;
-        localStorage.removeItem('barra_room_id');
-        
-        showScreen('online-lobby');
-        resetButtons();
-        renderPublicRooms();
-        showToast('🚪 غادرت الغرفة', 'info');
-    });
-}
 
         async function transferHost(roomId, currentHostId) {
             const sb = OS.supabase;
@@ -2068,73 +2215,63 @@ body::before {
         }
 
         function subscribeToPlayers(roomId) {
-    const sb = OS.supabase;
-    if (!sb) return;
-    
-    // إلغاء الاشتراك القديم إن وجد
-    OS.subscriptions.forEach(sub => { 
-        try { 
-            sub.unsubscribe(); 
-        } catch(e) { 
-            console.error('Error unsubscribing:', e); 
-        } 
-    });
-    OS.subscriptions = [];
-    
-    const playerSub = sb.channel(`players-${roomId}`)
-        .on('postgres_changes', { 
-            event: '*', 
-            schema: 'public', 
-            table: 'room_players', 
-            filter: `room_id=eq.${roomId}` 
-        }, (payload) => { 
-            console.log('👥 Realtime update received:', payload);
-            OS.realtimeActive = true; // Realtime يعمل
-            handlePlayerUpdate(payload); 
-        })
-        .subscribe((status) => {
-            console.log('📡 Player subscription status:', status);
-            if (status === 'SUBSCRIBED') {
-                console.log('✅ Subscribed to players channel');
-                OS.realtimeActive = true;
-            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-                console.warn('⚠️ Realtime connection error - using polling fallback');
-                OS.realtimeActive = false;
+            const sb = OS.supabase;
+            if (!sb) return;
+            
+            OS.subscriptions.forEach(sub => { 
+                try { 
+                    sub.unsubscribe(); 
+                } catch(e) { 
+                    console.error('Error unsubscribing:', e); 
+                } 
+            });
+            OS.subscriptions = [];
+            
+            const playerSub = sb.channel(`players-${roomId}`)
+                .on('postgres_changes', { 
+                    event: '*', 
+                    schema: 'public', 
+                    table: 'room_players', 
+                    filter: `room_id=eq.${roomId}` 
+                }, (payload) => { 
+                    console.log('👥 Realtime update received:', payload);
+                    OS.realtimeActive = true;
+                    handlePlayerUpdate(payload); 
+                })
+                .subscribe((status) => {
+                    console.log('📡 Player subscription status:', status);
+                    if (status === 'SUBSCRIBED') {
+                        console.log('✅ Subscribed to players channel');
+                        OS.realtimeActive = true;
+                    } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                        console.warn('⚠️ Realtime connection error - using polling fallback');
+                        OS.realtimeActive = false;
+                    }
+                });
+            OS.subscriptions.push(playerSub);
+            
+            if (OS.refreshInterval) {
+                clearInterval(OS.refreshInterval);
+                OS.refreshInterval = null;
             }
-        });
-    OS.subscriptions.push(playerSub);
-    
-    // ===== إعداد Polling احتياطي (يعمل فقط عند فشل Realtime) =====
-    // إزالة الـ interval القديم إن وجد
-    if (OS.refreshInterval) {
-        clearInterval(OS.refreshInterval);
-        OS.refreshInterval = null;
-    }
-    
-    // إضافة interval جديد يعمل فقط عند فشل Realtime
-    OS.refreshInterval = setInterval(() => {
-        // إذا كان Realtime يعمل، لا نقوم بالتحديث الدوري
-        if (OS.realtimeActive) {
-            // console.log('✅ Realtime active, skipping polling');
-            return;
+            
+            OS.refreshInterval = setInterval(() => {
+                if (OS.realtimeActive) {
+                    return;
+                }
+                const isRoomScreen = document.getElementById('screen-online-room')?.classList.contains('active');
+                const isLobbyScreen = document.getElementById('screen-online-lobby')?.classList.contains('active');
+                if (OS.roomId && (isRoomScreen || isLobbyScreen)) {
+                    console.log('🔄 Polling fallback: updating players');
+                    renderOnlineRoom();
+                }
+            }, 5000);
         }
-        
-        // فقط إذا كنا في شاشة الغرفة أو اللوبي
-        const isRoomScreen = document.getElementById('screen-online-room')?.classList.contains('active');
-        const isLobbyScreen = document.getElementById('screen-online-lobby')?.classList.contains('active');
-        
-        if (OS.roomId && (isRoomScreen || isLobbyScreen)) {
-            console.log('🔄 Polling fallback: updating players');
-            renderOnlineRoom();
-        }
-    }, 5000); // كل 5 ثوانٍ فقط عند فشل Realtime
-}
 
         function handleRoomUpdate(payload) {
             const newData = payload.new;
             if (!newData) return;
             
-            // التحقق من الطابع الزمني لمنع حالات السباق
             const newTimestamp = new Date(newData.updated_at).getTime();
             if (OS.lastUpdateTimestamp && newTimestamp <= OS.lastUpdateTimestamp) {
                 console.log('⏳ تحديث أقدم أو مكرر، تم تجاهله');
@@ -2184,17 +2321,7 @@ body::before {
                                 OS.supabase.from('votes').select('voter_id').eq('room_id', OS.roomId).eq('round_number', round)
                                     .then(({ data: votes }) => {
                                         if (votes) {
-                                            const votedIds = votes.map(v => v.voter_id);
-                                            const allPlayers = data.map(p => p.id);
-                                            const allVoted = allPlayers.every(id => votedIds.includes(id));
-                                            const statusDiv = document.getElementById('online-voting-status');
-                                            const doneBtn = document.getElementById('btn-online-voting-done');
-                                            if (allVoted && statusDiv) {
-                                                statusDiv.textContent = '✅ الجميع صوّت! اكشف النتيجة.';
-                                                if (doneBtn && OS.isHost) doneBtn.classList.remove('hidden');
-                                            } else if (statusDiv) {
-                                                statusDiv.textContent = `⏳ في انتظار تصويت الجميع... (${votedIds.length}/${allPlayers.length})`;
-                                            }
+                                            refreshVotingView(OS.gameData.room, data);
                                         }
                                     });
                             }
@@ -2245,7 +2372,6 @@ body::before {
                 const codeBadge = document.getElementById('online-room-code-badge');
                 codeBadge.textContent = room.code;
 
-                // تحديث كود الغرفة في زر المشاركة
                 const shareCodeSpan = document.getElementById('share-room-code');
                 if (shareCodeSpan) {
                     shareCodeSpan.textContent = room.code;
@@ -2320,6 +2446,11 @@ body::before {
                     waitMsg.style.display = 'none';
                 }
 
+                if (OS.roomId) {
+                    lastPhase = room.status;
+                    startPolling(OS.roomId);
+                }
+
                 if (window.lucide) lucide.createIcons();
             } catch(e) { console.error('Render room error:', e); }
         }
@@ -2328,10 +2459,16 @@ body::before {
             const sb = OS.supabase;
             if (!sb || !OS.roomId || !OS.isHost) return;
 
+            const startBtn = document.getElementById('btn-online-host-start');
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري البدء...';
+
             try {
                 const { data: players, error: pErr } = await sb.from('room_players').select('*').eq('room_id', OS.roomId);
                 if (pErr || !players || players.length < CFG.MIN_PLAYERS) {
                     showToast(`⚠️ تحتاج ${CFG.MIN_PLAYERS} لاعبين على الأقل`, 'warning');
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fa-solid fa-circle-play"></i> بدء اللعبة';
                     return;
                 }
 
@@ -2339,14 +2476,14 @@ body::before {
                 const mode = document.getElementById('online-host-mode').value;
 
                 const clusters = WORD_CLUSTERS[category];
-                if (!clusters || clusters.length === 0) { showAlert('⚠️ لا توجد كلمات لهذه الفئة', 'error'); return; }
+                if (!clusters || clusters.length === 0) { 
+                    showAlert('⚠️ لا توجد كلمات لهذه الفئة', 'error');
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fa-solid fa-circle-play"></i> بدء اللعبة';
+                    return;
+                }
 
-                // فلترة الكلمات غير المستخدمة
-                const availableClusters = clusters.filter(cluster => {
-                    const word = cluster[0];
-                    return !OS.usedWords?.includes(word);
-                });
-
+                const availableClusters = clusters.filter(cluster => !OS.usedWords?.includes(cluster[0]));
                 let cluster;
                 if (availableClusters.length === 0) {
                     OS.usedWords = [];
@@ -2367,19 +2504,47 @@ body::before {
                 }
 
                 await sb.from('rooms').update({
-                    status: 'reveal', category, mode, secret_word: secretWord, odd_player_id: oddPlayerId,
-                    odd_word: oddWord, current_round: 0, total_rounds: randInt(6,7),
+                    status: 'reveal',
+                    category,
+                    mode,
+                    secret_word: secretWord,
+                    odd_player_id: oddPlayerId,
+                    odd_word: oddWord,
+                    current_round: 0,
+                    total_rounds: randInt(6, 7),
                     updated_at: new Date().toISOString()
                 }).eq('id', OS.roomId);
 
                 await sb.from('room_players').update({ is_odd: true, has_revealed: false }).eq('id', oddPlayerId);
                 await sb.from('room_players').update({ is_odd: false, has_revealed: false }).eq('room_id', OS.roomId).neq('id', oddPlayerId);
 
-                showToast('🚀 بدأت اللعبة!', 'success');
-                hapticSuccess();
+                let retries = 0;
+                let confirmed = false;
+                while (retries < 10 && !confirmed) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    const { data: check } = await sb.from('rooms').select('status').eq('id', OS.roomId).single();
+                    if (check && check.status === 'reveal') {
+                        confirmed = true;
+                        break;
+                    }
+                    retries++;
+                }
+
+                if (confirmed) {
+                    showToast('🚀 بدأت اللعبة!', 'success');
+                    hapticSuccess();
+                    OS.currentPhase = 'reveal';
+                    showOnlineReveal();
+                } else {
+                    showAlert('⚠️ فشل تحديث حالة الغرفة، حاول مرة أخرى', 'warning');
+                }
+
             } catch(e) {
                 console.error('Start game error:', e);
                 showAlert('❌ فشل بدء اللعبة: ' + e.message, 'error');
+            } finally {
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<i class="fa-solid fa-circle-play"></i> بدء اللعبة';
             }
         }
 
@@ -2390,7 +2555,6 @@ body::before {
             const sb = OS.supabase;
             if (!sb || !OS.roomId) return;
 
-            // جلب أحدث البيانات مباشرة من قاعدة البيانات
             const { data: room, error: roomErr } = await sb.from('rooms').select('*').eq('id', OS.roomId).single();
             if (roomErr || !room) {
                 showToast('⚠️ خطأ في تحميل بيانات الغرفة', 'error');
@@ -2440,27 +2604,79 @@ body::before {
                 readyBtn.textContent = '✅ جاهز للمرحلة التالية';
                 readyBtn.disabled = false;
                 readyBtn.classList.remove('opacity-50');
+                
                 readyBtn.onclick = async () => {
                     const sb = OS.supabase;
                     if (!sb) return;
                     
-                    await sb.from('room_players').update({ has_revealed: true }).eq('id', OS.myPlayerId);
-                    hapticSuccess();
-                    
-                    readyBtn.textContent = '✅ تم';
+                    readyBtn.textContent = '⏳ جاري التجهيز...';
                     readyBtn.disabled = true;
-                    readyBtn.classList.add('opacity-50');
                     
-                    const { data: updatedPlayers } = await sb.from('room_players').select('has_revealed').eq('room_id', OS.roomId);
-                    const allRevealed = updatedPlayers ? updatedPlayers.every(p => p.has_revealed === true) : false;
-                    
-                    if (allRevealed && OS.isHost) {
-                        await sb.from('rooms').update({ 
-                            status: 'qa', 
-                            current_round: 0, 
-                            updated_at: new Date().toISOString() 
-                        }).eq('id', OS.roomId);
-                        showToast('🎤 الجميع جاهز! مرحلة الأسئلة تبدأ', 'success');
+                    try {
+                        await sb.from('room_players').update({ has_revealed: true }).eq('id', OS.myPlayerId);
+                        hapticSuccess();
+                        readyBtn.textContent = '✅ تم';
+                        
+                        let retries = 0;
+                        let confirmed = false;
+                        while (retries < 10 && !confirmed) {
+                            await new Promise(resolve => setTimeout(resolve, 300));
+                            const { data: check } = await sb.from('room_players').select('has_revealed').eq('id', OS.myPlayerId).single();
+                            if (check && check.has_revealed === true) {
+                                confirmed = true;
+                                break;
+                            }
+                            retries++;
+                        }
+                        
+                        const { data: updatedPlayers } = await sb.from('room_players').select('has_revealed').eq('room_id', OS.roomId);
+                        const allRevealed = updatedPlayers ? updatedPlayers.every(p => p.has_revealed === true) : false;
+                        
+                        if (allRevealed && OS.isHost) {
+                            await sb.from('rooms').update({ 
+                                status: 'qa', 
+                                current_round: 0,
+                                qa_start_time: new Date().toISOString(),
+                                updated_at: new Date().toISOString() 
+                            }).eq('id', OS.roomId);
+                            
+                            let retries2 = 0;
+                            let confirmed2 = false;
+                            while (retries2 < 10 && !confirmed2) {
+                                await new Promise(resolve => setTimeout(resolve, 300));
+                                const { data: check } = await sb.from('rooms').select('status').eq('id', OS.roomId).single();
+                                if (check && check.status === 'qa') {
+                                    confirmed2 = true;
+                                    break;
+                                }
+                                retries2++;
+                            }
+                            
+                            if (confirmed2) {
+                                showToast('🎤 الجميع جاهز! مرحلة الأسئلة تبدأ', 'success');
+                                OS.currentPhase = 'qa';
+                                lastPhase = 'qa';
+                                showOnlineQA();
+                            } else {
+                                showToast('⚠️ فشل تحديث حالة الغرفة، حاول مرة أخرى', 'warning');
+                                readyBtn.textContent = '✅ جاهز للمرحلة التالية';
+                                readyBtn.disabled = false;
+                            }
+                        } else if (allRevealed && !OS.isHost) {
+                            showToast('⏳ في انتظار المضيف لبدء المرحلة التالية', 'info');
+                            readyBtn.textContent = '✅ تم';
+                            readyBtn.disabled = true;
+                        } else {
+                            const { data: freshPlayers } = await sb.from('room_players').select('has_revealed').eq('room_id', OS.roomId);
+                            const revealedCount = freshPlayers ? freshPlayers.filter(p => p.has_revealed === true).length : 0;
+                            if (progress) progress.textContent = `✅ ${revealedCount}/${freshPlayers?.length || players.length} لاعبين اطلعوا على دورهم`;
+                            showToast(`✅ تم تجهيزك! في انتظار ${(freshPlayers?.length || players.length) - revealedCount} لاعبين`, 'success');
+                        }
+                    } catch(e) {
+                        console.error('Ready button error:', e);
+                        showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                        readyBtn.textContent = '✅ جاهز للمرحلة التالية';
+                        readyBtn.disabled = false;
                     }
                 };
             }
@@ -2505,7 +2721,6 @@ body::before {
                 showToast('🚪 تمت المغادرة وإعادة توزيع الأدوار', 'info');
             });
 
-            // جلب أحدث البيانات من قاعدة البيانات
             const { data: room, error: roomErr } = await sb.from('rooms').select('*').eq('id', OS.roomId).single();
             if (roomErr || !room) {
                 showToast('⚠️ خطأ في تحميل بيانات الغرفة', 'error');
@@ -2520,7 +2735,6 @@ body::before {
 
             OS.gameData = { room, players };
             
-            // إذا كان المضيف، يحسب الأدوار ويخزنها في قاعدة البيانات
             if (OS.isHost) {
                 const allPlayers = players.filter(p => p.id !== undefined);
                 const n = allPlayers.length;
@@ -2528,7 +2742,6 @@ body::before {
                     showToast('⚠️ عدد اللاعبين غير كافٍ', 'warning');
                     return;
                 }
-                
                 const round = room.current_round || 0;
                 const askerIdx = round % n;
                 const respondentIdx = (askerIdx + 1) % n;
@@ -2842,7 +3055,6 @@ body::before {
                     OS.isAdvancing = false;
                     return;
                 }
-                
                 const isLast = room.current_round + 1 >= room.total_rounds;
                 
                 await sb.from('rooms').update({
@@ -2886,90 +3098,99 @@ body::before {
             const statusDiv = document.getElementById('online-voting-status');
             const doneBtn = document.getElementById('btn-online-voting-done');
 
-            const { data: existingVote } = await sb.from('votes').select('*').eq('room_id', room.id).eq('round_number', round).eq('voter_id', OS.myPlayerId).maybeSingle();
+            const { data: existingVote } = await sb.from('votes')
+                .select('*')
+                .eq('room_id', room.id)
+                .eq('round_number', round)
+                .eq('voter_id', OS.myPlayerId)
+                .maybeSingle();
+
+            if (OS._voteInterval) {
+                clearInterval(OS._voteInterval);
+                OS._voteInterval = null;
+            }
 
             if (existingVote) {
                 instruction.textContent = '✅ لقد صوّت بالفعل. في انتظار الآخرين...';
                 optionsDiv.innerHTML = '';
-                statusDiv.textContent = '⏳ في انتظار تصويت الجميع...';
-                const { data: allVotes } = await sb.from('votes').select('voter_id').eq('room_id', room.id).eq('round_number', round);
-                const votedIds = allVotes ? allVotes.map(v => v.voter_id) : [];
-                const allPlayers = players.map(p => p.id);
-                const allVoted = allPlayers.every(id => votedIds.includes(id));
-                if (allVoted && OS.isHost) {
-                    doneBtn.classList.remove('hidden');
-                    statusDiv.textContent = '✅ الجميع صوّت! اكشف النتيجة.';
-                } else {
-                    doneBtn.classList.add('hidden');
-                }
+                await refreshVotingView(room, players);
                 return;
             }
 
             instruction.textContent = `صوّت على من تعتقد أنه برا السالفة (جولة ${round+1})`;
-            optionsDiv.innerHTML = players.filter(p => p.id !== OS.myPlayerId).map((p, i) => `
-                <div class="vote-opt-option bg-white/[0.025] border-2 border-white/5 rounded-2xl p-4 cursor-pointer transition-all hover:border-rose-500 hover:bg-rose-500/5 text-center min-h-[46px] flex items-center justify-center gap-3 font-bold text-white" data-target="${p.id}" tabindex="0" role="button">
-                    ${avHTML(p.player_name, i, 'sm')} <span>${esc(p.player_name)}</span>
-                </div>
-            `).join('');
+            
+            optionsDiv.innerHTML = players
+                .filter(p => p.id !== OS.myPlayerId)
+                .map((p, i) => `
+                    <div class="vote-opt-option bg-white/[0.025] border-2 border-white/5 rounded-2xl p-4 cursor-pointer transition-all hover:border-rose-500 hover:bg-rose-500/5 text-center min-h-[46px] flex items-center justify-center gap-3 font-bold text-white" 
+                         data-target="${p.id}" tabindex="0" role="button">
+                        ${avHTML(p.player_name, i, 'sm')} <span>${esc(p.player_name)}</span>
+                    </div>
+                `).join('');
 
             statusDiv.textContent = 'اختر لاعباً للتصويت عليه';
+            doneBtn.classList.add('hidden');
 
             optionsDiv.querySelectorAll('.vote-opt-option').forEach(el => {
                 el.addEventListener('click', async () => {
                     const targetId = el.dataset.target;
-                    const { error } = await sb.from('votes').insert({
-                        room_id: room.id, round_number: round,
-                        voter_id: OS.myPlayerId, target_id: targetId,
-                        created_at: new Date().toISOString()
-                    });
-                    if (error) { showAlert('❌ فشل التصويت: ' + error.message, 'error'); return; }
-                    hapticSuccess();
-                    showToast('✅ تم تسجيل تصويتك!', 'success');
-                    document.getElementById('online-voting-instruction').textContent = '✅ لقد صوّت بالفعل. في انتظار الآخرين...';
-                    document.getElementById('online-voting-options').innerHTML = '';
-                    document.getElementById('online-voting-status').textContent = '⏳ في انتظار تصويت الجميع...';
-                });
-                el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
-            });
-
-            const checkInterval = setInterval(async () => {
-                const { data: allVotes } = await sb.from('votes').select('voter_id').eq('room_id', room.id).eq('round_number', round);
-                const votedIds = allVotes ? allVotes.map(v => v.voter_id) : [];
-                const allPlayers = players.map(p => p.id);
-                const allVoted = allPlayers.every(id => votedIds.includes(id));
-                
-                if (allVoted) {
-                    clearInterval(checkInterval);
-                    statusDiv.textContent = '✅ الجميع صوّت! جارٍ كشف النتيجة...';
                     
-                    if (OS.isHost) {
-                        setTimeout(async () => {
-                            await sb.from('rooms').update({ 
-                                status: 'suspense', 
-                                updated_at: new Date().toISOString() 
-                            }).eq('id', room.id);
-                            showToast('🔮 جارٍ كشف النتيجة...', 'success');
-                        }, 3000);
-                    } else {
-                        doneBtn.classList.add('hidden');
-                        statusDiv.textContent = '✅ الجميع صوّت! في انتظار المضيف لكشف النتيجة...';
+                    optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
+                        opt.style.pointerEvents = 'none';
+                        opt.style.opacity = '0.5';
+                    });
+                    
+                    try {
+                        const { error } = await sb.from('votes').insert({
+                            room_id: room.id,
+                            round_number: round,
+                            voter_id: OS.myPlayerId,
+                            target_id: targetId,
+                            created_at: new Date().toISOString()
+                        });
+                        
+                        if (error) {
+                            showAlert('❌ فشل التصويت: ' + error.message, 'error');
+                            optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
+                                opt.style.pointerEvents = 'auto';
+                                opt.style.opacity = '1';
+                            });
+                            return;
+                        }
+                        
+                        hapticSuccess();
+                        showToast('✅ تم تسجيل تصويتك!', 'success');
+                        instruction.textContent = '✅ لقد صوّت بالفعل. في انتظار الآخرين...';
+                        optionsDiv.innerHTML = '';
+                        await refreshVotingView(room, players);
+                        
+                    } catch(e) {
+                        console.error('Vote error:', e);
+                        showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                        optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
+                            opt.style.pointerEvents = 'auto';
+                            opt.style.opacity = '1';
+                        });
                     }
-                }
-            }, 1000);
+                });
+                el.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        el.click();
+                    }
+                });
+            });
 
             if (OS.isHost) {
                 doneBtn.classList.remove('hidden');
                 doneBtn.textContent = '⚡ تسريع النتيجة';
                 doneBtn.onclick = async () => {
-                    clearInterval(checkInterval);
-                    await sb.from('rooms').update({ 
-                        status: 'suspense', 
-                        updated_at: new Date().toISOString() 
+                    await sb.from('rooms').update({
+                        status: 'suspense',
+                        updated_at: new Date().toISOString()
                     }).eq('id', room.id);
                     showToast('🔮 جارٍ كشف النتيجة...', 'success');
                 };
-            } else {
-                doneBtn.classList.add('hidden');
             }
         }
 
@@ -3065,90 +3286,93 @@ body::before {
                 confirmBtn.classList.add('hidden');
                 resultDiv.textContent = '';
                 nextBtn.classList.add('hidden');
-                const checkDone = setInterval(async () => {
-                    const { data: r } = await sb.from('rooms').select('sc_chosen, sc_correct').eq('id', room.id).single();
-                    if (r && r.sc_chosen) {
-                        clearInterval(checkDone);
-                        resultDiv.textContent = r.sc_correct ? '✅ تم الإنقاذ! +20 نقطة' : `❌ خطأ! الكلمة الصحيحة: ${esc(room.secret_word||'???')}`;
-                        nextBtn.classList.remove('hidden');
-                        nextBtn.onclick = async () => {
-                            await sb.from('rooms').update({ status: 'leaderboard', updated_at: new Date().toISOString() }).eq('id', room.id);
-                            showToast('🏆 النتائج النهائية!', 'success');
-                        };
-                    }
-                }, 500);
                 return;
             }
 
             prompt.textContent = `${myPlayer.player_name}، اختر الكلمة السرية الصحيحة للإنقاذ!`;
-            const cluster = WORD_CLUSTERS[room.category || Object.keys(WORD_CLUSTERS)[0]]?.find(c => c.includes(room.secret_word || '')) || [room.secret_word || '???', 'خيار1', 'خيار2', 'خيار3'];
+            
+            const cluster = WORD_CLUSTERS[room.category || Object.keys(WORD_CLUSTERS)[0]]
+                ?.find(c => c.includes(room.secret_word || '')) || [room.secret_word || '???', 'خيار1', 'خيار2', 'خيار3'];
             const correct = room.secret_word || '???';
             const distractors = shuffle(cluster.filter(w => w !== correct)).slice(0, 3);
             const options = shuffle([correct, ...distractors]);
 
             optionsDiv.innerHTML = options.map(w => `
-                <div class="vote-opt-option bg-white/[0.025] border-2 border-white/5 rounded-2xl p-4 cursor-pointer transition-all hover:border-lime-400 hover:bg-lime-400/5 text-center min-h-[46px] flex items-center justify-center font-bold text-white" data-word="${esc(w)}" tabindex="0" role="button">
+                <div class="vote-opt-option bg-white/[0.025] border-2 border-white/5 rounded-2xl p-4 cursor-pointer transition-all hover:border-lime-400 hover:bg-lime-400/5 text-center min-h-[46px] flex items-center justify-center font-bold text-white" 
+                     data-word="${esc(w)}" tabindex="0" role="button">
                     <span>${esc(w)}</span>
                 </div>
             `).join('');
 
             let selected = null;
+            confirmBtn.classList.add('hidden');
+            resultDiv.textContent = '';
+            nextBtn.classList.add('hidden');
+
             optionsDiv.querySelectorAll('.vote-opt-option').forEach(el => {
                 el.addEventListener('click', () => {
-                    optionsDiv.querySelectorAll('.vote-opt-option').forEach(x => x.classList.remove('!border-lime-400', '!bg-lime-400/12', '!text-lime-400'));
+                    optionsDiv.querySelectorAll('.vote-opt-option').forEach(x => {
+                        x.classList.remove('!border-lime-400', '!bg-lime-400/12', '!text-lime-400');
+                    });
                     el.classList.add('!border-lime-400', '!bg-lime-400/12', '!text-lime-400');
                     selected = el.dataset.word;
                     confirmBtn.classList.remove('hidden');
                     hapticLight();
                 });
-                el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
+                el.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        el.click();
+                    }
+                });
             });
 
             confirmBtn.onclick = async () => {
-                if (!selected) { showToast('اختر كلمة!', 'warning'); return; }
+                if (!selected) {
+                    showToast('اختر كلمة!', 'warning');
+                    return;
+                }
+                
                 const correctAns = room.secret_word || '???';
                 const isCorrect = (selected === correctAns);
 
+                optionsDiv.querySelectorAll('.vote-opt-option').forEach(el => {
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.5';
+                });
+                confirmBtn.classList.add('hidden');
+
                 if (isCorrect) {
-                    await sb.from('room_players').update({ total_score: (myPlayer.total_score || 0) + 20 }).eq('id', OS.myPlayerId);
+                    await sb.from('room_players')
+                        .update({ total_score: (myPlayer.total_score || 0) + 20 })
+                        .eq('id', OS.myPlayerId);
                     resultDiv.innerHTML = '<span class="text-lime-400 font-extrabold">✅ إجابة صحيحة! +20 نقطة إنقاذ</span>';
                     spawnCF(50);
                 } else {
                     resultDiv.innerHTML = `<span class="text-rose-500 font-extrabold">❌ خطأ! الكلمة الصحيحة: ${esc(correctAns)}</span>`;
                 }
 
-                await sb.from('rooms').update({ 
-                    sc_chosen: selected, 
-                    sc_correct: isCorrect, 
-                    updated_at: new Date().toISOString() 
+                await sb.from('rooms').update({
+                    sc_chosen: selected,
+                    sc_correct: isCorrect,
+                    updated_at: new Date().toISOString()
                 }).eq('id', room.id);
 
-                confirmBtn.classList.add('hidden');
-                optionsDiv.querySelectorAll('.vote-opt-option').forEach(el => el.style.pointerEvents = 'none');
-                
+                hapticSuccess();
+
                 if (OS.isHost) {
                     setTimeout(async () => {
-                        await sb.from('rooms').update({ 
-                            status: 'leaderboard', 
-                            updated_at: new Date().toISOString() 
+                        await sb.from('rooms').update({
+                            status: 'leaderboard',
+                            updated_at: new Date().toISOString()
                         }).eq('id', room.id);
                         showToast('🏆 النتائج النهائية!', 'success');
                     }, 3000);
                 } else {
                     nextBtn.classList.remove('hidden');
-                    nextBtn.textContent = '⏳ في انتظار المضيف...';
+                    nextBtn.textContent = '⏳ جاري عرض النتائج...';
                     nextBtn.disabled = true;
-                    
-                    const waitInterval = setInterval(async () => {
-                        const { data: r } = await sb.from('rooms').select('status').eq('id', room.id).single();
-                        if (r && r.status === 'leaderboard') {
-                            clearInterval(waitInterval);
-                            showScreen('online-leaderboard');
-                            showOnlineLeaderboard();
-                        }
-                    }, 1000);
                 }
-                hapticSuccess();
             };
         }
 
@@ -3183,45 +3407,84 @@ body::before {
                     <h3 class="font-extrabold mb-3 text-white">🏆 الترتيب</h3>
             `;
             sorted.forEach((p, i) => {
-    const idx = players.indexOf(p);
-    let medal = '';
-    let medalColor = '';
-    if (i === 0) {
-        medal = '<i class="fa-solid fa-crown text-yellow-400 ml-1"></i>';
-        medalColor = 'text-yellow-400';
-    } else if (i === 1) {
-        medal = '<i class="fa-solid fa-medal text-slate-300 ml-1"></i>';
-        medalColor = 'text-slate-300';
-    } else if (i === 2) {
-        medal = '<i class="fa-solid fa-medal text-amber-600 ml-1"></i>';
-        medalColor = 'text-amber-600';
-    } else {
-        medal = `<span class="text-slate-500 text-sm ml-1">${i+1}.</span>`;
-        medalColor = 'text-slate-400';
-    }
-    html += `
-        <div class="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
-            <span class="text-white ${medalColor}">${medal} ${avHTML(p.player_name, idx, 'sm')} ${esc(p.player_name)}</span>
-            <span class="font-extrabold text-white">${p.total_score||0} نقطة</span>
-        </div>
-    `;
-});
+                const idx = players.indexOf(p);
+                let medal = '';
+                let medalColor = '';
+                if (i === 0) {
+                    medal = '<i class="fa-solid fa-crown text-yellow-400 ml-1"></i>';
+                    medalColor = 'text-yellow-400';
+                } else if (i === 1) {
+                    medal = '<i class="fa-solid fa-medal text-slate-300 ml-1"></i>';
+                    medalColor = 'text-slate-300';
+                } else if (i === 2) {
+                    medal = '<i class="fa-solid fa-medal text-amber-600 ml-1"></i>';
+                    medalColor = 'text-amber-600';
+                } else {
+                    medal = `<span class="text-slate-500 text-sm ml-1">${i+1}.</span>`;
+                    medalColor = 'text-slate-400';
+                }
+                html += `
+                    <div class="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+                        <span class="text-white ${medalColor}">${medal} ${avHTML(p.player_name, idx, 'sm')} ${esc(p.player_name)}</span>
+                        <span class="font-extrabold text-white">${p.total_score||0} نقطة</span>
+                    </div>
+                `;
+            });
             html += `</div>`;
             content.innerHTML = html;
 
             newRoundBtn.onclick = async () => {
-                await sb.from('rooms').update({
-                    status: 'lobby', secret_word: null, odd_player_id: null, odd_word: null,
-                    current_round: 0, total_rounds: 6,
-                    qa_question: null, qa_answer: null, qa_answered: false,
-                    sc_chosen: null, sc_correct: false,
-                    updated_at: new Date().toISOString()
-                }).eq('id', OS.roomId);
-                await sb.from('room_players').update({ is_ready: false, is_odd: false, has_revealed: false }).eq('room_id', OS.roomId);
-                await sb.from('votes').delete().eq('room_id', OS.roomId);
-                showToast('🔄 جولة جديدة! الجميع غير جاهز.', 'success');
-                renderOnlineRoom();
-                showScreen('online-room');
+                const btn = newRoundBtn;
+                const originalHTML = btn.innerHTML;
+                
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحضير...';
+                
+                try {
+                    await sb.from('rooms').update({
+                        status: 'lobby',
+                        secret_word: null,
+                        odd_player_id: null,
+                        odd_word: null,
+                        current_round: 0,
+                        total_rounds: 6,
+                        qa_question: null,
+                        qa_answer: null,
+                        qa_answered: false,
+                        qa_asker_id: null,
+                        qa_respondent_id: null,
+                        sc_chosen: null,
+                        sc_correct: false,
+                        updated_at: new Date().toISOString()
+                    }).eq('id', OS.roomId);
+                    
+                    await sb.from('room_players')
+                        .update({
+                            is_ready: false,
+                            is_odd: false,
+                            has_revealed: false
+                        })
+                        .eq('room_id', OS.roomId);
+                    
+                    await sb.from('votes').delete().eq('room_id', OS.roomId);
+                    
+                    OS.usedWords = [];
+                    lastPhase = 'lobby';
+                    lastQaData = null;
+                    lastVoteData = null;
+                    lastScData = null;
+                    
+                    showToast('🔄 جولة جديدة!', 'success');
+                    renderOnlineRoom();
+                    showScreen('online-room');
+                    
+                } catch(e) {
+                    console.error('New round error:', e);
+                    showToast('❌ فشل بدء جولة جديدة: ' + e.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                }
             };
 
             leaveBtn.onclick = () => { leaveOnlineRoom(); };
@@ -3229,35 +3492,31 @@ body::before {
         }
 
         function showOnlineLobby() {
-    resetButtons();
-    showScreen('online-lobby');
-    
-    const catSelect = document.getElementById('online-host-category');
-    if (catSelect) {
-        catSelect.innerHTML = Object.keys(WORD_CLUSTERS).map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
-    }
-    
-    renderPublicRooms();
-    
-    // ===== تحديث الغرف العامة كل 10 ثوانٍ =====
-    // نستخدم interval منفصل للغرف العامة (لا يعتمد على Realtime)
-    if (OS.refreshInterval) { 
-        clearInterval(OS.refreshInterval); 
-        OS.refreshInterval = null; 
-    }
-    
-    // هذا interval خاص بالغرف العامة فقط
-    OS.refreshInterval = setInterval(() => {
-        // فقط إذا كنا في شاشة اللوبي
-        const isLobbyScreen = document.getElementById('screen-online-lobby')?.classList.contains('active');
-        if (isLobbyScreen) {
-            console.log('🔄 Refreshing public rooms');
+            resetButtons();
+            showScreen('online-lobby');
+            
+            const catSelect = document.getElementById('online-host-category');
+            if (catSelect) {
+                catSelect.innerHTML = Object.keys(WORD_CLUSTERS).map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+            }
+            
             renderPublicRooms();
+            
+            if (OS.refreshInterval) { 
+                clearInterval(OS.refreshInterval); 
+                OS.refreshInterval = null; 
+            }
+            
+            OS.refreshInterval = setInterval(() => {
+                const isLobbyScreen = document.getElementById('screen-online-lobby')?.classList.contains('active');
+                if (isLobbyScreen) {
+                    console.log('🔄 Refreshing public rooms');
+                    renderPublicRooms();
+                }
+            }, 10000);
+            
+            if (window.lucide) lucide.createIcons();
         }
-    }, 10000); // كل 10 ثوانٍ
-    
-    if (window.lucide) lucide.createIcons();
-}
 
         async function fetchPublicRooms() {
             const sb = OS.supabase;
@@ -3317,14 +3576,11 @@ body::before {
             list.querySelectorAll('.join-btn').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     if (btn.disabled) return;
-                    
                     const code = btn.dataset.code;
                     const originalHTML = btn.innerHTML;
-                    
                     btn.disabled = true;
                     btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin btn-icon"></i> جاري الانضمام...`;
                     btn.classList.add('opacity-70', 'cursor-wait');
-                    
                     try {
                         await joinOnlineRoom(code);
                     } catch(e) {
@@ -3343,29 +3599,23 @@ body::before {
             try {
                 const { error: voteError } = await sb.from('votes').delete().neq('id', '00000000-0000-0000-0000-000000000000');
                 if (voteError) console.warn('Votes delete error:', voteError);
-                
                 const { error: playerError } = await sb.from('room_players').delete().neq('id', '00000000-0000-0000-0000-000000000000');
                 if (playerError) console.warn('Players delete error:', playerError);
-                
                 const { error: roomError } = await sb.from('rooms').delete().neq('id', '00000000-0000-0000-0000-000000000000');
                 if (roomError) { 
                     showAlert('❌ فشل حذف الغرف: ' + roomError.message, 'error'); 
                     return; 
                 }
-                
                 showToast('✅ تم حذف جميع الغرف والبيانات بنجاح!', 'success');
                 renderPublicRooms();
-                
                 OS.roomId = null; 
                 OS.roomCode = null; 
                 OS.isHost = false;
                 OS.myPlayerId = null; 
                 OS.gameData = null;
-                
                 if (OS.currentPhase !== 'lobby') {
                     showScreen('online-lobby');
                 }
-                
             } catch(e) { 
                 showAlert('❌ خطأ في الحذف: ' + e.message, 'error'); 
             }
@@ -3410,12 +3660,10 @@ body::before {
                 subscribeToRoom(room.id);
                 subscribeToPlayers(room.id);
 
-                // تم نقل التحديث الدوري إلى subscribeToPlayers
-// لا حاجة لهذا الكود هنا
-if (OS.refreshInterval) {
-    clearInterval(OS.refreshInterval);
-    OS.refreshInterval = null;
-}
+                if (OS.refreshInterval) {
+                    clearInterval(OS.refreshInterval);
+                    OS.refreshInterval = null;
+                }
 
                 switch(OS.currentPhase) {
                     case 'lobby': renderOnlineRoom(); showScreen('online-room'); break;
@@ -3434,10 +3682,7 @@ if (OS.refreshInterval) {
             }
         }
 
-        // ===============================
-        // دوال اللعبة المحلية (كاملة)
-        // ===============================
-
+        // ===== دوال اللعبة المحلية =====
         function renderSetup() {
             renderPlayerChips();
             renderCatGrid();
@@ -3509,22 +3754,15 @@ if (OS.refreshInterval) {
             const cat = S.selectedCategory || Object.keys(WORD_CLUSTERS)[0];
             const clusters = WORD_CLUSTERS[cat];
             if (!clusters || clusters.length === 0) { showAlert('لا توجد كلمات في هذه الفئة!', 'error'); return; }
-            
-            const availableClusters = clusters.filter(cluster => {
-                const word = cluster[0];
-                return !S.usedWords.includes(word);
-            });
-            
+            const availableClusters = clusters.filter(cluster => !S.usedWords.includes(cluster[0]));
             if (availableClusters.length === 0) {
                 S.usedWords = [];
                 showToast('🔄 تم إعادة تعيين قائمة الكلمات', 'info');
                 return startNewRound();
             }
-            
             const cluster = availableClusters[randInt(0, availableClusters.length - 1)];
             const word = cluster[0];
             S.usedWords.push(word);
-            
             S.secretWord = word;
             S.oddIndex = randInt(0, S.players.length - 1);
             if (S.selectedMode === 'mindbending') {
@@ -3830,24 +4068,24 @@ if (OS.refreshInterval) {
             html += `</div>`;
             html += `<div class="glass-panel rounded-2xl p-5"><h3 class="font-extrabold mb-3 text-white"><i class="fa-solid fa-trophy text-yellow-400 ml-2"></i> الترتيب العام (تراكمي)</h3>`;
             sorted.forEach((p, i) => {
-    const idx = S.players.indexOf(p);
-    let medal = '';
-    let medalColor = '';
-    if (i === 0) {
-        medal = '<i class="fa-solid fa-crown text-yellow-400 ml-1"></i>';
-        medalColor = 'text-yellow-400';
-    } else if (i === 1) {
-        medal = '<i class="fa-solid fa-medal text-slate-300 ml-1"></i>';
-        medalColor = 'text-slate-300';
-    } else if (i === 2) {
-        medal = '<i class="fa-solid fa-medal text-amber-600 ml-1"></i>';
-        medalColor = 'text-amber-600';
-    } else {
-        medal = `<span class="text-slate-500 text-sm ml-1">${i+1}.</span>`;
-        medalColor = 'text-slate-400';
-    }
-    html += `<div class="flex justify-between items-center py-1.5"><span class="text-white ${medalColor}">${medal} ${avHTML(p.name,idx,'sm')} ${esc(p.name)}</span><span class="font-extrabold text-white">${p.totalScore||0} نقطة</span></div>`;
-});
+                const idx = S.players.indexOf(p);
+                let medal = '';
+                let medalColor = '';
+                if (i === 0) {
+                    medal = '<i class="fa-solid fa-crown text-yellow-400 ml-1"></i>';
+                    medalColor = 'text-yellow-400';
+                } else if (i === 1) {
+                    medal = '<i class="fa-solid fa-medal text-slate-300 ml-1"></i>';
+                    medalColor = 'text-slate-300';
+                } else if (i === 2) {
+                    medal = '<i class="fa-solid fa-medal text-amber-600 ml-1"></i>';
+                    medalColor = 'text-amber-600';
+                } else {
+                    medal = `<span class="text-slate-500 text-sm ml-1">${i+1}.</span>`;
+                    medalColor = 'text-slate-400';
+                }
+                html += `<div class="flex justify-between items-center py-1.5"><span class="text-white ${medalColor}">${medal} ${avHTML(p.name,idx,'sm')} ${esc(p.name)}</span><span class="font-extrabold text-white">${p.totalScore||0} نقطة</span></div>`;
+            });
             html += `</div>`;
             document.getElementById('lb-content').innerHTML = html;
             if (window.lucide) lucide.createIcons();
@@ -4309,11 +4547,9 @@ if (OS.refreshInterval) {
             document.getElementById('btn-online-create').addEventListener('click', async () => {
                 const btn = document.getElementById('btn-online-create');
                 const originalHTML = btn.innerHTML;
-                
                 btn.disabled = true;
                 btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري إنشاء الغرفة...`;
                 btn.classList.add('opacity-70', 'cursor-wait');
-                
                 try {
                     const name = document.getElementById('online-room-name').value.trim() || 'غرفة جديدة';
                     const isPublic = OS.visibility === 'public';
@@ -4335,16 +4571,13 @@ if (OS.refreshInterval) {
                 const btn = document.getElementById('btn-online-join');
                 const originalHTML = btn.innerHTML;
                 const code = document.getElementById('online-join-code').value.trim();
-                
                 if (!code || code.length !== 6) { 
                     showToast('أدخل كوداً مكوناً من 6 أرقام', 'warning'); 
                     return; 
                 }
-                
                 btn.disabled = true;
                 btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري الانضمام...`;
                 btn.classList.add('opacity-70', 'cursor-wait');
-                
                 try {
                     await joinOnlineRoom(code);
                 } catch(e) {
@@ -4397,7 +4630,7 @@ if (OS.refreshInterval) {
 
             document.getElementById('btn-online-lb-leave').onclick = () => { leaveOnlineRoom(); };
 
-            // ===== أحداث زر المشاركة =====
+            // أحداث زر المشاركة
             const shareToggle = document.getElementById('btn-share-toggle');
             const shareModal = document.getElementById('share-modal');
             const shareClose = document.getElementById('btn-share-close');
@@ -4415,7 +4648,6 @@ if (OS.refreshInterval) {
                 if (e.target === shareModal) shareModal.classList.remove('active');
             });
 
-            // نسخ كود الغرفة من نافذة المشاركة
             document.getElementById('btn-share-copy-code').addEventListener('click', () => {
                 const code = document.getElementById('share-room-code').textContent;
                 navigator.clipboard.writeText(code).then(() => {
@@ -4431,7 +4663,6 @@ if (OS.refreshInterval) {
                 });
             });
 
-            // نسخ رابط الدعوة الرئيسي
             document.getElementById('btn-share-copy-main').addEventListener('click', () => {
                 const code = document.getElementById('share-room-code').textContent;
                 const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
@@ -4448,43 +4679,36 @@ if (OS.refreshInterval) {
                 });
             });
 
-  // دوال المشاركة الاجتماعية
-window.shareTo = function(platform) {
-    const code = document.getElementById('share-room-code').textContent;
-    const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
-    
-    // النص المنسق بالأسطر الجديدة
-    const message = `تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول: ${inviteUrl}`;
-    const encodedMessage = encodeURIComponent(message);
-    const encodedUrl = encodeURIComponent(inviteUrl);
+            window.shareTo = function(platform) {
+                const code = document.getElementById('share-room-code').textContent;
+                const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
+                const message = `تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول: ${inviteUrl}`;
+                const encodedMessage = encodeURIComponent(message);
+                const encodedUrl = encodeURIComponent(inviteUrl);
 
-    let targetUrl = "";
-
-    switch(platform) {
-        case 'whatsapp':
-            targetUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-            break;
-        case 'twitter':
-            // تويتر يفضل فصل النص عن الرابط حتى يظهر بشكل أرتّب
-            const twitterText = encodeURIComponent(`تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول:`);
-            targetUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedUrl}`;
-            break;
-        case 'telegram':
-            targetUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}`)}`;
-            break;
-        case 'discord':
-            // إمكانية نسخ النص تلقائيًا للحافظة لسهولة اللصق في ديسكورد
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(message);
-                alert("تم نسخ الرسالة! يمكنك لصقها في ديسكورد الآن.");
-            }
-            targetUrl = `https://discord.com/channels/@me`;
-            break;
-    }
-
-    if (targetUrl) window.open(targetUrl, '_blank');
-    if (typeof hapticLight === 'function') hapticLight();
-};
+                let targetUrl = "";
+                switch(platform) {
+                    case 'whatsapp':
+                        targetUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+                        break;
+                    case 'twitter':
+                        const twitterText = encodeURIComponent(`تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول:`);
+                        targetUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedUrl}`;
+                        break;
+                    case 'telegram':
+                        targetUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}`)}`;
+                        break;
+                    case 'discord':
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(message);
+                            alert("تم نسخ الرسالة! يمكنك لصقها في ديسكورد الآن.");
+                        }
+                        targetUrl = `https://discord.com/channels/@me`;
+                        break;
+                }
+                if (targetUrl) window.open(targetUrl, '_blank');
+                if (typeof hapticLight === 'function') hapticLight();
+            };
         }
 
         // ===== التهيئة =====
@@ -4530,112 +4754,99 @@ window.shareTo = function(platform) {
             if (!reconnected) showScreen('landing');
 
             bindEvents();
-            console.log('🔮 برا السالفة v8.0 — النسخة النهائية الكاملة مع زر المشاركة');
+            console.log('🔮 برا السالفة v8.0 — النسخة النهائية المعدلة مع نظام Polling الموحد');
         }
 
-            if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
 
-// ===== جعل زر المشاركة قابلاً للسحب (Draggable) =====
-// ===== جعل زر المشاركة قابلاً للسحب (Draggable) =====
-function makeShareFabDraggable() {
-    const fab = document.getElementById('share-fab');
-    if (!fab) return;
-    
-    let isDragging = false;
-    let hasMoved = false;
-    let startX, startY, initialX, initialY;
-    const DRAG_THRESHOLD = 5;
-    
-    const onStart = (e) => {
-        // لا تمنع الحدث الأصلي، فقط ابدأ السحب
-        const touch = e.touches ? e.touches[0] : e;
-        isDragging = true;
-        hasMoved = false;
-        startX = touch.clientX;
-        startY = touch.clientY;
-        const rect = fab.getBoundingClientRect();
-        initialX = rect.left;
-        initialY = rect.top;
-        fab.style.cursor = 'grabbing';
-        fab.style.transition = 'none';
-        // لا نستخدم preventDefault هنا حتى لا نمنع النقر
-    };
-    
-    const onMove = (e) => {
-        if (!isDragging) return;
-        const touch = e.touches ? e.touches[0] : e;
-        const dx = touch.clientX - startX;
-        const dy = touch.clientY - startY;
-        
-        if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
-            hasMoved = true;
-            e.preventDefault(); // نمنع فقط عندما يتحرك فعلاً
+        // ===== جعل زر المشاركة قابلاً للسحب =====
+        function makeShareFabDraggable() {
+            const fab = document.getElementById('share-fab');
+            if (!fab) return;
+            
+            let isDragging = false;
+            let hasMoved = false;
+            let startX, startY, initialX, initialY;
+            const DRAG_THRESHOLD = 5;
+            
+            const onStart = (e) => {
+                const touch = e.touches ? e.touches[0] : e;
+                isDragging = true;
+                hasMoved = false;
+                startX = touch.clientX;
+                startY = touch.clientY;
+                const rect = fab.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+                fab.style.cursor = 'grabbing';
+                fab.style.transition = 'none';
+            };
+            
+            const onMove = (e) => {
+                if (!isDragging) return;
+                const touch = e.touches ? e.touches[0] : e;
+                const dx = touch.clientX - startX;
+                const dy = touch.clientY - startY;
+                
+                if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
+                    hasMoved = true;
+                    e.preventDefault();
+                }
+                
+                let newX = initialX + dx;
+                let newY = initialY + dy;
+                
+                const fabWidth = fab.offsetWidth || 58;
+                const fabHeight = fab.offsetHeight || 58;
+                const maxX = window.innerWidth - fabWidth - 10;
+                const maxY = window.innerHeight - fabHeight - 10;
+                newX = Math.max(10, Math.min(newX, maxX));
+                newY = Math.max(10, Math.min(newY, maxY));
+                
+                fab.style.left = newX + 'px';
+                fab.style.top = newY + 'px';
+                fab.style.right = 'auto';
+                fab.style.bottom = 'auto';
+                e.preventDefault();
+            };
+            
+            const onEnd = () => {
+                if (isDragging) {
+                    isDragging = false;
+                    fab.style.cursor = 'grab';
+                    fab.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                }
+            };
+            
+            fab.addEventListener('mousedown', onStart);
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onEnd);
+            
+            fab.addEventListener('touchstart', onStart, { passive: true });
+            document.addEventListener('touchmove', onMove, { passive: false });
+            document.addEventListener('touchend', onEnd);
+            
+            fab.addEventListener('click', function(e) {
+                if (hasMoved) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    hasMoved = false;
+                    return false;
+                }
+                const shareToggle = document.getElementById('btn-share-toggle');
+                if (shareToggle && !hasMoved) {
+                    const event = new Event('click', { bubbles: true });
+                    shareToggle.dispatchEvent(event);
+                }
+                return true;
+            });
         }
-        
-        let newX = initialX + dx;
-        let newY = initialY + dy;
-        
-        const fabWidth = fab.offsetWidth || 58;
-        const fabHeight = fab.offsetHeight || 58;
-        const maxX = window.innerWidth - fabWidth - 10;
-        const maxY = window.innerHeight - fabHeight - 10;
-        newX = Math.max(10, Math.min(newX, maxX));
-        newY = Math.max(10, Math.min(newY, maxY));
-        
-        fab.style.left = newX + 'px';
-        fab.style.top = newY + 'px';
-        fab.style.right = 'auto';
-        fab.style.bottom = 'auto';
-        e.preventDefault();
-    };
-    
-    const onEnd = () => {
-        if (isDragging) {
-            isDragging = false;
-            fab.style.cursor = 'grab';
-            fab.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        }
-    };
-    
-    // استخدام addEventListener مع تحديد أن الحدث سيتم التعامل معه
-    fab.addEventListener('mousedown', onStart);
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onEnd);
-    
-    fab.addEventListener('touchstart', onStart, { passive: true });
-    document.addEventListener('touchmove', onMove, { passive: false });
-    document.addEventListener('touchend', onEnd);
-    
-    // لا نضيف مستمع click إضافي، نترك الحدث الأصلي يعمل
-    // ولكن نتحقق في حدث click الأصلي من hasMoved
-    const originalClick = fab._listeners ? fab._listeners.click : null;
-    
-    // نضيف مستمع click يتجاوز الحدث الأصلي
-    fab.addEventListener('click', function(e) {
-        if (hasMoved) {
-            e.stopPropagation();
-            e.preventDefault();
-            hasMoved = false;
-            return false;
-        }
-        // إذا لم يتحرك، نترك الحدث الأصلي يعمل
-        // لكن نحتاج إلى تشغيل الحدث الأصلي يدوياً
-        const shareToggle = document.getElementById('btn-share-toggle');
-        if (shareToggle && !hasMoved) {
-            // نطلق الحدث الأصلي
-            const event = new Event('click', { bubbles: true });
-            shareToggle.dispatchEvent(event);
-        }
-        return true;
-    });
-}
 
-// استدعاء الدالة بعد تحميل الصفحة
-setTimeout(makeShareFabDraggable, 500);
-</script>
+        setTimeout(makeShareFabDraggable, 500);
+    </script>
 </body>
 </html>
