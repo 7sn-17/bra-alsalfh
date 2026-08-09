@@ -1780,7 +1780,7 @@
     <!-- ====== استعادة الحالة ====== -->
     <div id="reconnect-overlay">
         <div class="spinner"></div>
-        <p>⏳ جاري استعادة الجلسة...</p>
+        <p> جاري استعادة الجلسة...⏳</p>
     </div>
 
     <!-- ====== الشريط العلوي العالمي ====== -->
@@ -1881,7 +1881,7 @@
                 <span class="text-8xl" style="filter:drop-shadow(0 0 60px rgba(0,224,255,0.2));">🔮</span>
             </div>
             <h1 class="font-black text-5xl leading-tight tracking-tight text-white text-shadow-glow">برا السالفة</h1>
-            <p class="text-[#8892a6] text-lg max-w-[300px] mt-2">اللعبة الجماعية المثيرة — اكتشفوا من برا السالفة قبل ما يكتشفكم!</p>
+            <p class="text-[#8892a6] text-lg max-w-[300px] mt-2">اللعبة الجماعية المثيرة — اكتشفوا من برا السالفة فيكم</p>
             <div class="flex flex-col gap-4 w-full max-w-[300px] mt-8">
                 <button id="btn-landing-play" class="btn-primary w-full flex items-center justify-center gap-3 text-lg">
                     <i data-lucide="play-circle" class="w-5 h-5"></i> بدء اللعب
@@ -2510,23 +2510,24 @@
             </div>
 
             <div class="social-grid">
-                <button onclick="shareTo('whatsapp')">
-                    <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
-                    <span>واتساب</span>
-                </button>
-                <button onclick="shareTo('twitter')">
-                    <i class="fa-brands fa-x-twitter" style="color:#1DA1F2;"></i>
-                    <span>تويتر</span>
-                </button>
-                <button onclick="shareTo('discord')">
-                    <i class="fa-brands fa-discord" style="color:#5865F2;"></i>
-                    <span>ديسكورد</span>
-                </button>
-                <button onclick="shareTo('telegram')">
-                    <i class="fa-brands fa-telegram" style="color:#26A5E4;"></i>
-                    <span>تيليجرام</span>
-                </button>
-            </div>
+    <button onclick="shareTo('whatsapp')">
+        <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
+        <span>واتساب</span>
+    </button>
+    <button onclick="shareTo('twitter')">
+        <i class="fa-brands fa-x-twitter" style="color:#1DA1F2;"></i>
+        <span>اكس</span>
+    </button>
+    <!-- ✅ استبدال ديسكورد بـ إنستغرام -->
+    <button onclick="shareTo('instagram')">
+        <i class="fa-brands fa-instagram" style="color:#E4405F;"></i>
+        <span>إنستغرام</span>
+    </button>
+    <button onclick="shareTo('telegram')">
+        <i class="fa-brands fa-telegram" style="color:#26A5E4;"></i>
+        <span>تيليجرام</span>
+    </button>
+</div>
 
             <button class="share-copy-main" id="btn-share-copy-main">
                 <i class="fa-regular fa-copy"></i>
@@ -6914,64 +6915,80 @@ if (btnSetupBack) {
                 });
             }
 
-            const btnShareCopyMain = document.getElementById('btn-share-copy-main');
-            if (btnShareCopyMain) {
-                btnShareCopyMain.addEventListener('click', () => {
-                    const code = document.getElementById('share-room-code').textContent;
-                    const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
-                    navigator.clipboard.writeText(inviteUrl).then(() => {
-                        showToast('✅ تم نسخ رابط الدعوة!', 'success');
-                    }).catch(() => {
-                        const temp = document.createElement('input');
-                        temp.value = inviteUrl;
-                        document.body.appendChild(temp);
-                        temp.select();
-                        document.execCommand('copy');
-                        temp.remove();
-                        showToast('✅ تم نسخ رابط الدعوة!', 'success');
-                    });
-                });
-            }
+            // تعديل زر نسخ الرابط الرئيسي
+const btnShareCopyMain = document.getElementById('btn-share-copy-main');
+if (btnShareCopyMain) {
+    btnShareCopyMain.addEventListener('click', () => {
+        const code = document.getElementById('share-room-code').textContent;
+        const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
+        const fullMessage = `تعالوا نلعب "برا السالفة"! 🎯\nكود الغرفة: ${code}\nرابط دخول مباشر: ${inviteUrl}`;
+        
+        navigator.clipboard.writeText(fullMessage).then(() => {
+            showToast('✅ تم نسخ رسالة الدعوة الكاملة!', 'success');
+        }).catch(() => {
+            const temp = document.createElement('textarea');
+            temp.value = fullMessage;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            temp.remove();
+            showToast('✅ تم نسخ رسالة الدعوة الكاملة!', 'success');
+        });
+    });
+}
 
             window.shareTo = function(platform) {
-                const code = document.getElementById('share-room-code').textContent;
-                const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
-                const message = `تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول: ${inviteUrl}`;
-                const encodedMessage = encodeURIComponent(message);
-                const encodedUrl = encodeURIComponent(inviteUrl);
+    const code = document.getElementById('share-room-code').textContent;
+    const inviteUrl = window.location.origin + window.location.pathname + '?room=' + code;
+    
+    // ✅ الرسالة بالتنسيق الجديد
+    const message = `تعالوا نلعب "برا السالفة"! 🎯\nكود الغرفة: ${code}\nرابط دخول مباشر: ${inviteUrl}`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    const encodedUrl = encodeURIComponent(inviteUrl);
 
-                let targetUrl = "";
-                switch (platform) {
-                    case 'whatsapp':
-                        targetUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
-                        break;
-                    case 'twitter':
-                        const twitterText = encodeURIComponent(
-                            `تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}\nرابط الدخول:`);
-                        targetUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedUrl}`;
-                        break;
-                    case 'telegram':
-                        targetUrl =
-                            `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`تعال نلعب "برا السالفة"! 🎯\n\nكود الغرفة: ${code}`)}`;
-                        break;
-                    case 'discord':
-                        if (navigator.clipboard) {
-                            navigator.clipboard.writeText(message);
-                            alert("تم نسخ الرسالة! يمكنك لصقها في ديسكورد الآن.");
-                        }
-                        targetUrl = `https://discord.com/channels/@me`;
-                        break;
-                }
-                if (targetUrl) window.open(targetUrl, '_blank');
-                if (typeof hapticLight === 'function') hapticLight();
-            };
-
-            // ربط أحداث المصادقة
-            bindAuthEvents();
-
-            console.log('✅ تم ربط جميع الأحداث بنجاح');
-        }
-
+    let targetUrl = "";
+    switch (platform) {
+        case 'whatsapp':
+            targetUrl = `https://api.whatsapp.com/send?text=${encodedMessage}`;
+            break;
+        case 'twitter':
+            const twitterText = encodeURIComponent(
+                `تعالوا نلعب "برا السالفة"! 🎯\nكود الغرفة: ${code}\nرابط دخول مباشر:`
+            );
+            targetUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodedUrl}`;
+            break;
+        case 'telegram':
+            targetUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`تعالوا نلعب "برا السالفة"! 🎯\nكود الغرفة: ${code}\nرابط دخول مباشر: ${inviteUrl}`)}`;
+            break;
+        case 'instagram':
+            // ✅ الانتقال مباشرة إلى إنستغرام مع نسخ الرسالة للحافظة
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(message).then(() => {
+                    if (typeof showToast === 'function') {
+                        showToast('✅ تم نسخ الرسالة! افتح إنستغرام وألصقها', 'success');
+                    }
+                }).catch(() => {
+                    const temp = document.createElement('textarea');
+                    temp.value = message;
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    temp.remove();
+                    if (typeof showToast === 'function') {
+                        showToast('✅ تم نسخ الرسالة! افتح إنستغرام وألصقها', 'success');
+                    }
+                });
+            }
+            // ✅ الانتقال مباشرة إلى إنستغرام
+            // على الجوال: يفتح التطبيق، على الكمبيوتر: يفتح الموقع
+            targetUrl = 'https://www.instagram.com/';
+            break;
+    }
+    if (targetUrl) window.open(targetUrl, '_blank');
+    if (typeof hapticLight === 'function') hapticLight();
+};
+}
         // ==============================================================
         // ===== التهيئة =====
         // ==============================================================
