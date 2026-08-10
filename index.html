@@ -2346,6 +2346,24 @@
             transform: none !important;
             box-shadow: none !important;
         }
+
+        /* ===== زر جاهز للجولة التالية ===== */
+        .btn-next-ready {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-next-ready:active {
+            transform: scale(0.94);
+        }
+        .btn-next-ready.ready-done {
+            background: rgba(168, 255, 90, 0.15);
+            color: #a8ff5a;
+            border: 1px solid rgba(168, 255, 90, 0.3);
+            cursor: default;
+        }
+        .btn-next-ready.ready-done:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body>
@@ -2587,7 +2605,7 @@
                     </div>
                     <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
                         <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🎤</span> ٣. مرحلة الأسئلة</h3>
-                        <p class="text-slate-300 text-sm mt-1">٦ أو ٧ جولات، كل جولة يسأل لاعب زميله سؤالاً واحداً</p>
+                        <p class="text-slate-300 text-sm mt-1">عدد الجولات حسب عدد اللاعبين، كل جولة سائل ومجيب مختلفين</p>
                     </div>
                     <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
                         <h3 class="font-extrabold text-cyan-400 text-lg flex items-center gap-2"><span class="text-2xl">🗳️</span> ٤. التصويت السري</h3>
@@ -2906,19 +2924,6 @@
                     <span>جاهز وبدء الجولة</span>
                 </button>
 
-                <!-- معلومات إضافية عن اللاعبين -->
-                <div id="reveal-players-info" class="text-[10px] text-slate-500 border-t border-slate-800/50 pt-3 w-full flex items-center justify-center gap-4">
-                    <span class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-users text-cyan-400"></i>
-                        <span id="reveal-total-players">0 لاعبين</span>
-                    </span>
-                    <span class="text-slate-700">|</span>
-                    <span class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-secret text-rose-400"></i>
-                        <span id="reveal-odd-player">برا السالفة: —</span>
-                    </span>
-                </div>
-
             </div>
         </div>
 
@@ -2935,7 +2940,7 @@
                         <!-- الجولة -->
                         <div class="flex-1 text-right">
                             <span id="online-qa-round-display" class="text-[11px] font-extrabold px-3 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 whitespace-nowrap">
-                                الجولة 1 من 6
+                                الجولة 1 من 0
                             </span>
                         </div>
 
@@ -3022,12 +3027,6 @@
                                 </div>
                                 <p id="qa-asker-response-text" class="text-xs text-slate-100 font-semibold">"..."</p>
                             </div>
-
-                            <!-- زر الانتقال إلى الجولة التالية -->
-                            <button id="btn-online-qa-next-round" class="w-full py-2.5 bg-slate-900 border border-purple-500/40 hover:border-purple-400 text-purple-300 hover:text-white font-extrabold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md hover:bg-purple-950/40 active:scale-95">
-                                <span>الانتقال إلى الجولة التالية</span>
-                                <i class="fa-solid fa-angles-left text-xs"></i>
-                            </button>
                         </div>
                     </div>
 
@@ -3050,12 +3049,6 @@
                             <i class="fa-solid fa-reply"></i>
                             <span>إرسال الإجابة</span>
                         </button>
-
-                        <!-- زر الانتقال إلى الجولة التالية للمجيب -->
-                        <button id="btn-online-qa-next-round-respondent" class="w-full py-3 bg-slate-900 border border-purple-500/30 hover:border-purple-400 text-purple-300 hover:text-white font-extrabold rounded-2xl text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-95 hidden">
-                            <span>الانتقال إلى الجولة التالية</span>
-                            <i class="fa-solid fa-angles-left text-xs"></i>
-                        </button>
                     </div>
 
                     <!-- 3. منظور المتفرج -->
@@ -3077,12 +3070,15 @@
                                 <p id="qa-spectator-a-text" class="text-xs font-semibold text-slate-200 italic">...في انتظار الرد</p>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- زر الانتقال إلى الجولة التالية للمتفرج -->
-                        <button id="btn-online-qa-next-round-spectator" class="w-full py-3 bg-slate-900 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 hover:text-white font-extrabold rounded-2xl text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-95 mt-2 hidden">
-                            <span>الانتقال إلى الجولة التالية</span>
-                            <i class="fa-solid fa-angles-left text-xs"></i>
+                    <!-- زر جاهز للجولة التالية (موحد لكل اللاعبين) -->
+                    <div id="qa-next-ready-container" class="hidden mt-2">
+                        <button id="btn-qa-ready-next" class="btn-next-ready w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span>جاهز للجولة التالية</span>
                         </button>
+                        <p id="qa-next-ready-status" class="text-xs text-slate-400 text-center mt-2">يجب أن يكون جميع اللاعبين جاهزين للانتقال</p>
                     </div>
 
                 </div>
@@ -3400,7 +3396,7 @@
 
     <script>
         // =================================================================
-        // ===== جافا سكريبت - الكود الكامل =====
+        // ===== جافا سكريبت - الكود الكامل مع جميع التعديلات المطلوبة =====
         // =================================================================
 
         // ===== تكوين Supabase =====
@@ -3761,7 +3757,7 @@
                                     osc2.type = 'square';
                                     gain2.gain.setValueAtTime(0.08, this.context.currentTime);
                                     gain2.gain.exponentialRampToValueAtTime(0.001, this.context
-                                    .currentTime + 0.1);
+                                        .currentTime + 0.1);
                                     osc2.start(this.context.currentTime);
                                     osc2.stop(this.context.currentTime + 0.1);
                                 } catch (e) {}
@@ -3824,7 +3820,7 @@
         const QA_CONFIG = {
             ASKER_TIME: 90,
             RESPONDENT_TIME: 90,
-            TOTAL_ROUNDS: 6,
+            TOTAL_ROUNDS: 6, // سيتم تجاوزه بناءً على عدد اللاعبين
             MIN_PLAYERS: 3
         };
 
@@ -3866,7 +3862,7 @@
             myWord: null,
             hasRevealed: false,
             qaRound: 0,
-            qaTotalRounds: 6,
+            qaTotalRounds: 0,
             qaRole: null,
             qaQuestion: null,
             qaAnswer: null,
@@ -3918,10 +3914,15 @@
             qaQuestionSubmitted: false,
             qaAnswerSubmitted: false,
             qaStartTime: null,
-
-            // متغيرات خاصة بالـ Reveal الجديد
             revealFlipped: false,
-            revealReadyClicked: false
+            revealReadyClicked: false,
+            // حقول جديدة للجاهزية للجولة التالية
+            readyForNextRound: false,
+            // حقول تخزين إعدادات المضيف
+            hostCategory: null,
+            hostMode: null,
+            // مؤشر لإلغاء تكرار المستمعات
+            _hostControlsAttached: false
         };
 
         // ==============================================================
@@ -3980,8 +3981,6 @@
         }
 
         function showScreen(name) {
-            const previousScreen = document.querySelector('.screen.active')?.id?.replace('screen-', '') || '';
-
             $$('.screen').forEach(el => el.classList.remove('active'));
             const t = $(`#screen-${name}`);
             if (t) { t.classList.add('active');
@@ -3990,8 +3989,7 @@
                 t.style.animation = ''; }
             if (window.lucide) lucide.createIcons();
             const bp = $('#bg-particles');
-            if (bp) bp.style.display = (name === 'landing' || name === 'modepicker' || name === 'online-lobby') ? 'block' :
-                'none';
+            if (bp) bp.style.display = (name === 'landing' || name === 'online-lobby') ? 'block' : 'none';
             const shareFab = document.getElementById('share-fab');
             if (shareFab) {
                 if (name === 'online-room') {
@@ -4000,20 +3998,15 @@
                     shareFab.classList.add('hidden');
                 }
             }
-
-            updateHeaderState(name, previousScreen);
+            updateHeaderState(name);
             console.log(`🔄 تم الانتقال إلى الشاشة: ${name}`);
         }
 
         // ===== نظام التحكم بالشريط العلوي =====
-        function updateHeaderState(currentScreen, previousScreen) {
+        function updateHeaderState(currentScreen) {
             const header = document.getElementById('global-header');
-            if (!header) {
-                console.error('❌ عنصر الشريط العلوي غير موجود في الصفحة!');
-                return;
-            }
-
-            const hiddenScreens = ['landing', 'modepicker'];
+            if (!header) return;
+            const hiddenScreens = ['landing'];
             const stickyScreens = ['online-lobby'];
             const slideScreens = ['setup', 'online-room', 'online-reveal', 'online-qa', 'online-voting', 'online-suspense',
                 'online-secondchance', 'online-leaderboard', 'secret', 'questioning', 'voting', 'suspense', 'secondchance',
@@ -4026,60 +4019,15 @@
                 header.classList.add('hidden-state');
                 return;
             }
-
             if (stickyScreens.includes(currentScreen)) {
                 header.classList.add('sticky-state');
-                window.removeEventListener('scroll', handleHeaderScroll);
                 return;
             }
-
             if (slideScreens.includes(currentScreen)) {
                 header.classList.add('hidden-state');
-                headerVisible = false;
-                window.removeEventListener('scroll', handleHeaderScroll);
-                window.addEventListener('scroll', handleHeaderScroll);
                 return;
             }
-
             header.classList.add('hidden-state');
-        }
-
-        let headerVisible = false;
-
-        function handleHeaderScroll() {
-            const header = document.getElementById('global-header');
-            if (!header) return;
-            if (header.classList.contains('sticky-state')) return;
-
-            const currentScroll = window.scrollY;
-
-            if (currentScroll > 30) {
-                if (!headerVisible) {
-                    header.classList.remove('hidden-state');
-                    header.classList.add('slide-state');
-                    headerVisible = true;
-                }
-            } else {
-                if (headerVisible) {
-                    header.classList.remove('slide-state');
-                    header.classList.add('hidden-state');
-                    headerVisible = false;
-                }
-            }
-        }
-
-        // ===== دوال الشريط العلوي =====
-        function toggleDevModal(show) {
-            const modal = document.getElementById('dev-modal');
-            if (!modal) {
-                console.error('❌ مودال المطورين غير موجود');
-                return;
-            }
-            if (show) {
-                modal.classList.add('active');
-            } else {
-                modal.classList.remove('active');
-            }
         }
 
         function goToLanding() {
@@ -4129,6 +4077,7 @@
                 OS._qaRealtimeSetup = false;
                 OS.revealFlipped = false;
                 OS.revealReadyClicked = false;
+                OS.readyForNextRound = false;
                 localStorage.removeItem('barra_room_id');
                 console.log('🚪 تمت المغادرة الصامتة');
             } catch (e) {
@@ -4153,7 +4102,6 @@
             console.log('🔄 تم إعادة ضبط اللعبة بالكامل');
         }
 
-        window.toggleDevModal = toggleDevModal;
         window.goToLanding = goToLanding;
 
         function seedRand() { S.rngSeed = (S.rngSeed * 16807 + 0) % 2147483647; return (S.rngSeed - 1) / 2147483646; }
@@ -5081,6 +5029,8 @@
                     is_public: isPublic !== false,
                     status: 'lobby',
                     max_players: OS.playerLimit || 6,
+                    category: OS.hostCategory || Object.keys(WORD_CLUSTERS)[0],
+                    mode: OS.hostMode || 'traditional',
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 }).select().single();
@@ -5095,6 +5045,7 @@
                     player_name: playerName,
                     client_id: clientId,
                     is_ready: true,
+                    ready_for_next_round: false,
                     total_score: 0,
                     is_odd: false,
                     has_revealed: false,
@@ -5117,6 +5068,9 @@
                 OS.hasRevealed = false;
                 OS.revealFlipped = false;
                 OS.revealReadyClicked = false;
+                OS.readyForNextRound = false;
+                OS.hostCategory = room.category;
+                OS.hostMode = room.mode;
                 localStorage.setItem('barra_room_id', room.id);
 
                 subscribeToRoom(room.id);
@@ -5178,6 +5132,9 @@
                     OS.hasRevealed = existing.has_revealed || false;
                     OS.revealFlipped = false;
                     OS.revealReadyClicked = false;
+                    OS.readyForNextRound = existing.ready_for_next_round || false;
+                    OS.hostCategory = room.category;
+                    OS.hostMode = room.mode;
                     localStorage.setItem('barra_room_id', room.id);
                     subscribeToRoom(room.id);
                     subscribeToPlayers(room.id);
@@ -5193,6 +5150,7 @@
                     player_name: playerName,
                     client_id: clientId,
                     is_ready: true,
+                    ready_for_next_round: false,
                     total_score: 0,
                     is_odd: false,
                     has_revealed: false,
@@ -5211,6 +5169,9 @@
                 OS.hasRevealed = false;
                 OS.revealFlipped = false;
                 OS.revealReadyClicked = false;
+                OS.readyForNextRound = false;
+                OS.hostCategory = room.category;
+                OS.hostMode = room.mode;
                 localStorage.setItem('barra_room_id', room.id);
                 subscribeToRoom(room.id);
                 subscribeToPlayers(room.id);
@@ -5318,6 +5279,26 @@
             if (window.lucide) lucide.createIcons();
         }
 
+        // ===== دالة تحديث إعدادات الغرفة (الفئة والوضع) =====
+        async function updateRoomSettings(category, mode) {
+            const sb = OS.supabase;
+            if (!sb || !OS.roomId || !OS.isHost) return;
+            try {
+                await sb.from('rooms')
+                    .update({
+                        category: category,
+                        mode: mode,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', OS.roomId);
+                OS.hostCategory = category;
+                OS.hostMode = mode;
+                console.log('✅ تم تحديث إعدادات الغرفة:', { category, mode });
+            } catch (e) {
+                console.error('❌ فشل تحديث الإعدادات:', e);
+            }
+        }
+
         // ===== عرض الغرفة =====
         async function renderOnlineRoom() {
             const sb = OS.supabase;
@@ -5335,6 +5316,8 @@
                 OS.gameData = { room, players };
                 const isHost = (room.host_id === OS.clientId);
                 OS.isHost = isHost;
+                OS.hostCategory = room.category;
+                OS.hostMode = room.mode;
 
                 document.getElementById('online-room-title').textContent = `🏠 ${esc(room.name)}`;
                 const codeBadge = document.getElementById('online-room-code-badge');
@@ -5398,16 +5381,40 @@
                         </div>`;
                 }).join('');
 
+                // ===== عناصر التحكم للمضيف مع تثبيت الإعدادات =====
                 const hostCtrls = document.getElementById('online-host-controls');
                 if (isHost && room.status === 'lobby') {
                     hostCtrls.classList.remove('hidden');
                     const catSelect = document.getElementById('online-host-category');
-                    const currentCat = room.category || Object.keys(WORD_CLUSTERS)[0];
-                    catSelect.innerHTML = Object.keys(WORD_CLUSTERS).map(c =>
-                        `<option value="${esc(c)}" ${c===currentCat?'selected':''}>${esc(c)}</option>`).join('');
                     const modeSelect = document.getElementById('online-host-mode');
+
+                    // تعيين القيم من الغرفة (المحفوظة) أو الافتراضي
+                    const defaultCategory = Object.keys(WORD_CLUSTERS)[0];
+                    catSelect.value = room.category || defaultCategory;
                     modeSelect.value = room.mode || 'traditional';
 
+                    // إزالة المستمعات القديمة لتجنب التكرار
+                    if (OS._hostControlsAttached) {
+                        catSelect.onchange = null;
+                        modeSelect.onchange = null;
+                    }
+
+                    // إضافة مستمعات جديدة لتحديث قاعدة البيانات فور التغيير
+                    catSelect.onchange = () => {
+                        const newCat = catSelect.value;
+                        const newMode = modeSelect.value;
+                        updateRoomSettings(newCat, newMode);
+                        hostUpdateUIControls(players, room);
+                    };
+                    modeSelect.onchange = () => {
+                        const newCat = catSelect.value;
+                        const newMode = modeSelect.value;
+                        updateRoomSettings(newCat, newMode);
+                        hostUpdateUIControls(players, room);
+                    };
+                    OS._hostControlsAttached = true;
+
+                    // تحديث حالة الأزرار والمؤشرات
                     hostUpdateUIControls(players, room);
 
                     const startBtn = document.getElementById('btn-online-host-start');
@@ -5416,6 +5423,7 @@
                     };
                 } else {
                     hostCtrls.classList.add('hidden');
+                    OS._hostControlsAttached = false;
                 }
 
                 const waitMsg = document.getElementById('online-room-waiting');
@@ -5493,6 +5501,9 @@
                     if (modeSelect) modeSelect.value = selectedMode;
                 }
 
+                // حفظ الإعدادات في قاعدة البيانات
+                await updateRoomSettings(selectedCategory, selectedMode);
+
                 console.log(`🎯 المضيف بدأ اللعبة: الفئة=${selectedCategory}, النمط=${selectedMode}`);
 
                 const { data: players, error: pErr } = await sb.from('room_players').select('*').eq('room_id', OS.roomId);
@@ -5529,7 +5540,7 @@
                     oddWord = related[randInt(0, related.length - 1)];
                 }
 
-                // حساب عدد الجولات بناءً على عدد اللاعبين (كل لاعب يسأل مرة واحدة)
+                // عدد الجولات = عدد اللاعبين
                 const totalRounds = players.length;
 
                 const updateData = {
@@ -5560,9 +5571,10 @@
 
                 await sb.from('rooms').update(updateData).eq('id', OS.roomId);
 
-                await sb.from('room_players').update({ is_odd: true, has_revealed: false }).eq('id', oddPlayerId);
-                await sb.from('room_players').update({ is_odd: false, has_revealed: false }).eq('room_id', OS.roomId).neq(
-                    'id', oddPlayerId);
+                await sb.from('room_players').update({ is_odd: true, has_revealed: false, ready_for_next_round: false })
+                    .eq('id', oddPlayerId);
+                await sb.from('room_players').update({ is_odd: false, has_revealed: false, ready_for_next_round: false })
+                    .eq('room_id', OS.roomId).neq('id', oddPlayerId);
 
                 let retries = 0;
                 let confirmed = false;
@@ -5674,6 +5686,8 @@
                 OS._qaRealtimeSetup = false;
                 OS.revealFlipped = false;
                 OS.revealReadyClicked = false;
+                OS.readyForNextRound = false;
+                OS._hostControlsAttached = false;
                 localStorage.removeItem('barra_room_id');
 
                 showScreen('online-lobby');
@@ -5818,7 +5832,6 @@
                 handleQaUpdate(newData);
             }
 
-            // تحديث شاشة الكشف إذا كانت مفتوحة وحدث تغيير في الجاهزية
             if (phase === 'reveal' && document.getElementById('screen-online-reveal')?.classList.contains('active')) {
                 updateRevealUI(newData);
             }
@@ -5847,6 +5860,17 @@
                                 updateRevealUI(OS.gameData?.room);
                                 if (OS.isHost) {
                                     hostCheckRevealComplete(data, OS.gameData?.room);
+                                }
+                            }
+
+                            if (OS.currentPhase === 'qa') {
+                                // تحديث جاهزية الجولة التالية
+                                if (OS.isHost) {
+                                    hostCheckReadyForNextRound(OS.roomId);
+                                }
+                                // تحديث واجهة الأسئلة
+                                if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
+                                    refreshQAView(OS.gameData?.room);
                                 }
                             }
 
@@ -5933,7 +5957,8 @@
                             room.qa_phase !== lastQaData?.phase ||
                             room.qa_question_submitted !== lastQaData?.questionSubmitted ||
                             room.qa_answer_submitted !== lastQaData?.answerSubmitted ||
-                            room.qa_round_complete !== lastQaData?.roundComplete
+                            room.qa_round_complete !== lastQaData?.roundComplete ||
+                            room.qa_total_rounds !== lastQaData?.totalRounds
                         );
                         if (qaChanged) {
                             lastQaData = {
@@ -5947,7 +5972,8 @@
                                 respondentTimeLeft: room.qa_respondent_time_left,
                                 questionSubmitted: room.qa_question_submitted,
                                 answerSubmitted: room.qa_answer_submitted,
-                                roundComplete: room.qa_round_complete
+                                roundComplete: room.qa_round_complete,
+                                totalRounds: room.qa_total_rounds
                             };
                             console.log('🔄 QA data changed, refreshing...');
                             if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
@@ -5988,7 +6014,6 @@
                         }
                     }
 
-                    // تحديث شاشة الكشف إذا كانت مفتوحة
                     if (room.status === 'reveal' && document.getElementById('screen-online-reveal')?.classList
                         .contains('active')) {
                         updateRevealUI(room);
@@ -5997,7 +6022,7 @@
                 } catch (e) {
                     console.error('Polling error:', e);
                 }
-            }, 3000); // 3 ثوانٍ كما هو مطلوب
+            }, 3000);
         }
 
         function handlePhaseChange(room) {
@@ -6017,7 +6042,8 @@
                     respondentTimeLeft: room.qa_respondent_time_left,
                     questionSubmitted: room.qa_question_submitted,
                     answerSubmitted: room.qa_answer_submitted,
-                    roundComplete: room.qa_round_complete
+                    roundComplete: room.qa_round_complete,
+                    totalRounds: room.qa_total_rounds
                 };
             }
             if (room.status === 'voting') {
@@ -6084,7 +6110,6 @@
                 return;
             }
 
-            // تحديث واجهة الكشف
             updateRevealUI(room);
         }
 
@@ -6104,36 +6129,19 @@
             const revealedCount = players.filter(p => p.has_revealed === true).length;
             const readyPercent = totalPlayers > 0 ? Math.round((revealedCount / totalPlayers) * 100) : 0;
 
-            // تحديث الفئة
             const categoryNameEl = document.getElementById('reveal-category-name');
             if (categoryNameEl) categoryNameEl.textContent = category;
 
-            // تحديث عدد الجاهزين
             const readyCountEl = document.getElementById('reveal-ready-count');
             if (readyCountEl) {
                 readyCountEl.textContent = `${revealedCount} / ${totalPlayers} جاهزون`;
             }
 
-            // تحديث شريط التقدم
             const progressBar = document.getElementById('reveal-progress-bar');
             if (progressBar) {
                 progressBar.style.width = readyPercent + '%';
             }
 
-            // تحديث عدد اللاعبين الكلي
-            const totalPlayersEl = document.getElementById('reveal-total-players');
-            if (totalPlayersEl) {
-                totalPlayersEl.textContent = `${totalPlayers} لاعبين`;
-            }
-
-            // تحديث اسم برا السالفة
-            const oddPlayer = players.find(p => p.is_odd === true);
-            const oddPlayerNameEl = document.getElementById('reveal-odd-player');
-            if (oddPlayerNameEl) {
-                oddPlayerNameEl.textContent = `برا السالفة: ${oddPlayer ? esc(oddPlayer.player_name) : '—'}`;
-            }
-
-            // تحديث البطاقة الخلفية
             const backFace = document.getElementById('reveal-back-face');
             if (backFace) {
                 if (isOdd && mode === 'traditional') {
@@ -6149,13 +6157,6 @@
                         <p class="text-xs text-slate-300 text-center mt-2 leading-relaxed max-w-[220px]">
                             استغل الفئة "${esc(category)}" وركّز في أسئلة وإجابات البقية لتخمين الموضوع دون كشفك.
                         </p>
-                        <div class="mt-2 flex items-center gap-2 text-[10px] text-slate-500 border-t border-red-500/20 pt-2 w-full justify-center">
-                            <i class="fa-solid fa-users text-[10px]"></i>
-                            <span>${totalPlayers} لاعبين</span>
-                            <span class="text-slate-700">|</span>
-                            <i class="fa-solid fa-tag text-[10px] text-amber-400"></i>
-                            <span>${esc(category)}</span>
-                        </div>
                     `;
                 } else if (isOdd && mode === 'mindbending') {
                     backFace.className = 'flip-card-back role-in';
@@ -6170,13 +6171,6 @@
                         <p class="text-xs text-slate-300 text-center mt-2 leading-relaxed max-w-[220px]">
                             اللاعبون الآخرون لديهم كلمة مختلفة من فئة "${esc(category)}"
                         </p>
-                        <div class="mt-2 flex items-center gap-2 text-[10px] text-slate-500 border-t border-cyan-500/20 pt-2 w-full justify-center">
-                            <i class="fa-solid fa-users text-[10px]"></i>
-                            <span>${totalPlayers} لاعبين</span>
-                            <span class="text-slate-700">|</span>
-                            <i class="fa-solid fa-tag text-[10px] text-amber-400"></i>
-                            <span>${esc(category)}</span>
-                        </div>
                     `;
                 } else {
                     backFace.className = 'flip-card-back role-in';
@@ -6191,18 +6185,10 @@
                         <p class="text-xs text-slate-300 text-center mt-2 leading-relaxed max-w-[220px]">
                             جميع اللاعبين يعرفون الكلمة ما عدا شخص واحد برا السالفة.
                         </p>
-                        <div class="mt-2 flex items-center gap-2 text-[10px] text-slate-500 border-t border-cyan-500/20 pt-2 w-full justify-center">
-                            <i class="fa-solid fa-users text-[10px]"></i>
-                            <span>${totalPlayers} لاعبين</span>
-                            <span class="text-slate-700">|</span>
-                            <i class="fa-solid fa-tag text-[10px] text-amber-400"></i>
-                            <span>${esc(category)}</span>
-                        </div>
                     `;
                 }
             }
 
-            // تحديث حالة الزر
             const readyBtn = document.getElementById('btn-reveal-ready');
             if (readyBtn) {
                 if (myPlayer.has_revealed) {
@@ -6216,7 +6202,6 @@
                     readyBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>جاهز وبدء الجولة</span>`;
                     readyBtn.disabled = false;
 
-                    // إزالة المستمعين السابقين
                     const newBtn = readyBtn.cloneNode(true);
                     readyBtn.parentNode.replaceChild(newBtn, readyBtn);
 
@@ -6233,14 +6218,12 @@
                             hapticSuccessWithSound();
                             playSound('reveal');
 
-                            // تحديث الواجهة فوراً
                             newBtn.className =
                                 'btn-ready-reveal w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
                             newBtn.innerHTML =
                                 `<i class="fa-solid fa-check-circle"></i> <span>في انتظار بقية اللاعبين...</span>`;
                             newBtn.disabled = true;
 
-                            // تحديث شريط التقدم فوراً
                             const { data: updatedPlayers } = await sb.from('room_players').select('*').eq(
                                 'room_id', OS.roomId);
                             if (updatedPlayers) {
@@ -6261,7 +6244,6 @@
                             showToast('✅ تم تجهيزك! في انتظار الآخرين...', 'success');
                             ButtonManager.enable('btn-reveal-ready');
 
-                            // التحقق مما إذا كان الجميع جاهزين (للمضيف)
                             if (OS.isHost) {
                                 const { data: allPlayers } = await sb.from('room_players').select('*').eq(
                                     'room_id', OS.roomId);
@@ -6284,15 +6266,11 @@
                 }
             }
 
-            // تحديث حالة البطاقة (مقلوبة أم لا)
             const flipCard = document.getElementById('reveal-flip-card');
             if (flipCard) {
-                // إذا كان اللاعب قد شاهد دوره بالفعل، نترك البطاقة مقلوبة
                 if (myPlayer.has_revealed) {
                     flipCard.classList.add('is-flipped');
                 } else {
-                    // إذا لم يشاهد، نضيف مستمع الحدث للقلب
-                    // نزيل المستمعين السابقين
                     const newFlipCard = flipCard.cloneNode(true);
                     flipCard.parentNode.replaceChild(newFlipCard, flipCard);
 
@@ -6300,7 +6278,6 @@
                         if (!newFlipCard.classList.contains('is-flipped')) {
                             newFlipCard.classList.add('is-flipped');
                             hapticAndSound('click');
-                            // تحديث حالة اللاعب في الذاكرة المحلية
                             OS.revealFlipped = true;
                         }
                     });
@@ -6449,7 +6426,7 @@
 
             const phase = roomData.qa_phase;
             const round = roomData.qa_round || 0;
-            const totalRounds = roomData.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
+            const totalRounds = roomData.qa_total_rounds || OS.gameData?.players?.length || QA_CONFIG.TOTAL_ROUNDS;
             const questionSubmitted = roomData.qa_question_submitted || false;
             const answerSubmitted = roomData.qa_answer_submitted || false;
             const roundComplete = roomData.qa_round_complete || false;
@@ -6470,7 +6447,6 @@
             const respondentNameEl = document.getElementById('qa-respondent-name');
             if (respondentNameEl) respondentNameEl.textContent = respondentName || '—';
 
-            // تحديث الأفاتار
             if (askerName) {
                 const avatar = document.getElementById('qa-asker-avatar');
                 if (avatar) avatar.textContent = askerName.charAt(0).toUpperCase();
@@ -6480,13 +6456,11 @@
                 if (avatar) avatar.textContent = respondentName.charAt(0).toUpperCase();
             }
 
-            // تحديث تسمية السائل في منظور المجيب
             const askerLabel = document.getElementById('qa-respondent-asker-label');
             if (askerLabel && askerName) {
                 askerLabel.textContent = `${askerName} يسألك:`;
             }
 
-            // تحديث تسمية السائل في منظور المتفرج
             const specAskerLabel = document.getElementById('qa-spectator-asker-label');
             if (specAskerLabel && askerName && respondentName) {
                 specAskerLabel.textContent = `${askerName} يسأل ${respondentName}:`;
@@ -6510,22 +6484,27 @@
                 }
             }
 
-            // تحديث نص الإجابة
+            // تحديث نص الإجابة (يظهر فقط للسائل)
             if (roomData.qa_answer && roomData.qa_answered) {
+                const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+                const isAsker = myPlayer && myPlayer.id === roomData.qa_asker_id;
+
                 const aText = document.getElementById('qa-spectator-a-text');
                 if (aText) {
                     aText.textContent = `"${esc(roomData.qa_answer)}"`;
                     aText.className = 'text-xs font-semibold text-slate-200';
                 }
 
-                const responseText = document.getElementById('qa-asker-response-text');
-                if (responseText) {
-                    responseText.textContent = `"${esc(roomData.qa_answer)}"`;
-                }
-
+                // إظهار الإجابة فقط للسائل
                 const responseBox = document.getElementById('qa-asker-response-box');
-                if (responseBox) {
-                    responseBox.classList.remove('hidden');
+                const responseText = document.getElementById('qa-asker-response-text');
+                if (responseBox && responseText) {
+                    if (isAsker) {
+                        responseBox.classList.remove('hidden');
+                        responseText.textContent = `"${esc(roomData.qa_answer)}"`;
+                    } else {
+                        responseBox.classList.add('hidden');
+                    }
                 }
             }
 
@@ -6540,9 +6519,11 @@
                 loadAndDisplayHistory(OS.roomId);
             }
 
-            // إظهار زر الانتقال للجولة التالية إذا اكتملت الجولة
+            // إظهار زر "جاهز للجولة التالية" إذا اكتملت الجولة
             if (roundComplete) {
-                showNextRoundButton();
+                showNextRoundReadyButton(roomData);
+            } else {
+                hideNextRoundReadyButton();
             }
         }
 
@@ -6566,15 +6547,11 @@
             if (respondentView) respondentView.classList.add('hidden');
             if (spectatorView) spectatorView.classList.add('hidden');
 
-            // إخفاء جميع الأزرار المؤقتة للانتقال
-            const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
-            nextBtns.forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.classList.add('hidden');
-            });
+            // إخفاء زر الجاهزية للجولة التالية (سيتم عرضه عند اكتمال الجولة)
+            hideNextRoundReadyButton();
 
             if (roundComplete) {
-                showNextRoundButton();
+                showNextRoundReadyButton(roomData);
                 return;
             }
 
@@ -6589,13 +6566,15 @@
                 if (questionSubmitted) {
                     if (qInput) qInput.disabled = true;
                     if (sendQBtn) sendQBtn.disabled = true;
-                    if (roomData.qa_answer && roomData.qa_answered) {
-                        const responseBox = document.getElementById('qa-asker-response-box');
-                        if (responseBox) responseBox.classList.remove('hidden');
-                    }
+                    // إذا كانت الإجابة واردة، ستظهر عبر الشرط أعلاه
                 } else {
                     if (qInput) qInput.disabled = false;
                     if (sendQBtn) sendQBtn.disabled = false;
+                    // استعادة حالة الزر إذا كان قد فشل سابقاً
+                    if (sendQBtn && sendQBtn.innerHTML.includes('فشل')) {
+                        sendQBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>إرسال السؤال</span>`;
+                        sendQBtn.disabled = false;
+                    }
                 }
 
                 const targetLabel = document.getElementById('qa-asker-target-label');
@@ -6614,7 +6593,13 @@
 
                 if (questionSubmitted && !answerSubmitted) {
                     if (aInput) aInput.disabled = false;
-                    if (sendABtn) sendABtn.disabled = false;
+                    if (sendABtn) {
+                        sendABtn.disabled = false;
+                        if (sendABtn.innerHTML.includes('فشل')) {
+                            sendABtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>إرسال الإجابة</span>`;
+                            sendABtn.disabled = false;
+                        }
+                    }
                     const receivedQ = document.getElementById('online-qa-received-q');
                     if (receivedQ && roomData.qa_question) {
                         receivedQ.textContent = `"${esc(roomData.qa_question)}"`;
@@ -6686,32 +6671,131 @@
             }
         }
 
-        function showNextRoundButton() {
+        // ===== إظهار/إخفاء زر الجاهزية للجولة التالية =====
+        function showNextRoundReadyButton(roomData) {
+            const container = document.getElementById('qa-next-ready-container');
+            if (!container) return;
+
             const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
             if (!myPlayer) return;
 
-            const askerView = document.getElementById('view-asker');
-            const respondentView = document.getElementById('view-respondent');
-            const spectatorView = document.getElementById('view-spectator');
+            container.classList.remove('hidden');
 
-            const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
-            nextBtns.forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.classList.add('hidden');
-            });
+            const btn = document.getElementById('btn-qa-ready-next');
+            const status = document.getElementById('qa-next-ready-status');
 
-            let targetBtnId = null;
-            if (askerView && !askerView.classList.contains('hidden')) {
-                targetBtnId = 'btn-online-qa-next-round';
-            } else if (respondentView && !respondentView.classList.contains('hidden')) {
-                targetBtnId = 'btn-online-qa-next-round-respondent';
-            } else if (spectatorView && !spectatorView.classList.contains('hidden')) {
-                targetBtnId = 'btn-online-qa-next-round-spectator';
+            // التحقق من جاهزية اللاعب الحالي
+            if (myPlayer.ready_for_next_round) {
+                btn.className =
+                    'btn-next-ready w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
+                btn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>جاهز ✓</span>`;
+                btn.disabled = true;
+                btn.classList.add('ready-done');
+            } else {
+                btn.className =
+                    'btn-next-ready w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2';
+                btn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>جاهز للجولة التالية</span>`;
+                btn.disabled = false;
+                btn.classList.remove('ready-done');
+
+                // إزالة المستمعات السابقة
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+
+                newBtn.addEventListener('click', async () => {
+                    if (ButtonManager.isDisabled('btn-qa-ready-next')) return;
+                    ButtonManager.disable('btn-qa-ready-next', 'جاري التجهيز...');
+
+                    try {
+                        const sb = OS.supabase;
+                        if (!sb) return;
+
+                        await sb.from('room_players').update({ ready_for_next_round: true }).eq('id', OS
+                            .myPlayerId);
+                        hapticSuccessWithSound();
+
+                        // تحديث الواجهة محلياً
+                        OS.readyForNextRound = true;
+                        newBtn.className =
+                            'btn-next-ready w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
+                        newBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>جاهز ✓</span>`;
+                        newBtn.disabled = true;
+                        newBtn.classList.add('ready-done');
+
+                        showToast('✅ تم تسجيل جاهزيتك، في انتظار الآخرين...', 'success');
+                        ButtonManager.enable('btn-qa-ready-next');
+
+                        // المضيف يتحقق من جاهزية الجميع
+                        if (OS.isHost) {
+                            hostCheckReadyForNextRound(OS.roomId);
+                        }
+
+                    } catch (e) {
+                        console.error('Ready for next round error:', e);
+                        showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                        ButtonManager.enable('btn-qa-ready-next');
+                        newBtn.className =
+                            'btn-next-ready w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2';
+                        newBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>جاهز للجولة التالية</span>`;
+                        newBtn.disabled = false;
+                        newBtn.classList.remove('ready-done');
+                    }
+                });
             }
 
-            if (targetBtnId) {
-                const btn = document.getElementById(targetBtnId);
-                if (btn) btn.classList.remove('hidden');
+            // تحديث حالة الجميع
+            const allPlayers = OS.gameData?.players || [];
+            const readyCount = allPlayers.filter(p => p.ready_for_next_round === true).length;
+            status.textContent = `جاهز ${readyCount} من ${allPlayers.length} لاعبين`;
+        }
+
+        function hideNextRoundReadyButton() {
+            const container = document.getElementById('qa-next-ready-container');
+            if (container) container.classList.add('hidden');
+        }
+
+        // ===== المضيف يتحقق من جاهزية الجميع للجولة التالية =====
+        async function hostCheckReadyForNextRound(roomId) {
+            const sb = OS.supabase;
+            if (!sb || !OS.isHost || OS.stageLock) return;
+            if (!OS.roomId) return;
+
+            const { data: players, error } = await sb.from('room_players')
+                .select('id, ready_for_next_round')
+                .eq('room_id', roomId);
+            if (error || !players) return;
+
+            const allReady = players.every(p => p.ready_for_next_round === true);
+            if (!allReady) {
+                // تحديث واجهة الزر
+                const container = document.getElementById('qa-next-ready-container');
+                if (container) {
+                    const status = document.getElementById('qa-next-ready-status');
+                    const readyCount = players.filter(p => p.ready_for_next_round === true).length;
+                    status.textContent = `جاهز ${readyCount} من ${players.length} لاعبين`;
+                }
+                return;
+            }
+
+            console.log('🎯 جميع اللاعبين جاهزون للجولة التالية، الهوست ينتقل...');
+            OS.stageLock = true;
+
+            try {
+                // إعادة تعيين جاهزية الجميع
+                await sb.from('room_players')
+                    .update({ ready_for_next_round: false })
+                    .eq('room_id', roomId);
+
+                // الانتقال للجولة التالية
+                await startNewQARound(roomId);
+
+                showToast('✅ الجميع جاهز! الجولة التالية تبدأ', 'success');
+
+            } catch (e) {
+                console.error('hostCheckReadyForNextRound error:', e);
+                showAlert('❌ فشل الانتقال للجولة التالية: ' + e.message, 'error');
+            } finally {
+                OS.stageLock = false;
             }
         }
 
@@ -6750,7 +6834,7 @@
             }
         }
 
-        // ===== بدء جولة أسئلة جديدة (بدون مؤقتات) =====
+        // ===== بدء جولة أسئلة جديدة =====
         async function startNewQARound(roomId) {
             const sb = OS.supabase;
             if (!sb || !roomId) return;
@@ -6829,6 +6913,11 @@
                     return;
                 }
 
+                // إعادة تعيين جاهزية الجميع للجولة التالية
+                await sb.from('room_players')
+                    .update({ ready_for_next_round: false })
+                    .eq('room_id', roomId);
+
                 showToast(`🎤 الجولة ${currentRound + 1}: ${asker.player_name} يسأل ${respondent.player_name}`, 'info');
                 hapticAndSound('click');
 
@@ -6849,6 +6938,7 @@
                         questionInput.disabled = false;
                         questionInput.value = '';
                         sendBtn.disabled = false;
+                        sendBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>إرسال السؤال</span>`;
                         questionInput.focus();
                     }
                 }
@@ -6883,8 +6973,12 @@
                 return;
             }
 
-            if (ButtonManager.isDisabled('btn-online-qa-send-q')) return;
-            ButtonManager.disable('btn-online-qa-send-q', 'جاري الإرسال...');
+            const btn = document.getElementById('btn-online-qa-send-q');
+            if (btn.disabled) return;
+
+            btn.disabled = true;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري الإرسال...</span>`;
 
             questionInput.disabled = true;
 
@@ -6899,28 +6993,32 @@
                 if (roomErr || !room) {
                     showToast('❌ خطأ في جلب بيانات الغرفة', 'error');
                     console.error('❌ خطأ في جلب الغرفة:', roomErr);
-                    ButtonManager.enable('btn-online-qa-send-q');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     questionInput.disabled = false;
                     return;
                 }
 
                 if (room.qa_asker_id !== OS.myPlayerId) {
                     showToast('⚠️ لست السائل في هذه الجولة', 'warning');
-                    ButtonManager.enable('btn-online-qa-send-q');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     questionInput.disabled = false;
                     return;
                 }
 
                 if (room.qa_question_submitted) {
                     showToast('⚠️ تم إرسال السؤال بالفعل', 'warning');
-                    ButtonManager.enable('btn-online-qa-send-q');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     questionInput.disabled = false;
                     return;
                 }
 
                 if (room.qa_phase !== 'asking' && room.qa_phase !== 'waiting') {
                     showToast('⏳ ليس وقت السؤال الآن', 'warning');
-                    ButtonManager.enable('btn-online-qa-send-q');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     questionInput.disabled = false;
                     return;
                 }
@@ -6938,7 +7036,8 @@
                 if (updateResult.error) {
                     console.error('❌ فشل إرسال السؤال:', updateResult.error);
                     showToast('❌ فشل إرسال السؤال: ' + updateResult.error.message, 'error');
-                    ButtonManager.enable('btn-online-qa-send-q');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     questionInput.disabled = false;
                     return;
                 }
@@ -6947,9 +7046,12 @@
                 showToast('✅ تم إرسال السؤال!', 'success');
                 hapticSuccessWithSound();
 
+                // تغيير حالة الزر إلى "تم الإرسال"
+                btn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>تم الإرسال ✓</span>`;
+                btn.disabled = true;
+
                 questionInput.value = '';
                 questionInput.disabled = true;
-                document.getElementById('btn-online-qa-send-q').disabled = true;
 
                 const { data: updatedRoom } = await sb.from('rooms')
                     .select('*')
@@ -6974,7 +7076,10 @@
 
                     if (myPlayer && myPlayer.id === respondentId) {
                         if (answerInput) answerInput.disabled = false;
-                        if (sendABtn) sendABtn.disabled = false;
+                        if (sendABtn) {
+                            sendABtn.disabled = false;
+                            sendABtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>إرسال الإجابة</span>`;
+                        }
                         if (answerInput) answerInput.focus();
                     }
 
@@ -6984,12 +7089,9 @@
             } catch (e) {
                 console.error('❌ خطأ غير متوقع في إرسال السؤال:', e);
                 showToast('❌ حدث خطأ غير متوقع: ' + e.message, 'error');
-                ButtonManager.enable('btn-online-qa-send-q');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-rotate"></i> <span>فشل، حاول مرة أخرى</span>`;
                 questionInput.disabled = false;
-            } finally {
-                if (!document.getElementById('btn-online-qa-send-q').disabled) {
-                    ButtonManager.enable('btn-online-qa-send-q');
-                }
             }
         }
 
@@ -7014,8 +7116,12 @@
                 return;
             }
 
-            if (ButtonManager.isDisabled('btn-online-qa-send-a')) return;
-            ButtonManager.disable('btn-online-qa-send-a', 'جاري الإرسال...');
+            const btn = document.getElementById('btn-online-qa-send-a');
+            if (btn.disabled) return;
+
+            btn.disabled = true;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري الإرسال...</span>`;
 
             answerInput.disabled = true;
 
@@ -7030,35 +7136,40 @@
                 if (roomErr || !room) {
                     showToast('❌ خطأ في جلب بيانات الغرفة', 'error');
                     console.error('❌ خطأ في جلب الغرفة:', roomErr);
-                    ButtonManager.enable('btn-online-qa-send-a');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     answerInput.disabled = false;
                     return;
                 }
 
                 if (room.qa_respondent_id !== OS.myPlayerId) {
                     showToast('⚠️ لست المجيب في هذه الجولة', 'warning');
-                    ButtonManager.enable('btn-online-qa-send-a');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     answerInput.disabled = false;
                     return;
                 }
 
                 if (room.qa_answer_submitted) {
                     showToast('⚠️ تم إرسال الإجابة بالفعل', 'warning');
-                    ButtonManager.enable('btn-online-qa-send-a');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     answerInput.disabled = false;
                     return;
                 }
 
                 if (!room.qa_question) {
                     showToast('⚠️ لا يوجد سؤال للإجابة عليه', 'warning');
-                    ButtonManager.enable('btn-online-qa-send-a');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     answerInput.disabled = false;
                     return;
                 }
 
                 if (room.qa_phase !== 'answering') {
                     showToast('⏳ ليس وقت الإجابة الآن', 'warning');
-                    ButtonManager.enable('btn-online-qa-send-a');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     answerInput.disabled = false;
                     return;
                 }
@@ -7077,7 +7188,8 @@
                 if (updateResult.error) {
                     console.error('❌ فشل إرسال الإجابة:', updateResult.error);
                     showToast('❌ فشل إرسال الإجابة: ' + updateResult.error.message, 'error');
-                    ButtonManager.enable('btn-online-qa-send-a');
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
                     answerInput.disabled = false;
                     return;
                 }
@@ -7086,9 +7198,11 @@
                 showToast('✅ تم إرسال الإجابة!', 'success');
                 hapticSuccessWithSound();
 
+                btn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>تم الإرسال ✓</span>`;
+                btn.disabled = true;
+
                 answerInput.value = '';
                 answerInput.disabled = true;
-                document.getElementById('btn-online-qa-send-a').disabled = true;
 
                 await saveQAHistory(
                     OS.roomId,
@@ -7111,17 +7225,10 @@
                         spectatorAText.className = 'text-xs font-semibold text-slate-200';
                     }
 
-                    const responseText = document.getElementById('qa-asker-response-text');
-                    if (responseText) {
-                        responseText.textContent = `"${esc(answer)}"`;
-                    }
-                    const responseBox = document.getElementById('qa-asker-response-box');
-                    if (responseBox) {
-                        responseBox.classList.remove('hidden');
-                    }
-
+                    // إظهار الإجابة فقط للسائل (سيتم التحكم في updateUIByPhase)
+                    handleQaUpdate(updatedRoom);
                     updateRoleBadge(updatedRoom);
-                    showNextRoundButton();
+                    showNextRoundReadyButton(updatedRoom);
                 }
 
                 await loadAndDisplayHistory(OS.roomId);
@@ -7129,64 +7236,9 @@
             } catch (e) {
                 console.error('❌ خطأ غير متوقع في إرسال الإجابة:', e);
                 showToast('❌ حدث خطأ غير متوقع: ' + e.message, 'error');
-                ButtonManager.enable('btn-online-qa-send-a');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-rotate"></i> <span>فشل، حاول مرة أخرى</span>`;
                 answerInput.disabled = false;
-            } finally {
-                if (!document.getElementById('btn-online-qa-send-a').disabled) {
-                    ButtonManager.enable('btn-online-qa-send-a');
-                }
-            }
-        }
-
-        // ===== الانتقال إلى الجولة التالية (يدوياً) =====
-        async function advanceToNextRound() {
-            const sb = OS.supabase;
-            if (!sb || !OS.roomId) return;
-
-            if (OS.isAdvancing) {
-                console.log('⏳ جاري التقدم بالفعل...');
-                return;
-            }
-
-            const { data: room, error: roomErr } = await sb.from('rooms')
-                .select('qa_round_complete, qa_round, qa_total_rounds')
-                .eq('id', OS.roomId)
-                .single();
-
-            if (roomErr || !room) {
-                showToast('❌ خطأ في جلب بيانات الغرفة', 'error');
-                return;
-            }
-
-            if (!room.qa_round_complete) {
-                showToast('⚠️ الجولة الحالية لم تكتمل بعد! انتظر الإجابة.', 'warning');
-                return;
-            }
-
-            if (ButtonManager.isDisabled('btn-online-qa-next-round')) return;
-            ButtonManager.disable('btn-online-qa-next-round', 'جاري التقدم...');
-
-            try {
-                const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
-                nextBtns.forEach(id => {
-                    const btn = document.getElementById(id);
-                    if (btn) btn.classList.add('hidden');
-                });
-
-                await startNewQARound(OS.roomId);
-
-            } catch (e) {
-                console.error('❌ فشل التقدم للجولة التالية:', e);
-                showToast('❌ فشل التقدم: ' + e.message, 'error');
-            } finally {
-                ButtonManager.enable('btn-online-qa-next-round');
-                const { data: checkRoom } = await sb.from('rooms')
-                    .select('qa_round_complete')
-                    .eq('id', OS.roomId)
-                    .single();
-                if (checkRoom && checkRoom.qa_round_complete) {
-                    showNextRoundButton();
-                }
             }
         }
 
@@ -7290,10 +7342,10 @@
 
                 OS.gameData = { room, players };
 
+                const currentRound = room.qa_round || 0;
+                const totalRounds = room.qa_total_rounds || players.length;
                 const roundDisplay = document.getElementById('online-qa-round-display');
                 if (roundDisplay) {
-                    const currentRound = room.qa_round || 0;
-                    const totalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
                     roundDisplay.textContent = `الجولة ${currentRound + 1} من ${totalRounds}`;
                 }
 
@@ -7329,14 +7381,6 @@
                     sendABtn.onclick = sendAnswer;
                 }
 
-                const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
-                nextBtns.forEach(id => {
-                    const btn = document.getElementById(id);
-                    if (btn) {
-                        btn.onclick = advanceToNextRound;
-                    }
-                });
-
                 const questionInput = document.getElementById('online-qa-question-input');
                 if (questionInput) {
                     questionInput.addEventListener('keydown', (e) => {
@@ -7370,7 +7414,9 @@
                 }
 
                 if (room.qa_round_complete) {
-                    showNextRoundButton();
+                    showNextRoundReadyButton(room);
+                } else {
+                    hideNextRoundReadyButton();
                 }
 
             } catch (e) {
@@ -7387,10 +7433,10 @@
             const myPlayer = players.find(p => p.client_id === OS.clientId);
             if (!myPlayer) return;
 
+            const currentRound = room.qa_round || 0;
+            const totalRounds = room.qa_total_rounds || players.length;
             const roundDisplay = document.getElementById('online-qa-round-display');
             if (roundDisplay) {
-                const currentRound = room.qa_round || 0;
-                const totalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
                 roundDisplay.textContent = `الجولة ${currentRound + 1} من ${totalRounds}`;
             }
 
@@ -7427,17 +7473,27 @@
                     spectatorAText.className = 'text-xs font-semibold text-slate-200';
                 }
 
-                const responseText = document.getElementById('qa-asker-response-text');
-                if (responseText) responseText.textContent = `"${esc(room.qa_answer)}"`;
-
+                // إظهار الإجابة فقط للسائل
+                const myPlayerLocal = players.find(p => p.client_id === OS.clientId);
+                const isAsker = myPlayerLocal && myPlayerLocal.id === room.qa_asker_id;
                 const responseBox = document.getElementById('qa-asker-response-box');
-                if (responseBox) responseBox.classList.remove('hidden');
+                const responseText = document.getElementById('qa-asker-response-text');
+                if (responseBox && responseText) {
+                    if (isAsker) {
+                        responseBox.classList.remove('hidden');
+                        responseText.textContent = `"${esc(room.qa_answer)}"`;
+                    } else {
+                        responseBox.classList.add('hidden');
+                    }
+                }
             }
 
             updateMyRole(room);
 
             if (room.qa_round_complete) {
-                showNextRoundButton();
+                showNextRoundReadyButton(room);
+            } else {
+                hideNextRoundReadyButton();
             }
 
             const askerLabel = document.getElementById('qa-respondent-asker-label');
@@ -8032,7 +8088,8 @@
                         .update({
                             is_ready: false,
                             is_odd: false,
-                            has_revealed: false
+                            has_revealed: false,
+                            ready_for_next_round: false
                         })
                         .eq('room_id', OS.roomId);
 
@@ -8043,6 +8100,7 @@
                     OS._qaRealtimeSetup = false;
                     OS.revealFlipped = false;
                     OS.revealReadyClicked = false;
+                    OS.readyForNextRound = false;
                     lastPhase = 'lobby';
                     lastQaData = null;
                     lastVoteData = null;
@@ -8096,6 +8154,7 @@
                 OS._qaRealtimeSetup = false;
                 OS.revealFlipped = false;
                 OS.revealReadyClicked = false;
+                OS.readyForNextRound = false;
                 if (OS.currentPhase !== 'lobby') {
                     showScreen('online-lobby');
                 }
@@ -8722,6 +8781,9 @@
                 OS.isReady = true;
                 OS.revealFlipped = false;
                 OS.revealReadyClicked = false;
+                OS.readyForNextRound = player.ready_for_next_round || false;
+                OS.hostCategory = room.category;
+                OS.hostMode = room.mode;
 
                 if (room.status !== 'lobby') {
                     const { data: allPlayers } = await sb.from('room_players').select('*').eq('room_id', roomId);
@@ -8736,9 +8798,10 @@
                     OS.refreshInterval = null;
                 }
 
+                // استعادة بيانات QA
                 if (room.status === 'qa') {
                     OS.qaRound = room.qa_round || 0;
-                    OS.qaTotalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
+                    OS.qaTotalRounds = room.qa_total_rounds || room.total_rounds || OS.gameData?.players?.length || QA_CONFIG.TOTAL_ROUNDS;
                     OS.qaAskerId = room.qa_asker_id;
                     OS.qaRespondentId = room.qa_respondent_id;
                     OS.qaQuestionText = room.qa_question;
@@ -8755,6 +8818,8 @@
                         else if (myPlayer.id === room.qa_respondent_id) OS.qaRole = 'respondent';
                         else OS.qaRole = 'spectator';
                     }
+                    // إعادة تهيئة الـ realtime للـ QA
+                    OS._qaRealtimeSetup = false;
                 }
 
                 if (room.used_words) {
@@ -8770,7 +8835,6 @@
                         showOnlineReveal();
                         break;
                     case 'qa':
-                        OS._qaRealtimeSetup = false;
                         showOnlineQA();
                         break;
                     case 'voting':
@@ -9358,7 +9422,7 @@
                 const activeScreen = document.querySelector('.screen.active');
                 if (activeScreen) {
                     const name = activeScreen.id.replace('screen-', '');
-                    updateHeaderState(name, '');
+                    updateHeaderState(name);
                 }
             }, 100);
 
@@ -9367,7 +9431,12 @@
 
             console.log('🔮 برا السالفة v12.0 — النسخة النهائية المكملة');
             console.log('✅ جميع التحسينات المطلوبة تم تطبيقها');
-            console.log('✅ نظام الأسئلة يعمل بدون مؤقتات مع أزرار انتقال يدوية');
+            console.log('✅ نظام الأسئلة يعمل بدون مؤقتات مع نظام موافقة جميع اللاعبين للانتقال');
+            console.log('✅ عدد الجولات بناءً على عدد اللاعبين');
+            console.log('✅ إخفاء الإجابة عن المجيب وإظهارها فقط للسائل');
+            console.log('✅ حالة الأزرار تعرض "تم الإرسال" أو "فشل، حاول مرة أخرى"');
+            console.log('✅ استعادة الحالة بعد تحديث الصفحة تعمل بشكل صحيح');
+            console.log('✅ إعدادات المضيف (الفئة والوضع) تثبت عند انضمام لاعبين جدد');
             console.log('✅ الملف الشخصي بتصميم احترافي جديد');
             console.log('✅ المصادقة تعمل مع Toast بدلاً من التنبيهات الداخلية');
             console.log('✅ المؤثرات الصوتية مفعلة');
