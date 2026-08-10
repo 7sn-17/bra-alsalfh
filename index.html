@@ -3820,7 +3820,7 @@
         const QA_CONFIG = {
             ASKER_TIME: 90,
             RESPONDENT_TIME: 90,
-            TOTAL_ROUNDS: 6, // سيتم تجاوزه بناءً على عدد اللاعبين
+            TOTAL_ROUNDS: 6,
             MIN_PLAYERS: 3
         };
 
@@ -3916,12 +3916,9 @@
             qaStartTime: null,
             revealFlipped: false,
             revealReadyClicked: false,
-            // حقول جديدة للجاهزية للجولة التالية
             readyForNextRound: false,
-            // حقول تخزين إعدادات المضيف
             hostCategory: null,
             hostMode: null,
-            // مؤشر لإلغاء تكرار المستمعات
             _hostControlsAttached: false
         };
 
@@ -4002,7 +3999,6 @@
             console.log(`🔄 تم الانتقال إلى الشاشة: ${name}`);
         }
 
-        // ===== نظام التحكم بالشريط العلوي =====
         function updateHeaderState(currentScreen) {
             const header = document.getElementById('global-header');
             if (!header) return;
@@ -4229,6 +4225,33 @@
             OS.playerName = null;
             localStorage.removeItem('barra_player_name');
         }
+
+async function validateStoredUser() {
+    const stored = getStoredUser();
+    if (!stored) return false;
+
+    const sb = OS.supabase || initSupabase();
+    if (!sb) return false;
+
+    try {
+        const { data: user, error } = await sb
+            .from('users')
+            .select('username')
+            .eq('username', stored.username)
+            .maybeSingle();
+
+        if (error || !user) {
+            clearStoredUser();              // ← هذا يمسح localStorage
+            localStorage.removeItem('barra_player_name');
+            updateProfileUI();
+            return false;
+        }
+        return true;
+    } catch (e) {
+        console.warn('فشل التحقق من المستخدم:', e);
+        return true;
+    }
+}
 
         let authCallback = null;
 
@@ -4584,7 +4607,7 @@
                 statusText.textContent = 'مسجل';
                 statusBadge.className = 'profile-status-badge';
                 statusBadge.innerHTML =
-                `<i class="fa-solid fa-circle-check"></i><span id="profile-status-text-short">مسجل</span>`;
+                    `<i class="fa-solid fa-circle-check"></i><span id="profile-status-text-short">مسجل</span>`;
                 if (onlineDot) onlineDot.className = 'online-dot';
                 editNameInput.value = username;
             } else {
@@ -4597,36 +4620,46 @@
                 statusText.textContent = 'غير مسجل';
                 statusBadge.className = 'profile-status-badge offline';
                 statusBadge.innerHTML =
-                `<i class="fa-solid fa-circle"></i><span id="profile-status-text-short">غير مسجل</span>`;
+                    `<i class="fa-solid fa-circle"></i><span id="profile-status-text-short">غير مسجل</span>`;
                 if (onlineDot) onlineDot.className = 'online-dot offline';
                 editNameInput.value = '';
             }
         }
 
-        function showProfileModal() {
-            const modal = document.getElementById('profile-modal');
-            const stored = getStoredUser();
+        async function showProfileModal() {
+    const modal = document.getElementById('profile-modal');
+    const stored = getStoredUser();
 
-            if (!stored) {
-                requireAuth(() => {});
-                return;
-            }
+    if (!stored) {
+        requireAuth(() => {});
+        return;
+    }
 
-            document.getElementById('profile-edit-name').value = stored.username;
-            document.getElementById('profile-old-password').value = '';
-            document.getElementById('profile-new-password').value = '';
-            document.getElementById('profile-confirm-password').value = '';
+    // تحقق من صحة المستخدم في قاعدة البيانات
+    const valid = await validateStoredUser();
+    if (!valid) {
+        clearStoredUser();
+        updateProfileUI();
+        requireAuth(() => {});
+        return;
+    }
 
-            const msg = document.getElementById('profile-message');
-            msg.className = 'profile-msg hidden';
-            msg.textContent = '';
+    // باقي الكود كما هو (تعبئة الحقول، إظهار المودال...)
+    document.getElementById('profile-edit-name').value = stored.username;
+    document.getElementById('profile-old-password').value = '';
+    document.getElementById('profile-new-password').value = '';
+    document.getElementById('profile-confirm-password').value = '';
 
-            updateProfileUI();
+    const msg = document.getElementById('profile-message');
+    msg.className = 'profile-msg hidden';
+    msg.textContent = '';
 
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            hapticAndSound('click');
-        }
+    updateProfileUI();
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    hapticAndSound('click');
+}
 
         function hideProfileModal() {
             const modal = document.getElementById('profile-modal');
@@ -4938,7 +4971,7 @@
             if (refreshBtn) {
                 refreshBtn.disabled = true;
                 refreshBtn.innerHTML =
-                `<i class="fa-solid fa-spinner fa-spin text-cyan-400"></i><span>جاري التحديث...</span>`;
+                    `<i class="fa-solid fa-spinner fa-spin text-cyan-400"></i><span>جاري التحديث...</span>`;
             }
 
             try {
@@ -4982,7 +5015,7 @@
                         const originalHTML = btn.innerHTML;
                         btn.disabled = true;
                         btn.innerHTML =
-                        `<i class="fa-solid fa-spinner fa-spin btn-icon"></i> جاري الانضمام...`;
+                            `<i class="fa-solid fa-spinner fa-spin btn-icon"></i> جاري الانضمام...`;
                         btn.classList.add('opacity-70', 'cursor-wait');
                         try {
                             await joinOnlineRoom(code);
@@ -5388,18 +5421,15 @@
                     const catSelect = document.getElementById('online-host-category');
                     const modeSelect = document.getElementById('online-host-mode');
 
-                    // تعيين القيم من الغرفة (المحفوظة) أو الافتراضي
                     const defaultCategory = Object.keys(WORD_CLUSTERS)[0];
                     catSelect.value = room.category || defaultCategory;
                     modeSelect.value = room.mode || 'traditional';
 
-                    // إزالة المستمعات القديمة لتجنب التكرار
                     if (OS._hostControlsAttached) {
                         catSelect.onchange = null;
                         modeSelect.onchange = null;
                     }
 
-                    // إضافة مستمعات جديدة لتحديث قاعدة البيانات فور التغيير
                     catSelect.onchange = () => {
                         const newCat = catSelect.value;
                         const newMode = modeSelect.value;
@@ -5414,7 +5444,6 @@
                     };
                     OS._hostControlsAttached = true;
 
-                    // تحديث حالة الأزرار والمؤشرات
                     hostUpdateUIControls(players, room);
 
                     const startBtn = document.getElementById('btn-online-host-start');
@@ -5501,7 +5530,6 @@
                     if (modeSelect) modeSelect.value = selectedMode;
                 }
 
-                // حفظ الإعدادات في قاعدة البيانات
                 await updateRoomSettings(selectedCategory, selectedMode);
 
                 console.log(`🎯 المضيف بدأ اللعبة: الفئة=${selectedCategory}, النمط=${selectedMode}`);
@@ -5540,7 +5568,6 @@
                     oddWord = related[randInt(0, related.length - 1)];
                 }
 
-                // عدد الجولات = عدد اللاعبين
                 const totalRounds = players.length;
 
                 const updateData = {
@@ -5864,11 +5891,9 @@
                             }
 
                             if (OS.currentPhase === 'qa') {
-                                // تحديث جاهزية الجولة التالية
                                 if (OS.isHost) {
                                     hostCheckReadyForNextRound(OS.roomId);
                                 }
-                                // تحديث واجهة الأسئلة
                                 if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
                                     refreshQAView(OS.gameData?.room);
                                 }
@@ -6434,7 +6459,8 @@
             // تحديث شارة الجولة
             const roundDisplay = document.getElementById('online-qa-round-display');
             if (roundDisplay) {
-                roundDisplay.textContent = `الجولة ${round + 1} من ${totalRounds}`;
+                const displayRound = Math.min(round + 1, totalRounds);
+                roundDisplay.textContent = `الجولة ${displayRound} من ${totalRounds}`;
             }
 
             // تحديث أسماء السائل والمجيب
@@ -6547,7 +6573,6 @@
             if (respondentView) respondentView.classList.add('hidden');
             if (spectatorView) spectatorView.classList.add('hidden');
 
-            // إخفاء زر الجاهزية للجولة التالية (سيتم عرضه عند اكتمال الجولة)
             hideNextRoundReadyButton();
 
             if (roundComplete) {
@@ -6565,16 +6590,17 @@
 
                 if (questionSubmitted) {
                     if (qInput) qInput.disabled = true;
-                    if (sendQBtn) sendQBtn.disabled = true;
-                    // إذا كانت الإجابة واردة، ستظهر عبر الشرط أعلاه
+                    if (sendQBtn) {
+                        sendQBtn.disabled = true;
+                        sendQBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>تم الإرسال ✓</span>`;
+                    }
                 } else {
                     if (qInput) qInput.disabled = false;
-                    if (sendQBtn) sendQBtn.disabled = false;
-                    // استعادة حالة الزر إذا كان قد فشل سابقاً
-                    if (sendQBtn && sendQBtn.innerHTML.includes('فشل')) {
-                        sendQBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>إرسال السؤال</span>`;
+                    if (sendQBtn) {
                         sendQBtn.disabled = false;
+                        sendQBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>إرسال السؤال</span>`;
                     }
+                    // إذا كانت الإجابة واردة، ستظهر عبر الشرط أعلاه
                 }
 
                 const targetLabel = document.getElementById('qa-asker-target-label');
@@ -6595,10 +6621,7 @@
                     if (aInput) aInput.disabled = false;
                     if (sendABtn) {
                         sendABtn.disabled = false;
-                        if (sendABtn.innerHTML.includes('فشل')) {
-                            sendABtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>إرسال الإجابة</span>`;
-                            sendABtn.disabled = false;
-                        }
+                        sendABtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>إرسال الإجابة</span>`;
                     }
                     const receivedQ = document.getElementById('online-qa-received-q');
                     if (receivedQ && roomData.qa_question) {
@@ -6606,7 +6629,12 @@
                     }
                 } else if (answerSubmitted || roundComplete) {
                     if (aInput) aInput.disabled = true;
-                    if (sendABtn) sendABtn.disabled = true;
+                    if (sendABtn) {
+                        sendABtn.disabled = true;
+                        if (answerSubmitted) {
+                            sendABtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>تم الإرسال ✓</span>`;
+                        }
+                    }
                 } else {
                     if (aInput) aInput.disabled = true;
                     if (sendABtn) sendABtn.disabled = true;
@@ -6684,7 +6712,6 @@
             const btn = document.getElementById('btn-qa-ready-next');
             const status = document.getElementById('qa-next-ready-status');
 
-            // التحقق من جاهزية اللاعب الحالي
             if (myPlayer.ready_for_next_round) {
                 btn.className =
                     'btn-next-ready w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
@@ -6698,7 +6725,6 @@
                 btn.disabled = false;
                 btn.classList.remove('ready-done');
 
-                // إزالة المستمعات السابقة
                 const newBtn = btn.cloneNode(true);
                 btn.parentNode.replaceChild(newBtn, btn);
 
@@ -6714,7 +6740,6 @@
                             .myPlayerId);
                         hapticSuccessWithSound();
 
-                        // تحديث الواجهة محلياً
                         OS.readyForNextRound = true;
                         newBtn.className =
                             'btn-next-ready w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
@@ -6725,7 +6750,6 @@
                         showToast('✅ تم تسجيل جاهزيتك، في انتظار الآخرين...', 'success');
                         ButtonManager.enable('btn-qa-ready-next');
 
-                        // المضيف يتحقق من جاهزية الجميع
                         if (OS.isHost) {
                             hostCheckReadyForNextRound(OS.roomId);
                         }
@@ -6743,7 +6767,6 @@
                 });
             }
 
-            // تحديث حالة الجميع
             const allPlayers = OS.gameData?.players || [];
             const readyCount = allPlayers.filter(p => p.ready_for_next_round === true).length;
             status.textContent = `جاهز ${readyCount} من ${allPlayers.length} لاعبين`;
@@ -6767,7 +6790,6 @@
 
             const allReady = players.every(p => p.ready_for_next_round === true);
             if (!allReady) {
-                // تحديث واجهة الزر
                 const container = document.getElementById('qa-next-ready-container');
                 if (container) {
                     const status = document.getElementById('qa-next-ready-status');
@@ -6781,12 +6803,10 @@
             OS.stageLock = true;
 
             try {
-                // إعادة تعيين جاهزية الجميع
                 await sb.from('room_players')
                     .update({ ready_for_next_round: false })
                     .eq('room_id', roomId);
 
-                // الانتقال للجولة التالية
                 await startNewQARound(roomId);
 
                 showToast('✅ الجميع جاهز! الجولة التالية تبدأ', 'success');
@@ -6865,6 +6885,7 @@
                 const currentRound = room.qa_round || 0;
                 const totalRounds = room.qa_total_rounds || players.length;
 
+                // التحقق من انتهاء جميع الجولات
                 if (currentRound >= totalRounds) {
                     console.log('✅ انتهت جميع الجولات، الانتقال للتصويت');
                     await sb.from('rooms').update({
@@ -6889,8 +6910,11 @@
 
                 console.log(`🎯 الجولة ${currentRound + 1}: ${asker.player_name} → ${respondent.player_name}`);
 
+                // Reset all QA fields for the new round, but keep qa_round as the NEXT round index
+                const nextRound = currentRound + 1;
+
                 const updateData = {
-                    qa_round: currentRound,
+                    qa_round: nextRound,
                     qa_asker_id: asker.id,
                     qa_respondent_id: respondent.id,
                     qa_question: null,
@@ -6942,6 +6966,32 @@
                         questionInput.focus();
                     }
                 }
+
+                // Reset respondent view
+                const respondentView = document.getElementById('view-respondent');
+                if (respondentView) {
+                    const aInput = document.getElementById('online-qa-answer-input');
+                    const sendABtn = document.getElementById('btn-online-qa-send-a');
+                    const receivedQ = document.getElementById('online-qa-received-q');
+                    if (aInput) { aInput.disabled = true;
+                        aInput.value = ''; }
+                    if (sendABtn) { sendABtn.disabled = true;
+                        sendABtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>إرسال الإجابة</span>`; }
+                    if (receivedQ) receivedQ.textContent = '⏳ في انتظار السؤال...';
+                }
+
+                // Reset spectator view
+                const spectatorQText = document.getElementById('qa-spectator-q-text');
+                const spectatorAText = document.getElementById('qa-spectator-a-text');
+                if (spectatorQText) spectatorQText.textContent = '⏳ في انتظار السؤال...';
+                if (spectatorAText) { spectatorAText.textContent = '...في انتظار الرد';
+                    spectatorAText.className = 'text-xs font-semibold text-slate-200 italic'; }
+
+                // Reset asker response box
+                const responseBox = document.getElementById('qa-asker-response-box');
+                if (responseBox) responseBox.classList.add('hidden');
+
+                hideNextRoundReadyButton();
 
                 OS.isAdvancing = false;
 
@@ -7046,7 +7096,6 @@
                 showToast('✅ تم إرسال السؤال!', 'success');
                 hapticSuccessWithSound();
 
-                // تغيير حالة الزر إلى "تم الإرسال"
                 btn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>تم الإرسال ✓</span>`;
                 btn.disabled = true;
 
@@ -7225,7 +7274,6 @@
                         spectatorAText.className = 'text-xs font-semibold text-slate-200';
                     }
 
-                    // إظهار الإجابة فقط للسائل (سيتم التحكم في updateUIByPhase)
                     handleQaUpdate(updatedRoom);
                     updateRoleBadge(updatedRoom);
                     showNextRoundReadyButton(updatedRoom);
@@ -7346,7 +7394,8 @@
                 const totalRounds = room.qa_total_rounds || players.length;
                 const roundDisplay = document.getElementById('online-qa-round-display');
                 if (roundDisplay) {
-                    roundDisplay.textContent = `الجولة ${currentRound + 1} من ${totalRounds}`;
+                    const displayRound = Math.min(currentRound + 1, totalRounds);
+                    roundDisplay.textContent = `الجولة ${displayRound} من ${totalRounds}`;
                 }
 
                 const askerName = getPlayerName(room.qa_asker_id);
@@ -7437,7 +7486,8 @@
             const totalRounds = room.qa_total_rounds || players.length;
             const roundDisplay = document.getElementById('online-qa-round-display');
             if (roundDisplay) {
-                roundDisplay.textContent = `الجولة ${currentRound + 1} من ${totalRounds}`;
+                const displayRound = Math.min(currentRound + 1, totalRounds);
+                roundDisplay.textContent = `الجولة ${displayRound} من ${totalRounds}`;
             }
 
             const askerName = getPlayerName(room.qa_asker_id);
@@ -7473,7 +7523,6 @@
                     spectatorAText.className = 'text-xs font-semibold text-slate-200';
                 }
 
-                // إظهار الإجابة فقط للسائل
                 const myPlayerLocal = players.find(p => p.client_id === OS.clientId);
                 const isAsker = myPlayerLocal && myPlayerLocal.id === room.qa_asker_id;
                 const responseBox = document.getElementById('qa-asker-response-box');
@@ -7556,7 +7605,7 @@
 
             if (existingVote) {
                 instruction.innerHTML =
-                `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت بالفعل. في انتظار الآخرين...`;
+                    `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت بالفعل. في انتظار الآخرين...`;
                 optionsDiv.innerHTML = '';
                 await refreshVotingView(room, players);
                 return;
@@ -8736,7 +8785,14 @@
 
         async function attemptReconnect() {
             const storedUser = getStoredUser();
-            if (!storedUser) return false;
+if (!storedUser) return false;
+
+// تحقق من صحة المستخدم في قاعدة البيانات
+const valid = await validateStoredUser();
+if (!valid) {
+    // المستخدم غير موجود، نخرج من محاولة إعادة الاتصال
+    return false;
+}
 
             OS.authUser = { username: storedUser.username };
             OS.playerName = storedUser.username;
@@ -8818,7 +8874,6 @@
                         else if (myPlayer.id === room.qa_respondent_id) OS.qaRole = 'respondent';
                         else OS.qaRole = 'spectator';
                     }
-                    // إعادة تهيئة الـ realtime للـ QA
                     OS._qaRealtimeSetup = false;
                 }
 
@@ -9394,6 +9449,17 @@
             console.log('✅ تم ربط جميع الأحداث بنجاح');
         }
 
+        function toggleDevModal(show) {
+            const modal = document.getElementById('dev-modal');
+            if (show) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
         // ==============================================================
         // ===== التهيئة =====
         // ==============================================================
@@ -9415,8 +9481,18 @@
 
             updateProfileUI();
 
-            const reconnected = await attemptReconnect();
-            if (!reconnected) showScreen('landing');
+            // نحاول استعادة الجلسة فقط إذا كان المستخدم صحيحاً
+const validUser = await validateStoredUser();
+if (validUser) {
+    // إذا كان المستخدم صحيحاً، نحاول استعادة الغرفة
+    const reconnected = await attemptReconnect();
+    if (!reconnected) {
+        showScreen('landing');
+    }
+} else {
+    // المستخدم غير صحيح، نعرض شاشة الترحيب بدون فتح المصادقة
+    showScreen('landing');
+}
 
             setTimeout(() => {
                 const activeScreen = document.querySelector('.screen.active');
