@@ -34,11 +34,13 @@
     <style>
         /* ===== أنماط عامة ===== */
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Tajawal', sans-serif;
             background: #030712;
@@ -47,6 +49,7 @@
             min-height: 100dvh;
             overflow-x: hidden;
         }
+
         ::-webkit-scrollbar {
             width: 5px;
         }
@@ -240,6 +243,73 @@
             border-width: 2px;
         }
 
+        /* ===== أنماط الكشف الجديدة (3D Flip Card) ===== */
+        .card-perspective {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 340px;
+            height: 220px;
+            margin: 0 auto;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flip-card-inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(145deg, #0f172a, #1a2332);
+            border: 2px dashed rgba(0, 224, 255, 0.25);
+            box-shadow: 0 0 40px rgba(0, 224, 255, 0.04);
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            border: 2px solid #00e0ff;
+            box-shadow: 0 0 50px rgba(0, 224, 255, 0.1);
+        }
+
+        .flip-card-back.role-out {
+            border-color: #ef4444;
+            background: radial-gradient(circle at center, rgba(239, 68, 68, 0.12) 0%, #0f172a 80%);
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.12);
+        }
+
+        .flip-card-back.role-in {
+            border-color: #00e0ff;
+            background: radial-gradient(circle at center, rgba(0, 224, 255, 0.12) 0%, #0f172a 80%);
+            box-shadow: 0 0 50px rgba(0, 224, 255, 0.1);
+        }
+
+        /* ===== شريط تقدم الجاهزية ===== */
+        .progress-fill {
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== باقي الأنماط ===== */
         .reveal-scene {
             perspective: 950px;
             width: 100%;
@@ -1484,15 +1554,19 @@
             display: flex;
         }
         @keyframes profileFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
         @keyframes profileSlideUp {
-            from { 
+            from {
                 opacity: 0;
                 transform: translateY(40px) scale(0.95);
             }
-            to { 
+            to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
@@ -1598,8 +1672,12 @@
             margin: 0 auto;
         }
         @keyframes profileRingRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
         .profile-avatar-main {
             width: 100%;
@@ -1672,8 +1750,14 @@
             animation: profileMsgIn 0.3s ease forwards;
         }
         @keyframes profileMsgIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         .profile-msg.hidden {
             display: none;
@@ -1706,14 +1790,14 @@
             align-items: flex-start;
             gap: 12px;
         }
-        .profile-info-item > i {
+        .profile-info-item>i {
             color: #64748b;
             font-size: 18px;
             margin-top: 4px;
             width: 24px;
             flex-shrink: 0;
         }
-        .profile-info-item > div {
+        .profile-info-item>div {
             flex: 1;
             min-width: 0;
         }
@@ -1812,7 +1896,7 @@
             display: flex;
             align-items: center;
         }
-        .profile-input-group > i {
+        .profile-input-group>i {
             position: absolute;
             right: 12px;
             color: #64748b;
@@ -1940,7 +2024,7 @@
             .profile-info-item {
                 gap: 8px;
             }
-            .profile-info-item > i {
+            .profile-info-item>i {
                 font-size: 16px;
                 width: 20px;
             }
@@ -1957,8 +2041,12 @@
             animation: profileSpin 0.8s linear infinite;
         }
         @keyframes profileSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* ===== مودال المطورين ===== */
@@ -2156,46 +2244,108 @@
                 height: 10px;
             }
         }
+
         /* ===== إصلاح شاشة الإعداد المحلي - توحيد قسم الفئات ===== */
-#screen-setup .glass-panel {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-}
+        #screen-setup .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
 
-#screen-setup .cat-card-option {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 2px solid rgba(255, 255, 255, 0.08) !important;
-    color: #8892a6 !important;
-    transition: all 0.3s ease;
-    border-radius: 16px;
-}
+        #screen-setup .cat-card-option {
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 2px solid rgba(255, 255, 255, 0.08) !important;
+            color: #8892a6 !important;
+            transition: all 0.3s ease;
+            border-radius: 16px;
+        }
 
-#screen-setup .cat-card-option:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.18) !important;
-}
+        #screen-setup .cat-card-option:hover {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+        }
 
-#screen-setup .cat-card-option.selected {
-    background: rgba(0, 224, 255, 0.08) !important;
-    border-color: #00e0ff !important;
-    color: #e6ecf7 !important;
-    box-shadow: 0 0 25px rgba(0, 224, 255, 0.08);
-}
+        #screen-setup .cat-card-option.selected {
+            background: rgba(0, 224, 255, 0.08) !important;
+            border-color: #00e0ff !important;
+            color: #e6ecf7 !important;
+            box-shadow: 0 0 25px rgba(0, 224, 255, 0.08);
+        }
 
-#screen-setup .cat-card-option i {
-    font-size: 1.4rem;
-    display: block;
-}
+        #screen-setup .cat-card-option i {
+            font-size: 1.4rem;
+            display: block;
+        }
 
-/* إصلاح الشبكة */
-#screen-setup .grid-auto-fill {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 12px;
-}
+        #screen-setup .grid-auto-fill {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+        }
 
+        /* ===== أنماط شاشة الأسئلة الجديدة ===== */
+        .glass-panel-modern {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+        }
+
+        .role-view {
+            transition: all 0.3s ease;
+        }
+
+        .faceoff-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .history-toggle-btn {
+            transition: all 0.3s ease;
+        }
+        .history-toggle-btn:hover {
+            color: #f8fafc;
+        }
+
+        .history-arrow {
+            transition: transform 0.3s ease;
+        }
+        .history-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* ===== أنماط أزرار الجاهزية في الكشف ===== */
+        .btn-ready-reveal {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-ready-reveal:active {
+            transform: scale(0.94);
+        }
+        .btn-ready-reveal.ready-done {
+            background: rgba(168, 255, 90, 0.15);
+            color: #a8ff5a;
+            border: 1px solid rgba(168, 255, 90, 0.3);
+            cursor: default;
+        }
+        .btn-ready-reveal.ready-done:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body>
@@ -2699,166 +2849,262 @@
             </div>
         </div>
 
-        <!-- ===== شاشة الكشف الأونلاين - نسخة محسنة مع أيقونات ===== -->
+        <!-- ===== شاشة الكشف الأونلاين (بتصميم 3D الجديد) ===== -->
         <div id="screen-online-reveal" class="screen flex-col items-center flex-1 justify-center text-center py-4">
-            <div class="glass-panel rounded-3xl p-6 flex flex-col gap-6 items-center w-full max-w-[400px] mx-4">
-                <h3 class="font-extrabold text-xl text-white flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-wand-magic-sparkles text-cyan-400 text-2xl"></i>
-                    <span>دورك في هذه الجولة</span>
-                    <span id="online-reveal-category" class="text-xs text-amber-400 font-normal flex items-center gap-1.5 mt-1">
-                        <i class="fa-solid fa-tag"></i>
-                        <span>الفئة: <span id="online-reveal-category-name">---</span></span>
-                    </span>
-                </h3>
-                <div id="online-reveal-content" class="reveal-scene mx-auto">
-                    <div class="reveal-card flipped" style="pointer-events:none;">
-                        <div class="reveal-face reveal-front"></div>
-                        <div class="reveal-face reveal-back" id="online-reveal-back">
-                            <span class="text-2xl font-black text-cyan-400">???</span>
-                            <span class="text-[#8892a6] text-xs">جاري تحميل دورك...</span>
+            <div class="glass-panel rounded-3xl p-6 flex flex-col gap-5 items-center w-full max-w-[400px] mx-4">
+
+                <!-- هيدر الفئة والجاهزية -->
+                <div class="w-full glass-card rounded-2xl p-3 flex flex-col gap-2.5 border-r-4 border-r-cyan-400">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2.5 text-xs">
+                            <div class="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-cyan-400">
+                                <i class="fa-solid fa-layer-group"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-semibold block">فئة الجولة</span>
+                                <span id="reveal-category-name" class="font-bold text-white">أطعمة</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end gap-1">
+                            <span id="reveal-ready-count" class="text-[11px] font-black text-cyan-400 bg-cyan-400/10 px-2.5 py-0.5 rounded-lg border border-cyan-400/20">
+                                0 / 0 جاهزون
+                            </span>
                         </div>
                     </div>
+                    <div class="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                        <div id="reveal-progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full progress-fill" style="width: 0%;"></div>
+                    </div>
                 </div>
-                <button id="btn-online-reveal-ready" class="btn-success text-lg px-8 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-check-circle"></i>
-                    <span>جاهز للمرحلة التالية</span>
+
+                <!-- البطاقة التفاعلية ثلاثية الأبعاد -->
+                <div class="card-perspective w-full">
+                    <div id="reveal-flip-card" class="flip-card-inner">
+
+                        <!-- الوجه الأمامي -->
+                        <div class="flip-card-front">
+                            <div class="w-14 h-14 rounded-full bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 text-xl mb-3">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                            <h3 class="font-bold text-sm text-white">اضغط لكشف دورك السري</h3>
+                            <span class="mt-4 text-[11px] font-bold text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-full border border-cyan-400/20 flex items-center gap-1.5">
+                                <i class="fa-solid fa-hand-pointer"></i>
+                                <span>انقر هنا</span>
+                            </span>
+                        </div>
+
+                        <!-- الوجه الخلفي (يُملأ ديناميكياً) -->
+                        <div id="reveal-back-face" class="flip-card-back role-in">
+                            <!-- يُملأ عبر JavaScript -->
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- زر الجاهزية الموحد -->
+                <button id="btn-reveal-ready" class="btn-ready-reveal w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>جاهز وبدء الجولة</span>
                 </button>
-                <p id="online-reveal-progress" class="text-[#8892a6] text-xs flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                    <span id="online-reveal-progress-text">0 لاعبين اطلعوا على دورهم</span>
-                </p>
-                <div id="online-reveal-game-info" class="text-[10px] text-slate-500 border-t border-slate-800/50 pt-3 w-full flex items-center justify-center gap-4">
-                    <span id="online-reveal-mode-info" class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-masks-theater text-purple-400"></i>
-                        <span>الوضع: <span id="online-reveal-mode-name">---</span></span>
+
+                <!-- معلومات إضافية عن اللاعبين -->
+                <div id="reveal-players-info" class="text-[10px] text-slate-500 border-t border-slate-800/50 pt-3 w-full flex items-center justify-center gap-4">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-users text-cyan-400"></i>
+                        <span id="reveal-total-players">0 لاعبين</span>
                     </span>
                     <span class="text-slate-700">|</span>
-                    <span id="online-reveal-players-count" class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-users text-cyan-400"></i>
-                        <span id="online-reveal-players-number">0 لاعبين</span>
+                    <span class="flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-secret text-rose-400"></i>
+                        <span id="reveal-odd-player">برا السالفة: —</span>
                     </span>
                 </div>
+
             </div>
         </div>
 
-        <!-- ===== شاشة الأسئلة الأونلاين ===== -->
+        <!-- ===== شاشة الأسئلة الجديدة (المطورة بالكامل) ===== -->
         <div id="screen-online-qa" class="screen flex-col flex-1 py-2">
-            <div class="glass-panel rounded-3xl p-4 flex flex-col gap-4 flex-1 w-full px-2 max-w-full">
-                <div class="flex items-center justify-between flex-wrap gap-2">
-                    <span id="online-qa-round" class="bg-yellow-500/15 text-yellow-400 font-bold text-sm px-4 py-1 rounded-full">الجولة 1 من 6</span>
-                    <span id="online-qa-role-badge" class="qa-role-badge">🎤 سائل</span>
-                    <button id="btn-online-qa-leave" class="text-rose-400/70 hover:text-rose-400 text-sm bg-slate-800/30 hover:bg-slate-800/60 px-3 py-1.5 rounded-xl border border-rose-500/20 transition-all flex items-center gap-1.5 shadow-lg">
-                        <i class="fa-solid fa-right-from-bracket text-xs"></i> خروج
+            <div class="max-w-md mx-auto w-full px-4 space-y-4">
+
+                <!-- اللوحة الرئيسية للتصميم العصري المطور -->
+                <div class="glass-panel-modern rounded-3xl p-5 shadow-2xl space-y-5 relative overflow-hidden">
+                    <div class="absolute -top-10 -left-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <!-- هيدر الشاشة: الجولة - دور الشخص بالمنتصف - زر الخروج -->
+                    <div class="flex items-center justify-between border-b border-slate-700/50 pb-4">
+                        <!-- الجولة -->
+                        <div class="flex-1 text-right">
+                            <span id="online-qa-round-display" class="text-[11px] font-extrabold px-3 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 whitespace-nowrap">
+                                الجولة 1 من 6
+                            </span>
+                        </div>
+
+                        <!-- شارة وضع الشخص (بالمنتصف) -->
+                        <div class="flex-1 flex justify-center">
+                            <div id="player-role-badge" class="px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-extrabold text-xs flex items-center gap-1.5 shadow-sm">
+                                <i id="player-role-icon" class="fa-solid fa-microphone text-[11px]"></i>
+                                <span id="player-role-text">سائل</span>
+                            </div>
+                        </div>
+
+                        <!-- زر الخروج -->
+                        <div class="flex-1 text-left flex justify-end">
+                            <button id="btn-online-qa-leave" class="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl transition text-xs font-bold active:scale-95">
+                                <span>خروج</span>
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- المواجهة بين السائل والمجيب -->
+                    <div id="online-qa-faceoff" class="bg-slate-950/50 p-3.5 rounded-2xl border border-slate-800/80 flex items-center justify-between gap-2">
+                        <!-- بطاقة السائل -->
+                        <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                            <div class="relative flex-shrink-0">
+                                <div id="qa-asker-avatar" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-slate-950 font-black flex items-center justify-center text-base shadow-md">
+                                    ?
+                                </div>
+                                <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-slate-900 border border-cyan-400 text-cyan-400 rounded-full text-[10px] flex items-center justify-center shadow">
+                                    <i class="fa-solid fa-microphone"></i>
+                                </span>
+                            </div>
+                            <div class="truncate">
+                                <span class="text-[9px] text-cyan-400 font-bold block">السائل</span>
+                                <h4 id="qa-asker-name" class="font-bold text-xs text-white truncate">—</h4>
+                            </div>
+                        </div>
+
+                        <!-- سهم الاتجاه للمواجهة -->
+                        <div class="flex flex-col items-center justify-center px-1">
+                            <div class="w-7 h-7 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-cyan-400 text-xs shadow-inner">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </div>
+                        </div>
+
+                        <!-- بطاقة المجيب -->
+                        <div class="flex items-center justify-end gap-2.5 flex-1 min-w-0 text-left">
+                            <div class="truncate">
+                                <span class="text-[9px] text-purple-400 font-bold block">المجيب</span>
+                                <h4 id="qa-respondent-name" class="font-bold text-xs text-white truncate">—</h4>
+                            </div>
+                            <div class="relative flex-shrink-0">
+                                <div id="qa-respondent-avatar" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-600 text-white font-black flex items-center justify-center text-base shadow-md">
+                                    ?
+                                </div>
+                                <span class="absolute -bottom-1 -left-1 w-5 h-5 bg-slate-900 border border-purple-400 text-purple-400 rounded-full text-[10px] flex items-center justify-center shadow">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1. منظور السائل -->
+                    <div id="view-asker" class="role-view space-y-4 pt-1">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-300 block">سؤالك إلى <span id="qa-asker-target-label">المجيب</span>:</label>
+                            <textarea id="online-qa-question-input" rows="3" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-2xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition resize-none" placeholder="اكتب سؤالك هنا..."></textarea>
+                        </div>
+
+                        <button id="btn-online-qa-send-q" class="w-full py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-black rounded-2xl shadow-lg shadow-cyan-500/20 hover:opacity-95 active:scale-95 transition flex items-center justify-center gap-2 text-xs">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>إرسال السؤال</span>
+                        </button>
+
+                        <!-- بطاقة استقبال إجابة المجيب + زر الانتقال للجولة التالية -->
+                        <div id="qa-asker-response-box" class="glass-card p-3.5 rounded-2xl border-r-4 border-r-purple-400 bg-purple-950/10 space-y-3 hidden">
+                            <div class="space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-purple-400 font-bold flex items-center gap-1.5">
+                                        <i class="fa-solid fa-reply"></i>
+                                        <span>إجابة المجيب الواردة:</span>
+                                    </span>
+                                    <span class="text-[9px] text-slate-500">منذ لحظات</span>
+                                </div>
+                                <p id="qa-asker-response-text" class="text-xs text-slate-100 font-semibold">"..."</p>
+                            </div>
+
+                            <!-- زر الانتقال إلى الجولة التالية -->
+                            <button id="btn-online-qa-next-round" class="w-full py-2.5 bg-slate-900 border border-purple-500/40 hover:border-purple-400 text-purple-300 hover:text-white font-extrabold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md hover:bg-purple-950/40 active:scale-95">
+                                <span>الانتقال إلى الجولة التالية</span>
+                                <i class="fa-solid fa-angles-left text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2. منظور المجيب -->
+                    <div id="view-respondent" class="role-view space-y-4 pt-1 hidden">
+                        <div class="glass-card p-3.5 rounded-2xl border-r-4 border-r-cyan-400 space-y-1">
+                            <span class="text-[10px] text-cyan-400 font-bold flex items-center gap-1 block">
+                                <i class="fa-solid fa-microphone text-[10px]"></i>
+                                <span id="qa-respondent-asker-label">السائل يسألك:</span>
+                            </span>
+                            <p id="online-qa-received-q" class="text-xs font-bold text-white">⏳ في انتظار السؤال...</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-300 block">إجابتك:</label>
+                            <textarea id="online-qa-answer-input" rows="3" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-2xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 transition resize-none" placeholder="اكتب إجابتك هنا..." disabled></textarea>
+                        </div>
+
+                        <button id="btn-online-qa-send-a" class="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-black rounded-2xl shadow-lg shadow-purple-500/20 hover:opacity-95 active:scale-95 transition flex items-center justify-center gap-2 text-xs" disabled>
+                            <i class="fa-solid fa-reply"></i>
+                            <span>إرسال الإجابة</span>
+                        </button>
+
+                        <!-- زر الانتقال إلى الجولة التالية للمجيب -->
+                        <button id="btn-online-qa-next-round-respondent" class="w-full py-3 bg-slate-900 border border-purple-500/30 hover:border-purple-400 text-purple-300 hover:text-white font-extrabold rounded-2xl text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-95 hidden">
+                            <span>الانتقال إلى الجولة التالية</span>
+                            <i class="fa-solid fa-angles-left text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- 3. منظور المتفرج -->
+                    <div id="view-spectator" class="role-view space-y-3 pt-1 hidden">
+                        <div class="space-y-2.5">
+                            <div id="qa-spectator-q-box" class="glass-card p-3 rounded-2xl border-r-4 border-r-cyan-400">
+                                <span class="text-[10px] text-cyan-400 font-bold flex items-center gap-1.5 mb-1">
+                                    <i class="fa-solid fa-microphone"></i>
+                                    <span id="qa-spectator-asker-label">السائل يسأل المجيب:</span>
+                                </span>
+                                <p id="qa-spectator-q-text" class="text-xs font-extrabold text-white">⏳ في انتظار السؤال...</p>
+                            </div>
+
+                            <div id="qa-spectator-a-box" class="glass-card p-3 rounded-2xl border-r-4 border-r-purple-400">
+                                <span class="text-[10px] text-purple-400 font-bold flex items-center gap-1.5 mb-1">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                    <span id="qa-spectator-respondent-label">المجيب يجيب:</span>
+                                </span>
+                                <p id="qa-spectator-a-text" class="text-xs font-semibold text-slate-200 italic">...في انتظار الرد</p>
+                            </div>
+                        </div>
+
+                        <!-- زر الانتقال إلى الجولة التالية للمتفرج -->
+                        <button id="btn-online-qa-next-round-spectator" class="w-full py-3 bg-slate-900 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 hover:text-white font-extrabold rounded-2xl text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-95 mt-2 hidden">
+                            <span>الانتقال إلى الجولة التالية</span>
+                            <i class="fa-solid fa-angles-left text-xs"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- قسم سجل أسئلة وإجابات الجولات السابقة -->
+                <div class="glass-panel-modern rounded-3xl p-4 shadow-xl space-y-3">
+                    <button onclick="toggleQAHistory()" class="w-full flex items-center justify-between text-xs font-bold text-slate-300 hover:text-white transition history-toggle-btn">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i>
+                            <span>سجل الأسئلة والإجابات (الجولات السابقة)</span>
+                        </div>
+                        <i id="history-arrow" class="fa-solid fa-chevron-down text-slate-500 transition-transform history-arrow"></i>
                     </button>
-                </div>
 
-                <div id="online-qa-faceoff" class="bg-gradient-to-r from-cyan-950/30 via-slate-900 to-emerald-950/30 border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-inner">
-                    <div class="flex items-center gap-3">
-                        <div id="qa-asker-avatar" class="w-10 h-10 rounded-full bg-cyan-500/20 border-2 border-cyan-400 text-cyan-300 flex items-center justify-center font-black text-sm">?</div>
-                        <div>
-                            <span class="text-[10px] text-cyan-400 block font-bold">السائل</span>
-                            <span id="qa-asker-name" class="text-sm font-black text-white">—</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center gap-0.5">
-                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">يسأل</span>
-                        <i class="fa-solid fa-arrow-left text-slate-400 animate-pulse text-sm"></i>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div>
-                            <span class="text-[10px] text-emerald-400 block font-bold text-left">المجيب</span>
-                            <span id="qa-respondent-name" class="text-sm font-black text-white">—</span>
-                        </div>
-                        <div id="qa-respondent-avatar" class="w-10 h-10 rounded-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 flex items-center justify-center font-black text-sm">?</div>
-                    </div>
-                </div>
-
-                <div id="qa-round-status" class="text-center text-sm font-bold text-cyan-400 py-1">
-                    ⏳ في انتظار بدء الجولة...
-                </div>
-
-                <div id="qa-history-container" class="qa-history-container hidden">
-                    <div class="text-[10px] text-slate-500 font-bold mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> سجل الأسئلة السابقة
-                    </div>
-                    <div id="qa-history-list"></div>
-                </div>
-
-                <div id="online-qa-asker-view" class="hidden flex flex-col gap-4 bg-cyan-950/20 border border-cyan-500/30 rounded-2xl p-4 transition-all flex-1">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-cyan-400 flex items-center gap-2">
-                            <i class="fa-solid fa-pen-nib"></i> <span id="qa-asker-prompt">اكتب سؤالك:</span>
-                        </span>
-                        <div class="flex items-center gap-3">
-                            <span id="online-qa-timer" class="timer-ring">90</span>
-                            <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/30">أنت السائل</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-3 flex-1">
-                        <textarea id="online-qa-question-input" class="input-dark w-full bg-slate-900/90 border border-cyan-500/40 focus:border-cyan-400 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none h-20" placeholder="مثال: هل هذا الشيء يتواجد عادة في المطبخ؟" maxlength="200"></textarea>
-                        <div class="flex items-center gap-4">
-                            <button id="btn-online-qa-send-q" class="btn-primary flex items-center gap-2 text-sm py-3 px-6">إرسال السؤال 📤</button>
-                            <span class="text-xs text-slate-500">الوقت المتبقي للسؤال</span>
-                        </div>
-                    </div>
-                    <div id="qa-asker-response-box" class="hidden flex flex-col gap-2 qa-current-answer-box">
-                        <div class="label"><i class="fa-solid fa-comment-dots"></i> إجابة المجيب:</div>
-                        <p id="qa-asker-response-text" class="text text-slate-100 font-semibold">"..."</p>
-                    </div>
-                </div>
-
-                <div id="online-qa-respondent-view" class="hidden flex flex-col gap-4 bg-emerald-950/20 border border-emerald-500/30 rounded-2xl p-4 transition-all flex-1">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-emerald-400 flex items-center gap-2">
-                            <i class="fa-solid fa-comment-dots"></i> <span id="qa-respondent-prompt">أجب على السؤال:</span>
-                        </span>
-                        <div class="flex items-center gap-3">
-                            <span id="online-qa-timer-respondent" class="timer-ring">90</span>
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">أنت المجيب</span>
-                        </div>
-                    </div>
-                    <div id="qa-received-q-box" class="bg-slate-900 border-r-4 border-r-cyan-400 border border-slate-800 rounded-xl p-3.5 text-slate-200 text-sm font-medium leading-relaxed shadow-sm">
-                        <span id="online-qa-received-q">⏳ في انتظار السؤال...</span>
-                    </div>
-                    <div class="flex flex-col gap-3 flex-1">
-                        <textarea id="online-qa-answer-input" class="input-dark w-full bg-slate-900/90 border border-emerald-500/40 focus:border-emerald-400 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all resize-none h-20" placeholder="اكتب إجابتك الذكية هنا..." maxlength="200" disabled></textarea>
-                        <div class="flex items-center gap-4">
-                            <button id="btn-online-qa-send-a" class="btn-success flex items-center gap-2 text-sm py-3 px-6" disabled>إرسال الإجابة 📤</button>
-                            <span class="text-xs text-slate-500">الوقت المتبقي للإجابة</span>
+                    <!-- محتوى السجل القابل للطي -->
+                    <div id="history-content" class="hidden space-y-3 pt-2 border-t border-slate-800">
+                        <div id="qa-history-list" class="space-y-2">
+                            <div class="text-slate-500 text-xs text-center py-2">لا توجد جولات سابقة</div>
                         </div>
                     </div>
                 </div>
 
-                <div id="online-qa-spectator-view" class="hidden flex flex-col gap-3 bg-purple-950/20 border border-purple-500/30 rounded-2xl p-4 transition-all flex-1">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-purple-400 flex items-center gap-2">
-                            <i class="fa-solid fa-tv"></i> شاشة المراقبة المباشرة
-                        </span>
-                        <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full border border-purple-500/30 font-bold flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping"></span> مباشر
-                        </span>
-                    </div>
-                    <div class="space-y-3 flex-1">
-                        <div class="bg-slate-900/90 border border-cyan-500/30 rounded-xl p-3 text-xs flex flex-col gap-1.5 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-1 h-full bg-cyan-400"></div>
-                            <div class="flex items-center justify-between text-[11px] text-cyan-400 font-bold">
-                                <span><i class="fa-solid fa-circle-question"></i> <span id="qa-spectator-asker-label">السؤال من —:</span></span>
-                                <span id="qa-spectator-q-status" class="text-[10px] text-amber-400">في انتظار السؤال...</span>
-                            </div>
-                            <p id="qa-spectator-q-text" class="text-slate-200 font-medium pr-1">⏳ في انتظار السؤال...</p>
-                        </div>
-                        <div class="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-3 text-xs flex flex-col gap-1.5 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-1 h-full bg-emerald-400"></div>
-                            <div class="flex items-center justify-between text-[11px] text-emerald-400 font-bold">
-                                <span><i class="fa-solid fa-comment-dots"></i> <span id="qa-spectator-respondent-label">إجابة —:</span></span>
-                                <span id="qa-spectator-status-tag" class="text-[10px] text-amber-400">في انتظار الإجابة...</span>
-                            </div>
-                            <p id="qa-spectator-a-text" class="text-slate-400 font-medium pr-1 italic">...في انتظار الرد</p>
-                        </div>
-                    </div>
-                </div>
-
-                <button id="btn-online-qa-to-vote" class="hidden btn-purple w-full text-lg">🗳️ الانتقال للتصويت</button>
             </div>
         </div>
 
@@ -3447,7 +3693,7 @@
 
             init() {
                 try {
-                    this.context = new (window.AudioContext || window.webkitAudioContext)();
+                    this.context = new(window.AudioContext || window.webkitAudioContext)();
                     this.initialized = true;
                 } catch (e) {
                     console.warn('⚠️ Web Audio API not supported');
@@ -3505,7 +3751,6 @@
                             gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
                             oscillator.start(now);
                             oscillator.stop(now + 0.1);
-                            // تكرار النغمة
                             setTimeout(() => {
                                 try {
                                     const osc2 = this.context.createOscillator();
@@ -3515,7 +3760,8 @@
                                     osc2.frequency.setValueAtTime(600, this.context.currentTime);
                                     osc2.type = 'square';
                                     gain2.gain.setValueAtTime(0.08, this.context.currentTime);
-                                    gain2.gain.exponentialRampToValueAtTime(0.001, this.context.currentTime + 0.1);
+                                    gain2.gain.exponentialRampToValueAtTime(0.001, this.context
+                                    .currentTime + 0.1);
                                     osc2.start(this.context.currentTime);
                                     osc2.stop(this.context.currentTime + 0.1);
                                 } catch (e) {}
@@ -3523,7 +3769,6 @@
                             break;
 
                         case 'reveal':
-                            // صوت كشف البطاقة - تأثير درامي
                             oscillator.frequency.setValueAtTime(200, now);
                             oscillator.frequency.setValueAtTime(400, now + 0.1);
                             oscillator.frequency.setValueAtTime(600, now + 0.2);
@@ -3535,7 +3780,6 @@
                             break;
 
                         case 'game_start':
-                            // صوت بدء اللعبة - ثلاث نغمات تصاعدية
                             const freqs = [440, 554, 659];
                             freqs.forEach((freq, i) => {
                                 const osc = this.context.createOscillator();
@@ -3561,7 +3805,6 @@
                             break;
 
                         default:
-                            // صوت افتراضي
                             oscillator.frequency.setValueAtTime(440, now);
                             oscillator.type = 'sine';
                             gainNode.gain.setValueAtTime(0.1, now);
@@ -3670,7 +3913,15 @@
             stateRestored: false,
             _qaAskerTimer: null,
             _qaRespondentTimer: null,
-            _qaRealtimeSetup: false
+            _qaRealtimeSetup: false,
+            qaRoundComplete: false,
+            qaQuestionSubmitted: false,
+            qaAnswerSubmitted: false,
+            qaStartTime: null,
+
+            // متغيرات خاصة بالـ Reveal الجديد
+            revealFlipped: false,
+            revealReadyClicked: false
         };
 
         // ==============================================================
@@ -3714,7 +3965,6 @@
 
         function hapticSuccess() { try { if (navigator.vibrate) navigator.vibrate([12, 25, 12]); } catch (e) {} }
 
-        // ===== دوال الصوت المدمجة مع اللمس =====
         function playSound(type) {
             SoundManager.play(type);
         }
@@ -3877,6 +4127,8 @@
                 OS.currentPhase = 'lobby';
                 OS.gameData = null;
                 OS._qaRealtimeSetup = false;
+                OS.revealFlipped = false;
+                OS.revealReadyClicked = false;
                 localStorage.removeItem('barra_room_id');
                 console.log('🚪 تمت المغادرة الصامتة');
             } catch (e) {
@@ -3922,45 +4174,44 @@
 
         // ===== نظام التوست =====
         function showToast(message, type = 'info', duration = 4000) {
-    const container = document.getElementById('toast-container');
-    if (!container) {
-        console.error('❌ حاوية التوست غير موجودة');
-        return;
-    }
-    
-    const icons = {
-        info: 'fa-solid fa-circle-info text-cyan-400',
-        success: 'fa-solid fa-circle-check text-emerald-400',
-        error: 'fa-solid fa-circle-exclamation text-rose-400',
-        warning: 'fa-solid fa-triangle-exclamation text-yellow-400'
-    };
+            const container = document.getElementById('toast-container');
+            if (!container) {
+                console.error('❌ حاوية التوست غير موجودة');
+                return;
+            }
 
-    function cleanText(text) {
-        if (!text) return '';
-        let cleaned = text.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}]/gu, '');
-        cleaned = cleaned.replace(/[!؟]/g, '').trim();
-        return cleaned;
-    }
-    
-    const cleanMessage = cleanText(message) || 'تنبيه';
-    const item = document.createElement('div');
-    item.className = `toast-item ${type}`;
-    item.innerHTML = `
-        <span class="toast-icon"><i class="${icons[type] || icons.info}"></i></span>
-        <span class="toast-msg" style="font-size:0.95rem; line-height:1.5;">${cleanMessage}</span>
-    `;
-    container.appendChild(item);
-    
-    // تشغيل صوت حسب نوع التوست
-    if (type === 'success') playSound('success');
-    else if (type === 'error') playSound('error');
-    else if (type === 'warning') playSound('timer_warning');
-    
-    setTimeout(() => {
-        item.classList.add('hiding');
-        setTimeout(() => { if (item.parentNode) item.remove(); }, 300);
-    }, duration);
-}
+            const icons = {
+                info: 'fa-solid fa-circle-info text-cyan-400',
+                success: 'fa-solid fa-circle-check text-emerald-400',
+                error: 'fa-solid fa-circle-exclamation text-rose-400',
+                warning: 'fa-solid fa-triangle-exclamation text-yellow-400'
+            };
+
+            function cleanText(text) {
+                if (!text) return '';
+                let cleaned = text.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}]/gu, '');
+                cleaned = cleaned.replace(/[!؟]/g, '').trim();
+                return cleaned;
+            }
+
+            const cleanMessage = cleanText(message) || 'تنبيه';
+            const item = document.createElement('div');
+            item.className = `toast-item ${type}`;
+            item.innerHTML = `
+                <span class="toast-icon"><i class="${icons[type] || icons.info}"></i></span>
+                <span class="toast-msg" style="font-size:0.95rem; line-height:1.5;">${cleanMessage}</span>
+            `;
+            container.appendChild(item);
+
+            if (type === 'success') playSound('success');
+            else if (type === 'error') playSound('error');
+            else if (type === 'warning') playSound('timer_warning');
+
+            setTimeout(() => {
+                item.classList.add('hiding');
+                setTimeout(() => { if (item.parentNode) item.remove(); }, 300);
+            }, duration);
+        }
 
         // ===== نظام المودال =====
         let modalCallback = null;
@@ -4120,212 +4371,205 @@
 
         // ===== معالجة تسجيل الدخول =====
         async function handleLogin(e) {
-    e.preventDefault();
-    const username = document.getElementById('login-username').value.trim();
-    const password = document.getElementById('login-password').value;
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
 
-    if (!username || !password) {
-        showToast('يرجى إدخال اسم المستخدم وكلمة المرور', 'warning');
-        return;
-    }
-
-    if (username.length < 3) {
-        showToast('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'warning');
-        return;
-    }
-
-    if (!/^[\u0600-\u06FFa-zA-Z0-9\s\.\-_]+$/.test(username)) {
-        showToast('اسم المستخدم يحتوي على أحرف غير مسموحة', 'warning');
-        return;
-    }
-
-    const btn = document.getElementById('btn-submit-login');
-    btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري تسجيل الدخول...</span>`;
-
-    const sb = OS.supabase || initSupabase();
-    if (!sb) {
-        showToast('فشل الاتصال بقاعدة البيانات', 'error');
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
-        return;
-    }
-
-    try {
-        // تنظيف أي بيانات قديمة قبل تسجيل الدخول
-        localStorage.removeItem('barra_auth_user');
-        OS.authUser = null;
-        
-        const { data: user, error } = await sb.from('users')
-            .select('username, password_hash')
-            .eq('username', username)
-            .maybeSingle();
-
-        if (error) {
-            showToast('حدث خطأ في الاتصال: ' + error.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
-            return;
-        }
-
-        if (!user) {
-            showToast('لا يوجد حساب بهذا الاسم. يرجى إنشاء حساب جديد', 'warning');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
-            return;
-        }
-
-        if (user.password_hash !== btoa(password)) {
-            showToast('كلمة المرور غير صحيحة. حاول مرة أخرى', 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
-            return;
-        }
-
-        // تسجيل الدخول بنجاح
-        setStoredUser(username, password);
-        OS.authUser = { username };
-        OS.playerName = username;
-        localStorage.setItem('barra_player_name', username);
-        updateProfileUI();
-
-        showToast('مرحباً بك ' + username + '! تم تسجيل الدخول بنجاح', 'success');
-        hapticSuccessWithSound();
-
-        // إعادة تعيين الحقول
-        document.getElementById('login-username').value = '';
-        document.getElementById('login-password').value = '';
-
-        setTimeout(() => {
-            hideAuthOverlay();
-            if (authCallback) {
-                const cb = authCallback;
-                authCallback = null;
-                cb();
+            if (!username || !password) {
+                showToast('يرجى إدخال اسم المستخدم وكلمة المرور', 'warning');
+                return;
             }
-        }, 600);
 
-    } catch (err) {
-        console.error('Login error:', err);
-        showToast('حدث خطأ في الاتصال: ' + err.message, 'error');
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
-    }
-}
+            if (username.length < 3) {
+                showToast('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'warning');
+                return;
+            }
+
+            if (!/^[\u0600-\u06FFa-zA-Z0-9\s\.\-_]+$/.test(username)) {
+                showToast('اسم المستخدم يحتوي على أحرف غير مسموحة', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-login');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري تسجيل الدخول...</span>`;
+
+            const sb = OS.supabase || initSupabase();
+            if (!sb) {
+                showToast('فشل الاتصال بقاعدة البيانات', 'error');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
+                return;
+            }
+
+            try {
+                localStorage.removeItem('barra_auth_user');
+                OS.authUser = null;
+
+                const { data: user, error } = await sb.from('users')
+                    .select('username, password_hash')
+                    .eq('username', username)
+                    .maybeSingle();
+
+                if (error) {
+                    showToast('حدث خطأ في الاتصال: ' + error.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
+                    return;
+                }
+
+                if (!user) {
+                    showToast('لا يوجد حساب بهذا الاسم. يرجى إنشاء حساب جديد', 'warning');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
+                    return;
+                }
+
+                if (user.password_hash !== btoa(password)) {
+                    showToast('كلمة المرور غير صحيحة. حاول مرة أخرى', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
+                    return;
+                }
+
+                setStoredUser(username, password);
+                OS.authUser = { username };
+                OS.playerName = username;
+                localStorage.setItem('barra_player_name', username);
+                updateProfileUI();
+
+                showToast('مرحباً بك ' + username + '! تم تسجيل الدخول بنجاح', 'success');
+                hapticSuccessWithSound();
+
+                document.getElementById('login-username').value = '';
+                document.getElementById('login-password').value = '';
+
+                setTimeout(() => {
+                    hideAuthOverlay();
+                    if (authCallback) {
+                        const cb = authCallback;
+                        authCallback = null;
+                        cb();
+                    }
+                }, 600);
+
+            } catch (err) {
+                console.error('Login error:', err);
+                showToast('حدث خطأ في الاتصال: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>تسجيل الدخول</span>`;
+            }
+        }
 
         // ===== معالجة إنشاء الحساب =====
         async function handleRegister(e) {
-    e.preventDefault();
-    const username = document.getElementById('register-username').value.trim();
-    const password = document.getElementById('register-password').value;
-    const confirmPassword = document.getElementById('register-confirm-password').value;
+            e.preventDefault();
+            const username = document.getElementById('register-username').value.trim();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
 
-    if (!username || username.length < 3) {
-        showToast('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'warning');
-        return;
-    }
-
-    if (!/^[\u0600-\u06FFa-zA-Z0-9\s\.\-_]+$/.test(username)) {
-        showToast('اسم المستخدم يحتوي على أحرف غير مسموحة', 'warning');
-        return;
-    }
-
-    if (password.length < 6) {
-        showToast('كلمة المرور يجب أن تكون 6 خانات على الأقل', 'warning');
-        return;
-    }
-
-    if (!/^[a-zA-Z0-9]+$/.test(password)) {
-        showToast('كلمة المرور: أحرف إنجليزية وأرقام فقط', 'warning');
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        showToast('كلمتا المرور غير متطابقتين', 'warning');
-        return;
-    }
-
-    const btn = document.getElementById('btn-submit-register');
-    btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري إنشاء الحساب...</span>`;
-
-    const sb = OS.supabase || initSupabase();
-    if (!sb) {
-        showToast('فشل الاتصال بقاعدة البيانات', 'error');
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
-        return;
-    }
-
-    try {
-        // التحقق من وجود المستخدم
-        const { data: existing, error: checkErr } = await sb.from('users')
-            .select('username')
-            .eq('username', username)
-            .maybeSingle();
-
-        if (checkErr) {
-            showToast('حدث خطأ في التحقق: ' + checkErr.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
-            return;
-        }
-
-        if (existing) {
-            // رسالة واضحة للمستخدم
-            showToast('اسم المستخدم "' + username + '" مستخدم من قبل، اختر اسماً آخر', 'warning');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
-            return;
-        }
-
-        // إنشاء الحساب
-        const { error: insertErr } = await sb.from('users').insert({
-            username,
-            password_hash: btoa(password)
-        });
-
-        if (insertErr) {
-            // إذا كان الخطأ بسبب تكرار الاسم (حدث في نفس الوقت)
-            if (insertErr.message && insertErr.message.includes('duplicate key')) {
-                showToast('اسم المستخدم "' + username + '" مستخدم من قبل، اختر اسماً آخر', 'warning');
-            } else {
-                showToast('فشل إنشاء الحساب: ' + insertErr.message, 'error');
+            if (!username || username.length < 3) {
+                showToast('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'warning');
+                return;
             }
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
-            return;
-        }
 
-        setStoredUser(username, password);
-        OS.authUser = { username };
-        OS.playerName = username;
-        localStorage.setItem('barra_player_name', username);
-        updateProfileUI();
-
-        showToast('تم إنشاء الحساب بنجاح! مرحباً بك ' + username, 'success');
-        hapticSuccessWithSound();
-
-        document.getElementById('register-username').value = '';
-        document.getElementById('register-password').value = '';
-        document.getElementById('register-confirm-password').value = '';
-
-        setTimeout(() => {
-            hideAuthOverlay();
-            if (authCallback) {
-                const cb = authCallback;
-                authCallback = null;
-                cb();
+            if (!/^[\u0600-\u06FFa-zA-Z0-9\s\.\-_]+$/.test(username)) {
+                showToast('اسم المستخدم يحتوي على أحرف غير مسموحة', 'warning');
+                return;
             }
-        }, 800);
 
-    } catch (err) {
-        console.error('Register error:', err);
-        showToast('حدث خطأ في الاتصال: ' + err.message, 'error');
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
-    }
-}
+            if (password.length < 6) {
+                showToast('كلمة المرور يجب أن تكون 6 خانات على الأقل', 'warning');
+                return;
+            }
+
+            if (!/^[a-zA-Z0-9]+$/.test(password)) {
+                showToast('كلمة المرور: أحرف إنجليزية وأرقام فقط', 'warning');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('كلمتا المرور غير متطابقتين', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-register');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>جاري إنشاء الحساب...</span>`;
+
+            const sb = OS.supabase || initSupabase();
+            if (!sb) {
+                showToast('فشل الاتصال بقاعدة البيانات', 'error');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
+                return;
+            }
+
+            try {
+                const { data: existing, error: checkErr } = await sb.from('users')
+                    .select('username')
+                    .eq('username', username)
+                    .maybeSingle();
+
+                if (checkErr) {
+                    showToast('حدث خطأ في التحقق: ' + checkErr.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
+                    return;
+                }
+
+                if (existing) {
+                    showToast('اسم المستخدم "' + username + '" مستخدم من قبل، اختر اسماً آخر', 'warning');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
+                    return;
+                }
+
+                const { error: insertErr } = await sb.from('users').insert({
+                    username,
+                    password_hash: btoa(password)
+                });
+
+                if (insertErr) {
+                    if (insertErr.message && insertErr.message.includes('duplicate key')) {
+                        showToast('اسم المستخدم "' + username + '" مستخدم من قبل، اختر اسماً آخر', 'warning');
+                    } else {
+                        showToast('فشل إنشاء الحساب: ' + insertErr.message, 'error');
+                    }
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
+                    return;
+                }
+
+                setStoredUser(username, password);
+                OS.authUser = { username };
+                OS.playerName = username;
+                localStorage.setItem('barra_player_name', username);
+                updateProfileUI();
+
+                showToast('تم إنشاء الحساب بنجاح! مرحباً بك ' + username, 'success');
+                hapticSuccessWithSound();
+
+                document.getElementById('register-username').value = '';
+                document.getElementById('register-password').value = '';
+                document.getElementById('register-confirm-password').value = '';
+
+                setTimeout(() => {
+                    hideAuthOverlay();
+                    if (authCallback) {
+                        const cb = authCallback;
+                        authCallback = null;
+                        cb();
+                    }
+                }, 800);
+
+            } catch (err) {
+                console.error('Register error:', err);
+                showToast('حدث خطأ في الاتصال: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-user-check"></i> <span>إنشاء حساب جديد</span>`;
+            }
+        }
 
         function requireAuth(callback) {
             const stored = getStoredUser();
@@ -4391,7 +4635,8 @@
                 userHandle.textContent = `@${username}`;
                 statusText.textContent = 'مسجل';
                 statusBadge.className = 'profile-status-badge';
-                statusBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i><span id="profile-status-text-short">مسجل</span>`;
+                statusBadge.innerHTML =
+                `<i class="fa-solid fa-circle-check"></i><span id="profile-status-text-short">مسجل</span>`;
                 if (onlineDot) onlineDot.className = 'online-dot';
                 editNameInput.value = username;
             } else {
@@ -4403,7 +4648,8 @@
                 userHandle.textContent = '@زائر';
                 statusText.textContent = 'غير مسجل';
                 statusBadge.className = 'profile-status-badge offline';
-                statusBadge.innerHTML = `<i class="fa-solid fa-circle"></i><span id="profile-status-text-short">غير مسجل</span>`;
+                statusBadge.innerHTML =
+                `<i class="fa-solid fa-circle"></i><span id="profile-status-text-short">غير مسجل</span>`;
                 if (onlineDot) onlineDot.className = 'online-dot offline';
                 editNameInput.value = '';
             }
@@ -4458,227 +4704,222 @@
         }
 
         async function handleUpdateName() {
-    const input = document.getElementById('profile-edit-name');
-    const newName = input.value.trim();
+            const input = document.getElementById('profile-edit-name');
+            const newName = input.value.trim();
 
-    if (!newName) {
-        showToast('الرجاء إدخال اسم مستخدم صالح', 'warning');
-        return;
-    }
-    if (newName.length < 3) {
-        showToast('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'warning');
-        return;
-    }
-    if (!/^[\u0600-\u06FFa-zA-Z0-9\s\.\-_]+$/.test(newName)) {
-        showToast('اسم المستخدم: أحرف عربية/إنجليزية، أرقام، مسافات، نقاط، شرطات فقط', 'warning');
-        return;
-    }
+            if (!newName) {
+                showToast('الرجاء إدخال اسم مستخدم صالح', 'warning');
+                return;
+            }
+            if (newName.length < 3) {
+                showToast('اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'warning');
+                return;
+            }
+            if (!/^[\u0600-\u06FFa-zA-Z0-9\s\.\-_]+$/.test(newName)) {
+                showToast('اسم المستخدم: أحرف عربية/إنجليزية، أرقام، مسافات، نقاط، شرطات فقط', 'warning');
+                return;
+            }
 
-    const stored = getStoredUser();
-    if (!stored) {
-        showToast('يجب تسجيل الدخول أولاً', 'warning');
-        return;
-    }
+            const stored = getStoredUser();
+            if (!stored) {
+                showToast('يجب تسجيل الدخول أولاً', 'warning');
+                return;
+            }
 
-    if (newName === stored.username) {
-        showToast('الاسم مطابق للاسم الحالي', 'info');
-        return;
-    }
+            if (newName === stored.username) {
+                showToast('الاسم مطابق للاسم الحالي', 'info');
+                return;
+            }
 
-    const sb = OS.supabase || initSupabase();
-    if (!sb) {
-        showToast('فشل الاتصال بقاعدة البيانات', 'error');
-        return;
-    }
+            const sb = OS.supabase || initSupabase();
+            if (!sb) {
+                showToast('فشل الاتصال بقاعدة البيانات', 'error');
+                return;
+            }
 
-    const btn = document.getElementById('profile-update-name');
-    btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            const btn = document.getElementById('profile-update-name');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
 
-    try {
-        const { data: existing, error: checkErr } = await sb.from('users').select('username')
-            .eq('username', newName).maybeSingle();
-        
-        if (checkErr) {
-            showToast('خطأ في التحقق: ' + checkErr.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
-            return;
-        }
-        
-        if (existing) {
-            showToast('اسم المستخدم "' + newName + '" موجود بالفعل', 'warning');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
-            return;
-        }
-
-        const { error: updateErr } = await sb.from('users')
-            .update({ username: newName })
-            .eq('username', stored.username);
-        
-        if (updateErr) {
-            showToast('فشل تحديث الاسم: ' + updateErr.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
-            return;
-        }
-
-        setStoredUser(newName, atob(stored.password));
-        OS.authUser = { username: newName };
-        OS.playerName = newName;
-        localStorage.setItem('barra_player_name', newName);
-        updateProfileUI();
-
-        showToast('تم تحديث اسم المستخدم إلى "' + newName + '"', 'success');
-        hapticSuccessWithSound();
-
-        if (OS.roomId && OS.myPlayerId) {
             try {
-                await sb.from('room_players')
-                    .update({ player_name: newName })
-                    .eq('id', OS.myPlayerId);
+                const { data: existing, error: checkErr } = await sb.from('users').select('username')
+                    .eq('username', newName).maybeSingle();
+
+                if (checkErr) {
+                    showToast('خطأ في التحقق: ' + checkErr.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
+                    return;
+                }
+
+                if (existing) {
+                    showToast('اسم المستخدم "' + newName + '" موجود بالفعل', 'warning');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
+                    return;
+                }
+
+                const { error: updateErr } = await sb.from('users')
+                    .update({ username: newName })
+                    .eq('username', stored.username);
+
+                if (updateErr) {
+                    showToast('فشل تحديث الاسم: ' + updateErr.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
+                    return;
+                }
+
+                setStoredUser(newName, atob(stored.password));
+                OS.authUser = { username: newName };
+                OS.playerName = newName;
+                localStorage.setItem('barra_player_name', newName);
+                updateProfileUI();
+
+                showToast('تم تحديث اسم المستخدم إلى "' + newName + '"', 'success');
+                hapticSuccessWithSound();
+
+                if (OS.roomId && OS.myPlayerId) {
+                    try {
+                        await sb.from('room_players')
+                            .update({ player_name: newName })
+                            .eq('id', OS.myPlayerId);
+                    } catch (e) {
+                        console.warn('⚠️ فشل تحديث اسم اللاعب في الغرفة:', e);
+                    }
+                }
+
             } catch (e) {
-                console.warn('⚠️ فشل تحديث اسم اللاعب في الغرفة:', e);
+                showToast('حدث خطأ: ' + e.message, 'error');
+                console.error('Update name error:', e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
             }
         }
-
-    } catch (e) {
-        showToast('حدث خطأ: ' + e.message, 'error');
-        console.error('Update name error:', e);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>`;
-    }
-}
 
         async function handleChangePassword() {
-    const oldPass = document.getElementById('profile-old-password').value;
-    const newPass = document.getElementById('profile-new-password').value;
-    const confirmPass = document.getElementById('profile-confirm-password').value;
+            const oldPass = document.getElementById('profile-old-password').value;
+            const newPass = document.getElementById('profile-new-password').value;
+            const confirmPass = document.getElementById('profile-confirm-password').value;
 
-    if (!oldPass || !newPass || !confirmPass) {
-        showToast('الرجاء تعبئة جميع الحقول', 'warning');
-        return;
-    }
+            if (!oldPass || !newPass || !confirmPass) {
+                showToast('الرجاء تعبئة جميع الحقول', 'warning');
+                return;
+            }
 
-    if (newPass.length < 6) {
-        showToast('كلمة المرور الجديدة يجب أن تكون 6 خانات على الأقل', 'warning');
-        return;
-    }
+            if (newPass.length < 6) {
+                showToast('كلمة المرور الجديدة يجب أن تكون 6 خانات على الأقل', 'warning');
+                return;
+            }
 
-    if (!/^[a-zA-Z0-9]+$/.test(newPass)) {
-        showToast('كلمة المرور: أحرف إنجليزية وأرقام فقط (بدون مسافات أو رموز)', 'warning');
-        return;
-    }
+            if (!/^[a-zA-Z0-9]+$/.test(newPass)) {
+                showToast('كلمة المرور: أحرف إنجليزية وأرقام فقط (بدون مسافات أو رموز)', 'warning');
+                return;
+            }
 
-    if (newPass !== confirmPass) {
-        showToast('كلمتا المرور الجديدة غير متطابقتين', 'warning');
-        return;
-    }
+            if (newPass !== confirmPass) {
+                showToast('كلمتا المرور الجديدة غير متطابقتين', 'warning');
+                return;
+            }
 
-    const stored = getStoredUser();
-    if (!stored) {
-        showToast('يجب تسجيل الدخول أولاً', 'warning');
-        return;
-    }
+            const stored = getStoredUser();
+            if (!stored) {
+                showToast('يجب تسجيل الدخول أولاً', 'warning');
+                return;
+            }
 
-    const sb = OS.supabase || initSupabase();
-    if (!sb) {
-        showToast('فشل الاتصال بقاعدة البيانات', 'error');
-        return;
-    }
+            const sb = OS.supabase || initSupabase();
+            if (!sb) {
+                showToast('فشل الاتصال بقاعدة البيانات', 'error');
+                return;
+            }
 
-    const btn = document.getElementById('profile-change-password');
-    btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري التغيير...`;
+            const btn = document.getElementById('profile-change-password');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري التغيير...`;
 
-    try {
-        const { data: user, error } = await sb.from('users').select('password_hash')
-            .eq('username', stored.username).maybeSingle();
-        
-        if (error || !user) {
-            showToast('حدث خطأ في التحقق من المستخدم', 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
-            return;
+            try {
+                const { data: user, error } = await sb.from('users').select('password_hash')
+                    .eq('username', stored.username).maybeSingle();
+
+                if (error || !user) {
+                    showToast('حدث خطأ في التحقق من المستخدم', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
+                    return;
+                }
+
+                if (user.password_hash !== btoa(oldPass)) {
+                    showToast('كلمة المرور الحالية غير صحيحة', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
+                    return;
+                }
+
+                const { error: updateErr } = await sb.from('users')
+                    .update({ password_hash: btoa(newPass) })
+                    .eq('username', stored.username);
+
+                if (updateErr) {
+                    showToast('فشل تغيير كلمة المرور: ' + updateErr.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
+                    return;
+                }
+
+                setStoredUser(stored.username, newPass);
+                showToast('تم تغيير كلمة المرور بنجاح', 'success');
+                hapticSuccessWithSound();
+
+                document.getElementById('profile-old-password').value = '';
+                document.getElementById('profile-new-password').value = '';
+                document.getElementById('profile-confirm-password').value = '';
+
+            } catch (e) {
+                showToast('حدث خطأ: ' + e.message, 'error');
+                console.error('Change password error:', e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
+            }
         }
-
-        if (user.password_hash !== btoa(oldPass)) {
-            showToast('كلمة المرور الحالية غير صحيحة', 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
-            return;
-        }
-
-        const { error: updateErr } = await sb.from('users')
-            .update({ password_hash: btoa(newPass) })
-            .eq('username', stored.username);
-        
-        if (updateErr) {
-            showToast('فشل تغيير كلمة المرور: ' + updateErr.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
-            return;
-        }
-
-        setStoredUser(stored.username, newPass);
-        showToast('تم تغيير كلمة المرور بنجاح', 'success');
-        hapticSuccessWithSound();
-
-        document.getElementById('profile-old-password').value = '';
-        document.getElementById('profile-new-password').value = '';
-        document.getElementById('profile-confirm-password').value = '';
-
-    } catch (e) {
-        showToast('حدث خطأ: ' + e.message, 'error');
-        console.error('Change password error:', e);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-rotate"></i> تغيير كلمة المرور`;
-    }
-}
 
         function handleLogout() {
-    hideProfileModal();
-    
-    setTimeout(() => {
-        showCustomModal('تسجيل الخروج', 'هل أنت متأكد من تسجيل الخروج؟', 'warning', 'نعم، سجل خروج', 'إلغاء', () => {
-            // تنظيف شامل للبيانات
-            clearStoredUser();
-            OS.authUser = null;
-            OS.playerName = null;
-            localStorage.removeItem('barra_player_name');
-            localStorage.removeItem('barra_auth_user');
-            
-            // إغلاق أي جلسات مفتوحة
-            if (OS.roomId) {
-                leaveOnlineRoomSilent();
-                showScreen('landing');
-            }
-            
-            updateProfileUI();
-            showToast('تم تسجيل الخروج بنجاح', 'info');
-            hapticAndSound('click');
-            
-            // إغلاق شاشة المصادقة إذا كانت مفتوحة
-            document.getElementById('auth-overlay').classList.remove('active');
-            document.body.style.overflow = '';
-            
-            // إعادة تعيين حقول المصادقة
-            document.getElementById('login-username').value = '';
-            document.getElementById('login-password').value = '';
-            document.getElementById('register-username').value = '';
-            document.getElementById('register-password').value = '';
-            document.getElementById('register-confirm-password').value = '';
-            
-            // فتح شاشة المصادقة لتسجيل الدخول مجدداً
+            hideProfileModal();
+
             setTimeout(() => {
-                showAuthOverlay(() => {});
+                showCustomModal('تسجيل الخروج', 'هل أنت متأكد من تسجيل الخروج؟', 'warning', 'نعم، سجل خروج', 'إلغاء', () => {
+                    clearStoredUser();
+                    OS.authUser = null;
+                    OS.playerName = null;
+                    localStorage.removeItem('barra_player_name');
+                    localStorage.removeItem('barra_auth_user');
+
+                    if (OS.roomId) {
+                        leaveOnlineRoomSilent();
+                        showScreen('landing');
+                    }
+
+                    updateProfileUI();
+                    showToast('تم تسجيل الخروج بنجاح', 'info');
+                    hapticAndSound('click');
+
+                    document.getElementById('auth-overlay').classList.remove('active');
+                    document.body.style.overflow = '';
+
+                    document.getElementById('login-username').value = '';
+                    document.getElementById('login-password').value = '';
+                    document.getElementById('register-username').value = '';
+                    document.getElementById('register-password').value = '';
+                    document.getElementById('register-confirm-password').value = '';
+
+                    setTimeout(() => {
+                        showAuthOverlay(() => {});
+                    }, 300);
+                });
             }, 300);
-        });
-    }, 300);
-}
+        }
 
         // ==============================================================
         // ===== دوال الأونلاين =====
@@ -4873,6 +5114,9 @@
                 OS.playerName = playerName;
                 OS.currentPhase = 'lobby';
                 OS.isReady = true;
+                OS.hasRevealed = false;
+                OS.revealFlipped = false;
+                OS.revealReadyClicked = false;
                 localStorage.setItem('barra_room_id', room.id);
 
                 subscribeToRoom(room.id);
@@ -4931,6 +5175,9 @@
                     OS.playerName = existing.player_name;
                     OS.currentPhase = room.status;
                     OS.isReady = true;
+                    OS.hasRevealed = existing.has_revealed || false;
+                    OS.revealFlipped = false;
+                    OS.revealReadyClicked = false;
                     localStorage.setItem('barra_room_id', room.id);
                     subscribeToRoom(room.id);
                     subscribeToPlayers(room.id);
@@ -4961,6 +5208,9 @@
                 OS.playerName = playerName;
                 OS.currentPhase = room.status || 'lobby';
                 OS.isReady = true;
+                OS.hasRevealed = false;
+                OS.revealFlipped = false;
+                OS.revealReadyClicked = false;
                 localStorage.setItem('barra_room_id', room.id);
                 subscribeToRoom(room.id);
                 subscribeToPlayers(room.id);
@@ -5096,38 +5346,39 @@
                 }
 
                 const copyBtn = document.getElementById('btn-copy-code');
-if (copyBtn) {
-    copyBtn.onclick = () => {
-        const code = room.code;
-        navigator.clipboard.writeText(code).then(() => {
-            showToast('✅ تم نسخ الكود: ' + code, 'success');
-            hapticAndSound('click');
-            // تغيير الأيقونة إلى أيقونة نجاح واضحة
-            copyBtn.className = 'fa-solid fa-check text-emerald-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
-            copyBtn.style.textShadow = '0 0 20px rgba(16,185,129,0.3)';
-            setTimeout(() => {
-                // العودة للأيقونة الأصلية
-                copyBtn.className = 'fa-regular fa-copy text-slate-400 hover:text-cyan-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
-                copyBtn.style.textShadow = 'none';
-            }, 2500);
-        }).catch(() => {
-            // طريقة بديلة للنسخ
-            const temp = document.createElement('input');
-            temp.value = code;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand('copy');
-            temp.remove();
-            showToast('✅ تم نسخ الكود: ' + code, 'success');
-            copyBtn.className = 'fa-solid fa-check text-emerald-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
-            copyBtn.style.textShadow = '0 0 20px rgba(16,185,129,0.3)';
-            setTimeout(() => {
-                copyBtn.className = 'fa-regular fa-copy text-slate-400 hover:text-cyan-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
-                copyBtn.style.textShadow = 'none';
-            }, 2500);
-        });
-    };
-}
+                if (copyBtn) {
+                    copyBtn.onclick = () => {
+                        const code = room.code;
+                        navigator.clipboard.writeText(code).then(() => {
+                            showToast('✅ تم نسخ الكود: ' + code, 'success');
+                            hapticAndSound('click');
+                            copyBtn.className =
+                                'fa-solid fa-check text-emerald-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+                            copyBtn.style.textShadow = '0 0 20px rgba(16,185,129,0.3)';
+                            setTimeout(() => {
+                                copyBtn.className =
+                                    'fa-regular fa-copy text-slate-400 hover:text-cyan-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+                                copyBtn.style.textShadow = 'none';
+                            }, 2500);
+                        }).catch(() => {
+                            const temp = document.createElement('input');
+                            temp.value = code;
+                            document.body.appendChild(temp);
+                            temp.select();
+                            document.execCommand('copy');
+                            temp.remove();
+                            showToast('✅ تم نسخ الكود: ' + code, 'success');
+                            copyBtn.className =
+                                'fa-solid fa-check text-emerald-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+                            copyBtn.style.textShadow = '0 0 20px rgba(16,185,129,0.3)';
+                            setTimeout(() => {
+                                copyBtn.className =
+                                    'fa-regular fa-copy text-slate-400 hover:text-cyan-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+                                copyBtn.style.textShadow = 'none';
+                            }, 2500);
+                        });
+                    };
+                }
                 document.getElementById('online-room-player-count').textContent = `${players.length} لاعب`;
 
                 const list = document.getElementById('online-player-list');
@@ -5208,7 +5459,8 @@ if (copyBtn) {
                     `⏳ في انتظار ${players.length - readyCount} لاعبين للاستعداد (${readyCount}/${players.length})`;
             } else {
                 startBtn.disabled = false;
-                hostHint.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> جميع اللاعبين جاهزون! اضغط للبدء`;
+                hostHint.innerHTML =
+                    `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> جميع اللاعبين جاهزون! اضغط للبدء`;
             }
         }
 
@@ -5277,6 +5529,9 @@ if (copyBtn) {
                     oddWord = related[randInt(0, related.length - 1)];
                 }
 
+                // حساب عدد الجولات بناءً على عدد اللاعبين (كل لاعب يسأل مرة واحدة)
+                const totalRounds = players.length;
+
                 const updateData = {
                     status: 'reveal',
                     category: selectedCategory,
@@ -5285,17 +5540,15 @@ if (copyBtn) {
                     odd_player_id: oddPlayerId,
                     odd_word: oddWord,
                     current_round: 0,
-                    total_rounds: QA_CONFIG.TOTAL_ROUNDS,
+                    total_rounds: totalRounds,
                     qa_phase: 'waiting',
                     qa_round: 0,
-                    qa_total_rounds: QA_CONFIG.TOTAL_ROUNDS,
+                    qa_total_rounds: totalRounds,
                     qa_asker_id: null,
                     qa_respondent_id: null,
                     qa_question: null,
                     qa_answer: null,
                     qa_answered: false,
-                    qa_asker_time_left: QA_CONFIG.ASKER_TIME,
-                    qa_respondent_time_left: QA_CONFIG.RESPONDENT_TIME,
                     qa_question_submitted: false,
                     qa_answer_submitted: false,
                     qa_round_complete: false,
@@ -5419,6 +5672,8 @@ if (copyBtn) {
                 OS.currentPhase = 'lobby';
                 OS.gameData = null;
                 OS._qaRealtimeSetup = false;
+                OS.revealFlipped = false;
+                OS.revealReadyClicked = false;
                 localStorage.removeItem('barra_room_id');
 
                 showScreen('online-lobby');
@@ -5562,6 +5817,11 @@ if (copyBtn) {
             if (phase === 'qa' && document.getElementById('screen-online-qa')?.classList.contains('active')) {
                 handleQaUpdate(newData);
             }
+
+            // تحديث شاشة الكشف إذا كانت مفتوحة وحدث تغيير في الجاهزية
+            if (phase === 'reveal' && document.getElementById('screen-online-reveal')?.classList.contains('active')) {
+                updateRevealUI(newData);
+            }
         }
 
         function handlePlayerUpdate(payload) {
@@ -5584,7 +5844,7 @@ if (copyBtn) {
 
                             if (OS.currentPhase === 'reveal') {
                                 renderOnlineRoom();
-                                updateOnlineRevealProgress();
+                                updateRevealUI(OS.gameData?.room);
                                 if (OS.isHost) {
                                     hostCheckRevealComplete(data, OS.gameData?.room);
                                 }
@@ -5631,23 +5891,6 @@ if (copyBtn) {
             }
         }
 
-        function updateOnlineRevealProgress() {
-            const players = OS.gameData?.players || [];
-            const revealed = players.filter(p => p.has_revealed === true).length;
-            const progressText = document.getElementById('online-reveal-progress-text');
-            const progressContainer = document.getElementById('online-reveal-progress');
-            
-            if (progressText) {
-                progressText.textContent = `${revealed}/${players.length} لاعبين اطلعوا على دورهم`;
-            }
-            if (progressContainer) {
-                progressContainer.innerHTML = `
-                    <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                    <span id="online-reveal-progress-text">${revealed}/${players.length} لاعبين اطلعوا على دورهم</span>
-                `;
-            }
-        }
-
         // ===== نظام الـ Polling الاحتياطي =====
         function startPolling(roomId) {
             if (pollingInterval) clearInterval(pollingInterval);
@@ -5687,7 +5930,10 @@ if (copyBtn) {
                             room.qa_answered !== lastQaData?.answered ||
                             room.qa_asker_id !== lastQaData?.askerId ||
                             room.qa_respondent_id !== lastQaData?.respondentId ||
-                            room.qa_phase !== lastQaData?.phase
+                            room.qa_phase !== lastQaData?.phase ||
+                            room.qa_question_submitted !== lastQaData?.questionSubmitted ||
+                            room.qa_answer_submitted !== lastQaData?.answerSubmitted ||
+                            room.qa_round_complete !== lastQaData?.roundComplete
                         );
                         if (qaChanged) {
                             lastQaData = {
@@ -5698,7 +5944,10 @@ if (copyBtn) {
                                 respondentId: room.qa_respondent_id,
                                 phase: room.qa_phase,
                                 askerTimeLeft: room.qa_asker_time_left,
-                                respondentTimeLeft: room.qa_respondent_time_left
+                                respondentTimeLeft: room.qa_respondent_time_left,
+                                questionSubmitted: room.qa_question_submitted,
+                                answerSubmitted: room.qa_answer_submitted,
+                                roundComplete: room.qa_round_complete
                             };
                             console.log('🔄 QA data changed, refreshing...');
                             if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
@@ -5739,10 +5988,16 @@ if (copyBtn) {
                         }
                     }
 
+                    // تحديث شاشة الكشف إذا كانت مفتوحة
+                    if (room.status === 'reveal' && document.getElementById('screen-online-reveal')?.classList
+                        .contains('active')) {
+                        updateRevealUI(room);
+                    }
+
                 } catch (e) {
                     console.error('Polling error:', e);
                 }
-            }, 1500);
+            }, 3000); // 3 ثوانٍ كما هو مطلوب
         }
 
         function handlePhaseChange(room) {
@@ -5759,7 +6014,10 @@ if (copyBtn) {
                     respondentId: room.qa_respondent_id,
                     phase: room.qa_phase,
                     askerTimeLeft: room.qa_asker_time_left,
-                    respondentTimeLeft: room.qa_respondent_time_left
+                    respondentTimeLeft: room.qa_respondent_time_left,
+                    questionSubmitted: room.qa_question_submitted,
+                    answerSubmitted: room.qa_answer_submitted,
+                    roundComplete: room.qa_round_complete
                 };
             }
             if (room.status === 'voting') {
@@ -5799,7 +6057,7 @@ if (copyBtn) {
         }
 
         // ==============================================================
-        // ===== مرحلة الكشف (Reveal) =====
+        // ===== مرحلة الكشف (Reveal) - التصميم الجديد 3D =====
         // ==============================================================
 
         async function showOnlineReveal() {
@@ -5821,241 +6079,233 @@ if (copyBtn) {
 
             OS.gameData = { room, players };
             const myPlayer = players.find(p => p.client_id === OS.clientId);
-            const back = document.getElementById('online-reveal-back');
-            const progressContainer = document.getElementById('online-reveal-progress');
-            const progressText = document.getElementById('online-reveal-progress-text');
-
-            if (!myPlayer || !room) {
-                back.innerHTML = `
-                    <div class="text-center w-full">
-                        <i class="fa-solid fa-triangle-exclamation text-2xl text-rose-500 block mb-2"></i>
-                        <span class="text-[#8892a6] text-xs">خطأ في تحميل البيانات</span>
-                    </div>
-                `;
+            if (!myPlayer) {
+                showToast('⚠️ لم يتم العثور على بياناتك', 'error');
                 return;
             }
 
-            // ===== تحديث معلومات الفئة والوضع في الواجهة العلوية =====
+            // تحديث واجهة الكشف
+            updateRevealUI(room);
+        }
+
+        function updateRevealUI(room) {
+            if (!room) return;
+            const players = OS.gameData?.players || [];
+            const myPlayer = players.find(p => p.client_id === OS.clientId);
+            if (!myPlayer) return;
+
             const category = room.category || 'غير محدد';
-            const mode = room.mode || 'traditional';
-            const modeName = mode === 'mindbending' ? 'ذهني' : 'تقليدي';
-            const modeIcon = mode === 'mindbending' ? 'fa-brain' : 'fa-masks-theater';
-
-            const categoryNameEl = document.getElementById('online-reveal-category-name');
-            if (categoryNameEl) categoryNameEl.textContent = category;
-
-            const modeNameEl = document.getElementById('online-reveal-mode-name');
-            if (modeNameEl) modeNameEl.textContent = modeName;
-
-            const modeInfoEl = document.getElementById('online-reveal-mode-info');
-            if (modeInfoEl) {
-                modeInfoEl.innerHTML = `
-                    <i class="fa-solid ${modeIcon} text-purple-400"></i>
-                    <span>الوضع: ${modeName}</span>
-                `;
-            }
-
-            const playersNumberEl = document.getElementById('online-reveal-players-number');
-            if (playersNumberEl) playersNumberEl.textContent = `${players.length} لاعبين`;
-
-            // ===== الحصول على الكلمات =====
-            const isOdd = myPlayer.is_odd || false;
             const secretWord = room.secret_word || '???';
             const oddWord = room.odd_word || null;
+            const isOdd = myPlayer.is_odd || false;
+            const mode = room.mode || 'traditional';
 
-            // ===== بناء محتوى البطاقة الخلفية =====
-            let backHTML = '';
-
-            if (isOdd && mode === 'traditional') {
-                backHTML = `
-                    <div class="text-center w-full">
-                        <i class="fa-solid fa-user-secret text-3xl text-rose-500 block mb-2"></i>
-                        <span class="text-xl font-black text-rose-500 block">أنت برا السالفة!</span>
-                        <div class="mt-3 px-4 py-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl w-full">
-                            <div class="flex items-center justify-center gap-2 text-amber-400">
-                                <i class="fa-solid fa-tag text-xs"></i>
-                                <span class="text-[11px] font-bold">الفئة: ${esc(category)}</span>
-                            </div>
-                            <div class="flex items-center justify-center gap-2 text-slate-400 mt-1">
-                                <i class="fa-solid ${modeIcon} text-xs"></i>
-                                <span class="text-[11px]">الوضع: ${modeName}</span>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-[#8892a6] text-xs space-y-1">
-                            <div class="flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-users text-[10px]"></i>
-                                <span>اللاعبون الآخرون يعرفون الكلمة من فئة "${esc(category)}"</span>
-                            </div>
-                            <div class="flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-lightbulb text-[10px] text-yellow-400"></i>
-                                <span>حاول التخمين والتكيف معهم!</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else if (isOdd && mode === 'mindbending') {
-                backHTML = `
-                    <div class="text-center w-full">
-                        <i class="fa-solid fa-brain text-2xl text-cyan-400 block mb-2"></i>
-                        <span class="text-2xl font-black text-cyan-400 tracking-wider block">${esc(oddWord || '???')}</span>
-                        <div class="mt-2 px-4 py-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl w-full">
-                            <div class="flex items-center justify-center gap-2 text-amber-400">
-                                <i class="fa-solid fa-tag text-xs"></i>
-                                <span class="text-[11px] font-bold">الفئة: ${esc(category)}</span>
-                            </div>
-                            <div class="flex items-center justify-center gap-2 text-slate-400 mt-1">
-                                <i class="fa-solid ${modeIcon} text-xs"></i>
-                                <span class="text-[11px]">الوضع: ${modeName}</span>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-[#8892a6] text-xs space-y-1">
-                            <div class="flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-arrow-right-arrow-left text-[10px] text-cyan-400"></i>
-                                <span>لديك كلمة مختلفة عن الآخرين!</span>
-                            </div>
-                            <div class="flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-eye-slash text-[10px]"></i>
-                                <span>احفظها ولا تقلها لأحد</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                backHTML = `
-                    <div class="text-center w-full">
-                        <i class="fa-solid fa-key text-2xl text-emerald-400 block mb-2"></i>
-                        <span class="text-2xl font-black text-cyan-400 tracking-wider block">${esc(secretWord)}</span>
-                        <div class="mt-2 px-4 py-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl w-full">
-                            <div class="flex items-center justify-center gap-2 text-emerald-400">
-                                <i class="fa-solid fa-tag text-xs"></i>
-                                <span class="text-[11px] font-bold">الفئة: ${esc(category)}</span>
-                            </div>
-                            <div class="flex items-center justify-center gap-2 text-slate-400 mt-1">
-                                <i class="fa-solid ${modeIcon} text-xs"></i>
-                                <span class="text-[11px]">الوضع: ${modeName}</span>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-[#8892a6] text-xs">
-                            <div class="flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-eye-slash text-[10px]"></i>
-                                <span>احفظ الكلمة ولا تقلها لأحد!</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // ===== إضافة معلومات اللاعبين في الأسفل =====
             const totalPlayers = players.length;
-            const oddPlayerName = players.find(p => p.is_odd)?.player_name || '???';
+            const revealedCount = players.filter(p => p.has_revealed === true).length;
+            const readyPercent = totalPlayers > 0 ? Math.round((revealedCount / totalPlayers) * 100) : 0;
 
-            backHTML += `
-                <div class="mt-2 flex items-center justify-center gap-3 text-[10px] text-slate-500 border-t border-slate-800/30 pt-2 w-full">
-                    <span class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-users text-[10px]"></i>
-                        <span>${totalPlayers} لاعبين</span>
-                    </span>
-                    <span class="text-slate-700">|</span>
-                    <span class="flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-secret text-[10px] text-rose-400"></i>
-                        <span>برا السالفة: ${esc(oddPlayerName)}</span>
-                    </span>
-                </div>
-            `;
+            // تحديث الفئة
+            const categoryNameEl = document.getElementById('reveal-category-name');
+            if (categoryNameEl) categoryNameEl.textContent = category;
 
-            back.innerHTML = backHTML;
-
-            const card = document.querySelector('#online-reveal-content .reveal-card');
-            if (card) card.classList.add('flipped');
-
-            const revealed = players.filter(p => p.has_revealed === true).length;
-            if (progressText) progressText.textContent = `${revealed}/${players.length} لاعبين اطلعوا على دورهم`;
-            if (progressContainer) {
-                progressContainer.innerHTML = `
-                    <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                    <span id="online-reveal-progress-text">${revealed}/${players.length} لاعبين اطلعوا على دورهم</span>
-                `;
+            // تحديث عدد الجاهزين
+            const readyCountEl = document.getElementById('reveal-ready-count');
+            if (readyCountEl) {
+                readyCountEl.textContent = `${revealedCount} / ${totalPlayers} جاهزون`;
             }
 
-            const readyBtn = document.getElementById('btn-online-reveal-ready');
-            if (myPlayer.has_revealed) {
-                readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> تم`;
-                readyBtn.disabled = true;
-                readyBtn.classList.add('opacity-50');
-            } else {
-                readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> جاهز للمرحلة التالية`;
-                readyBtn.disabled = false;
-                readyBtn.classList.remove('opacity-50');
+            // تحديث شريط التقدم
+            const progressBar = document.getElementById('reveal-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = readyPercent + '%';
+            }
 
-                readyBtn.onclick = async () => {
-                    const sb = OS.supabase;
-                    if (!sb) return;
+            // تحديث عدد اللاعبين الكلي
+            const totalPlayersEl = document.getElementById('reveal-total-players');
+            if (totalPlayersEl) {
+                totalPlayersEl.textContent = `${totalPlayers} لاعبين`;
+            }
 
-                    if (ButtonManager.isDisabled('btn-online-reveal-ready')) return;
-                    ButtonManager.disable('btn-online-reveal-ready', 'جاري التجهيز...');
+            // تحديث اسم برا السالفة
+            const oddPlayer = players.find(p => p.is_odd === true);
+            const oddPlayerNameEl = document.getElementById('reveal-odd-player');
+            if (oddPlayerNameEl) {
+                oddPlayerNameEl.textContent = `برا السالفة: ${oddPlayer ? esc(oddPlayer.player_name) : '—'}`;
+            }
 
-                    try {
-                        await sb.from('room_players').update({ has_revealed: true }).eq('id', OS.myPlayerId);
-                        hapticSuccessWithSound();
-                        playSound('reveal');
-                        readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> تم`;
-                        readyBtn.disabled = true;
-                        ButtonManager.enable('btn-online-reveal-ready');
+            // تحديث البطاقة الخلفية
+            const backFace = document.getElementById('reveal-back-face');
+            if (backFace) {
+                if (isOdd && mode === 'traditional') {
+                    backFace.className = 'flip-card-back role-out';
+                    backFace.innerHTML = `
+                        <div class="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-xl mb-2">
+                            <i class="fa-solid fa-user-ninja"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-red-400 bg-red-500/10 px-2.5 py-0.5 rounded-full border border-red-500/20 mb-1">
+                            دورك الحالي
+                        </span>
+                        <h2 class="text-2xl font-black text-white">أنت برا السالفة</h2>
+                        <p class="text-xs text-slate-300 text-center mt-2 leading-relaxed max-w-[220px]">
+                            استغل الفئة "${esc(category)}" وركّز في أسئلة وإجابات البقية لتخمين الموضوع دون كشفك.
+                        </p>
+                        <div class="mt-2 flex items-center gap-2 text-[10px] text-slate-500 border-t border-red-500/20 pt-2 w-full justify-center">
+                            <i class="fa-solid fa-users text-[10px]"></i>
+                            <span>${totalPlayers} لاعبين</span>
+                            <span class="text-slate-700">|</span>
+                            <i class="fa-solid fa-tag text-[10px] text-amber-400"></i>
+                            <span>${esc(category)}</span>
+                        </div>
+                    `;
+                } else if (isOdd && mode === 'mindbending') {
+                    backFace.className = 'flip-card-back role-in';
+                    backFace.innerHTML = `
+                        <div class="w-12 h-12 rounded-full bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 text-xl mb-2">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-cyan-400 bg-cyan-400/10 px-2.5 py-0.5 rounded-full border border-cyan-400/20 mb-1">
+                            كلمتك المختلفة
+                        </span>
+                        <h2 class="text-3xl font-black text-white tracking-wide">${esc(oddWord || '???')}</h2>
+                        <p class="text-xs text-slate-300 text-center mt-2 leading-relaxed max-w-[220px]">
+                            اللاعبون الآخرون لديهم كلمة مختلفة من فئة "${esc(category)}"
+                        </p>
+                        <div class="mt-2 flex items-center gap-2 text-[10px] text-slate-500 border-t border-cyan-500/20 pt-2 w-full justify-center">
+                            <i class="fa-solid fa-users text-[10px]"></i>
+                            <span>${totalPlayers} لاعبين</span>
+                            <span class="text-slate-700">|</span>
+                            <i class="fa-solid fa-tag text-[10px] text-amber-400"></i>
+                            <span>${esc(category)}</span>
+                        </div>
+                    `;
+                } else {
+                    backFace.className = 'flip-card-back role-in';
+                    backFace.innerHTML = `
+                        <div class="w-12 h-12 rounded-full bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 text-xl mb-2">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-cyan-400 bg-cyan-400/10 px-2.5 py-0.5 rounded-full border border-cyan-400/20 mb-1">
+                            السالفة هي
+                        </span>
+                        <h2 class="text-3xl font-black text-white tracking-wide">${esc(secretWord)}</h2>
+                        <p class="text-xs text-slate-300 text-center mt-2 leading-relaxed max-w-[220px]">
+                            جميع اللاعبين يعرفون الكلمة ما عدا شخص واحد برا السالفة.
+                        </p>
+                        <div class="mt-2 flex items-center gap-2 text-[10px] text-slate-500 border-t border-cyan-500/20 pt-2 w-full justify-center">
+                            <i class="fa-solid fa-users text-[10px]"></i>
+                            <span>${totalPlayers} لاعبين</span>
+                            <span class="text-slate-700">|</span>
+                            <i class="fa-solid fa-tag text-[10px] text-amber-400"></i>
+                            <span>${esc(category)}</span>
+                        </div>
+                    `;
+                }
+            }
 
-                        showToast('✅ تم تجهيزك! في انتظار الآخرين...', 'success');
+            // تحديث حالة الزر
+            const readyBtn = document.getElementById('btn-reveal-ready');
+            if (readyBtn) {
+                if (myPlayer.has_revealed) {
+                    readyBtn.className =
+                        'btn-ready-reveal w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
+                    readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>في انتظار بقية اللاعبين...</span>`;
+                    readyBtn.disabled = true;
+                } else {
+                    readyBtn.className =
+                        'btn-ready-reveal w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2';
+                    readyBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>جاهز وبدء الجولة</span>`;
+                    readyBtn.disabled = false;
 
-                        const { data: updatedPlayers } = await sb.from('room_players').select('*').eq('room_id', OS
-                            .roomId);
-                        if (updatedPlayers) {
-                            const newRevealed = updatedPlayers.filter(p => p.has_revealed === true).length;
-                            if (progressContainer) {
-                                progressContainer.innerHTML = `
-                                    <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                                    <span id="online-reveal-progress-text">${newRevealed}/${updatedPlayers.length} لاعبين اطلعوا على دورهم</span>
-                                `;
+                    // إزالة المستمعين السابقين
+                    const newBtn = readyBtn.cloneNode(true);
+                    readyBtn.parentNode.replaceChild(newBtn, readyBtn);
+
+                    newBtn.addEventListener('click', async () => {
+                        if (ButtonManager.isDisabled('btn-reveal-ready')) return;
+                        ButtonManager.disable('btn-reveal-ready', 'جاري التجهيز...');
+
+                        try {
+                            const sb = OS.supabase;
+                            if (!sb) return;
+
+                            await sb.from('room_players').update({ has_revealed: true }).eq('id', OS
+                            .myPlayerId);
+                            hapticSuccessWithSound();
+                            playSound('reveal');
+
+                            // تحديث الواجهة فوراً
+                            newBtn.className =
+                                'btn-ready-reveal w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
+                            newBtn.innerHTML =
+                                `<i class="fa-solid fa-check-circle"></i> <span>في انتظار بقية اللاعبين...</span>`;
+                            newBtn.disabled = true;
+
+                            // تحديث شريط التقدم فوراً
+                            const { data: updatedPlayers } = await sb.from('room_players').select('*').eq(
+                                'room_id', OS.roomId);
+                            if (updatedPlayers) {
+                                OS.gameData = { ...OS.gameData, players: updatedPlayers };
+                                const newRevealed = updatedPlayers.filter(p => p.has_revealed === true)
+                                    .length;
+                                const newPercent = updatedPlayers.length > 0 ? Math.round((newRevealed /
+                                    updatedPlayers.length) * 100) : 0;
+                                const progressBar = document.getElementById('reveal-progress-bar');
+                                if (progressBar) progressBar.style.width = newPercent + '%';
+                                const readyCountEl = document.getElementById('reveal-ready-count');
+                                if (readyCountEl) {
+                                    readyCountEl.textContent =
+                                        `${newRevealed} / ${updatedPlayers.length} جاهزون`;
+                                }
                             }
-                        }
 
-                    } catch (e) {
-                        console.error('Ready button error:', e);
-                        showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
-                        ButtonManager.enable('btn-online-reveal-ready');
-                        readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> جاهز للمرحلة التالية`;
-                        readyBtn.disabled = false;
-                    }
-                };
+                            showToast('✅ تم تجهيزك! في انتظار الآخرين...', 'success');
+                            ButtonManager.enable('btn-reveal-ready');
+
+                            // التحقق مما إذا كان الجميع جاهزين (للمضيف)
+                            if (OS.isHost) {
+                                const { data: allPlayers } = await sb.from('room_players').select('*').eq(
+                                    'room_id', OS.roomId);
+                                if (allPlayers) {
+                                    hostCheckRevealComplete(allPlayers, OS.gameData?.room);
+                                }
+                            }
+
+                        } catch (e) {
+                            console.error('Ready button error:', e);
+                            showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                            ButtonManager.enable('btn-reveal-ready');
+                            newBtn.className =
+                                'btn-ready-reveal w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2';
+                            newBtn.innerHTML =
+                            `<i class="fa-solid fa-circle-check"></i> <span>جاهز وبدء الجولة</span>`;
+                            newBtn.disabled = false;
+                        }
+                    });
+                }
             }
 
-            if (OS.isHost) {
-                const checkInterval = setInterval(async () => {
-                    if (!OS.roomId) {
-                        clearInterval(checkInterval);
-                        return;
-                    }
+            // تحديث حالة البطاقة (مقلوبة أم لا)
+            const flipCard = document.getElementById('reveal-flip-card');
+            if (flipCard) {
+                // إذا كان اللاعب قد شاهد دوره بالفعل، نترك البطاقة مقلوبة
+                if (myPlayer.has_revealed) {
+                    flipCard.classList.add('is-flipped');
+                } else {
+                    // إذا لم يشاهد، نضيف مستمع الحدث للقلب
+                    // نزيل المستمعين السابقين
+                    const newFlipCard = flipCard.cloneNode(true);
+                    flipCard.parentNode.replaceChild(newFlipCard, flipCard);
 
-                    const { data: currentPlayers } = await sb.from('room_players').select('*').eq('room_id', OS
-                        .roomId);
-                    if (currentPlayers) {
-                        const newRevealed = currentPlayers.filter(p => p.has_revealed === true).length;
-                        if (progressContainer) {
-                            progressContainer.innerHTML = `
-                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                                <span id="online-reveal-progress-text">${newRevealed}/${currentPlayers.length} لاعبين اطلعوا على دورهم</span>
-                            `;
+                    newFlipCard.addEventListener('click', () => {
+                        if (!newFlipCard.classList.contains('is-flipped')) {
+                            newFlipCard.classList.add('is-flipped');
+                            hapticAndSound('click');
+                            // تحديث حالة اللاعب في الذاكرة المحلية
+                            OS.revealFlipped = true;
                         }
-
-                        const allRevealed = currentPlayers.every(p => p.has_revealed === true);
-                        if (allRevealed && OS.currentPhase === 'reveal') {
-                            clearInterval(checkInterval);
-                            await hostCheckRevealComplete(currentPlayers, room);
-                        }
-                    }
-                }, 1000);
-
-                window._revealCheckInterval = checkInterval;
+                    });
+                }
             }
-
-            if (window.lucide) lucide.createIcons();
         }
 
         async function hostCheckRevealComplete(players, room) {
@@ -6066,12 +6316,14 @@ if (copyBtn) {
 
             if (!allRevealed) {
                 const revealed = players.filter(p => p.has_revealed).length;
-                const progressContainer = document.getElementById('online-reveal-progress');
-                if (progressContainer) {
-                    progressContainer.innerHTML = `
-                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                        <span id="online-reveal-progress-text">${revealed}/${players.length} لاعبين اطلعوا على دورهم</span>
-                    `;
+                const progressBar = document.getElementById('reveal-progress-bar');
+                if (progressBar) {
+                    const percent = players.length > 0 ? Math.round((revealed / players.length) * 100) : 0;
+                    progressBar.style.width = percent + '%';
+                }
+                const readyCountEl = document.getElementById('reveal-ready-count');
+                if (readyCountEl) {
+                    readyCountEl.textContent = `${revealed} / ${players.length} جاهزون`;
                 }
                 return;
             }
@@ -6092,8 +6344,16 @@ if (copyBtn) {
                     status: 'qa',
                     qa_phase: 'waiting',
                     qa_round: 0,
-                    qa_total_rounds: QA_CONFIG.TOTAL_ROUNDS,
+                    qa_total_rounds: room.total_rounds || players.length,
                     qa_start_time: new Date().toISOString(),
+                    qa_question_submitted: false,
+                    qa_answer_submitted: false,
+                    qa_round_complete: false,
+                    qa_asker_id: null,
+                    qa_respondent_id: null,
+                    qa_question: null,
+                    qa_answer: null,
+                    qa_answered: false,
                     updated_at: new Date().toISOString()
                 }).eq('id', room.id);
 
@@ -6129,7 +6389,7 @@ if (copyBtn) {
         }
 
         // ==============================================================
-        // ===== نظام الأسئلة المحسن =====
+        // ===== نظام الأسئلة المطور (بدون مؤقتات) =====
         // ==============================================================
 
         function setupQaRealtime(roomId) {
@@ -6190,36 +6450,17 @@ if (copyBtn) {
             const phase = roomData.qa_phase;
             const round = roomData.qa_round || 0;
             const totalRounds = roomData.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
+            const questionSubmitted = roomData.qa_question_submitted || false;
+            const answerSubmitted = roomData.qa_answer_submitted || false;
+            const roundComplete = roomData.qa_round_complete || false;
 
-            const roundEl = document.getElementById('online-qa-round');
-            if (roundEl) {
-                roundEl.textContent = `الجولة ${round + 1} من ${totalRounds}`;
+            // تحديث شارة الجولة
+            const roundDisplay = document.getElementById('online-qa-round-display');
+            if (roundDisplay) {
+                roundDisplay.textContent = `الجولة ${round + 1} من ${totalRounds}`;
             }
 
-            const statusEl = document.getElementById('qa-round-status');
-            if (statusEl) {
-                switch (phase) {
-                    case 'waiting':
-                        statusEl.textContent = '⏳ جاري التحضير للجولة التالية...';
-                        statusEl.className = 'text-center text-sm font-bold text-slate-400 py-1';
-                        break;
-                    case 'asking':
-                        statusEl.textContent =
-                            `🎤 ${getPlayerName(roomData.qa_asker_id)} يسأل ${getPlayerName(roomData.qa_respondent_id)}`;
-                        statusEl.className = 'text-center text-sm font-bold text-cyan-400 py-1';
-                        break;
-                    case 'answering':
-                        statusEl.textContent =
-                            `💬 ${getPlayerName(roomData.qa_respondent_id)} يجيب على السؤال`;
-                        statusEl.className = 'text-center text-sm font-bold text-emerald-400 py-1';
-                        break;
-                    case 'done':
-                        statusEl.textContent = '✅ تمت الإجابة! جاري الانتقال...';
-                        statusEl.className = 'text-center text-sm font-bold text-green-400 py-1';
-                        break;
-                }
-            }
-
+            // تحديث أسماء السائل والمجيب
             const askerName = getPlayerName(roomData.qa_asker_id);
             const respondentName = getPlayerName(roomData.qa_respondent_id);
 
@@ -6229,6 +6470,7 @@ if (copyBtn) {
             const respondentNameEl = document.getElementById('qa-respondent-name');
             if (respondentNameEl) respondentNameEl.textContent = respondentName || '—';
 
+            // تحديث الأفاتار
             if (askerName) {
                 const avatar = document.getElementById('qa-asker-avatar');
                 if (avatar) avatar.textContent = askerName.charAt(0).toUpperCase();
@@ -6238,52 +6480,238 @@ if (copyBtn) {
                 if (avatar) avatar.textContent = respondentName.charAt(0).toUpperCase();
             }
 
+            // تحديث تسمية السائل في منظور المجيب
+            const askerLabel = document.getElementById('qa-respondent-asker-label');
+            if (askerLabel && askerName) {
+                askerLabel.textContent = `${askerName} يسألك:`;
+            }
+
+            // تحديث تسمية السائل في منظور المتفرج
+            const specAskerLabel = document.getElementById('qa-spectator-asker-label');
+            if (specAskerLabel && askerName && respondentName) {
+                specAskerLabel.textContent = `${askerName} يسأل ${respondentName}:`;
+            }
+            const specRespondentLabel = document.getElementById('qa-spectator-respondent-label');
+            if (specRespondentLabel && respondentName) {
+                specRespondentLabel.textContent = `${respondentName} يجيب:`;
+            }
+
+            // تحديث نص السؤال
             if (roomData.qa_question) {
                 const qText = document.getElementById('qa-spectator-q-text');
                 if (qText) qText.textContent = `"${esc(roomData.qa_question)}"`;
 
-                const qStatus = document.getElementById('qa-spectator-q-status');
-                if (qStatus) {
-                    qStatus.textContent = '✅ تم السؤال';
-                    qStatus.className = 'text-[10px] text-cyan-400 font-bold';
-                }
-
                 const receivedQ = document.getElementById('online-qa-received-q');
                 if (receivedQ) receivedQ.textContent = `"${esc(roomData.qa_question)}"`;
+
+                const askerQInput = document.getElementById('online-qa-question-input');
+                if (askerQInput && !askerQInput.value) {
+                    askerQInput.value = roomData.qa_question;
+                }
             }
 
+            // تحديث نص الإجابة
             if (roomData.qa_answer && roomData.qa_answered) {
                 const aText = document.getElementById('qa-spectator-a-text');
                 if (aText) {
                     aText.textContent = `"${esc(roomData.qa_answer)}"`;
-                    aText.className = 'text-slate-200 font-medium pr-1';
+                    aText.className = 'text-xs font-semibold text-slate-200';
                 }
 
-                const aStatus = document.getElementById('qa-spectator-status-tag');
-                if (aStatus) {
-                    aStatus.textContent = '✅ تمت الإجابة';
-                    aStatus.className = 'text-[10px] text-emerald-400 font-bold';
+                const responseText = document.getElementById('qa-asker-response-text');
+                if (responseText) {
+                    responseText.textContent = `"${esc(roomData.qa_answer)}"`;
                 }
 
                 const responseBox = document.getElementById('qa-asker-response-box');
-                const responseText = document.getElementById('qa-asker-response-text');
-                if (responseBox && responseText) {
+                if (responseBox) {
                     responseBox.classList.remove('hidden');
-                    responseText.textContent = `"${esc(roomData.qa_answer)}"`;
                 }
             }
 
-            if (roomData.qa_asker_time_left !== undefined) {
-                updateAskerTimerUI(roomData.qa_asker_time_left);
-            }
-            if (roomData.qa_respondent_time_left !== undefined) {
-                updateRespondentTimerUI(roomData.qa_respondent_time_left);
-            }
+            // تحديث حالة الأزرار بناءً على مرحلة الجولة
+            updateUIByPhase(roomData);
 
+            // تحديث دور اللاعب الحالي
             updateMyRole(roomData);
 
-            if (roomData.qa_answered) {
+            // تحديث سجل الأسئلة
+            if (roomData.qa_answered || roomData.qa_round_complete) {
                 loadAndDisplayHistory(OS.roomId);
+            }
+
+            // إظهار زر الانتقال للجولة التالية إذا اكتملت الجولة
+            if (roundComplete) {
+                showNextRoundButton();
+            }
+        }
+
+        function updateUIByPhase(roomData) {
+            const phase = roomData.qa_phase;
+            const questionSubmitted = roomData.qa_question_submitted || false;
+            const answerSubmitted = roomData.qa_answer_submitted || false;
+            const roundComplete = roomData.qa_round_complete || false;
+
+            const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+            if (!myPlayer) return;
+
+            const isAsker = myPlayer.id === roomData.qa_asker_id;
+            const isRespondent = myPlayer.id === roomData.qa_respondent_id;
+
+            const askerView = document.getElementById('view-asker');
+            const respondentView = document.getElementById('view-respondent');
+            const spectatorView = document.getElementById('view-spectator');
+
+            if (askerView) askerView.classList.remove('hidden');
+            if (respondentView) respondentView.classList.add('hidden');
+            if (spectatorView) spectatorView.classList.add('hidden');
+
+            // إخفاء جميع الأزرار المؤقتة للانتقال
+            const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
+            nextBtns.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.classList.add('hidden');
+            });
+
+            if (roundComplete) {
+                showNextRoundButton();
+                return;
+            }
+
+            if (isAsker) {
+                if (askerView) askerView.classList.remove('hidden');
+                if (respondentView) respondentView.classList.add('hidden');
+                if (spectatorView) spectatorView.classList.add('hidden');
+
+                const qInput = document.getElementById('online-qa-question-input');
+                const sendQBtn = document.getElementById('btn-online-qa-send-q');
+
+                if (questionSubmitted) {
+                    if (qInput) qInput.disabled = true;
+                    if (sendQBtn) sendQBtn.disabled = true;
+                    if (roomData.qa_answer && roomData.qa_answered) {
+                        const responseBox = document.getElementById('qa-asker-response-box');
+                        if (responseBox) responseBox.classList.remove('hidden');
+                    }
+                } else {
+                    if (qInput) qInput.disabled = false;
+                    if (sendQBtn) sendQBtn.disabled = false;
+                }
+
+                const targetLabel = document.getElementById('qa-asker-target-label');
+                const respondentName = getPlayerName(roomData.qa_respondent_id);
+                if (targetLabel && respondentName) {
+                    targetLabel.textContent = respondentName;
+                }
+
+            } else if (isRespondent) {
+                if (respondentView) respondentView.classList.remove('hidden');
+                if (askerView) askerView.classList.add('hidden');
+                if (spectatorView) spectatorView.classList.add('hidden');
+
+                const aInput = document.getElementById('online-qa-answer-input');
+                const sendABtn = document.getElementById('btn-online-qa-send-a');
+
+                if (questionSubmitted && !answerSubmitted) {
+                    if (aInput) aInput.disabled = false;
+                    if (sendABtn) sendABtn.disabled = false;
+                    const receivedQ = document.getElementById('online-qa-received-q');
+                    if (receivedQ && roomData.qa_question) {
+                        receivedQ.textContent = `"${esc(roomData.qa_question)}"`;
+                    }
+                } else if (answerSubmitted || roundComplete) {
+                    if (aInput) aInput.disabled = true;
+                    if (sendABtn) sendABtn.disabled = true;
+                } else {
+                    if (aInput) aInput.disabled = true;
+                    if (sendABtn) sendABtn.disabled = true;
+                }
+
+            } else {
+                if (spectatorView) spectatorView.classList.remove('hidden');
+                if (askerView) askerView.classList.add('hidden');
+                if (respondentView) respondentView.classList.add('hidden');
+
+                if (roomData.qa_question) {
+                    const qText = document.getElementById('qa-spectator-q-text');
+                    if (qText) qText.textContent = `"${esc(roomData.qa_question)}"`;
+                }
+                if (roomData.qa_answer && roomData.qa_answered) {
+                    const aText = document.getElementById('qa-spectator-a-text');
+                    if (aText) {
+                        aText.textContent = `"${esc(roomData.qa_answer)}"`;
+                        aText.className = 'text-xs font-semibold text-slate-200';
+                    }
+                }
+            }
+
+            updateRoleBadge(roomData);
+        }
+
+        function updateRoleBadge(roomData) {
+            const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+            if (!myPlayer) return;
+
+            const isAsker = myPlayer.id === roomData.qa_asker_id;
+            const isRespondent = myPlayer.id === roomData.qa_respondent_id;
+            const roundComplete = roomData.qa_round_complete || false;
+
+            const roleBadge = document.getElementById('player-role-badge');
+            const roleIcon = document.getElementById('player-role-icon');
+            const roleText = document.getElementById('player-role-text');
+
+            if (roundComplete) {
+                roleBadge.className =
+                    "px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-extrabold text-xs flex items-center gap-1.5 shadow-sm";
+                roleIcon.className = "fa-solid fa-check-circle text-[11px]";
+                roleText.textContent = "اكتملت الجولة";
+                return;
+            }
+
+            if (isAsker) {
+                roleBadge.className =
+                    "px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-extrabold text-xs flex items-center gap-1.5 shadow-sm";
+                roleIcon.className = "fa-solid fa-microphone text-[11px]";
+                roleText.textContent = "سائل";
+            } else if (isRespondent) {
+                roleBadge.className =
+                    "px-3.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 font-extrabold text-xs flex items-center gap-1.5 shadow-sm";
+                roleIcon.className = "fa-solid fa-comment-dots text-[11px]";
+                roleText.textContent = "مجيب";
+            } else {
+                roleBadge.className =
+                    "px-3.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-extrabold text-xs flex items-center gap-1.5 shadow-sm";
+                roleIcon.className = "fa-solid fa-eye text-[11px]";
+                roleText.textContent = "متفرج";
+            }
+        }
+
+        function showNextRoundButton() {
+            const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+            if (!myPlayer) return;
+
+            const askerView = document.getElementById('view-asker');
+            const respondentView = document.getElementById('view-respondent');
+            const spectatorView = document.getElementById('view-spectator');
+
+            const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
+            nextBtns.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.classList.add('hidden');
+            });
+
+            let targetBtnId = null;
+            if (askerView && !askerView.classList.contains('hidden')) {
+                targetBtnId = 'btn-online-qa-next-round';
+            } else if (respondentView && !respondentView.classList.contains('hidden')) {
+                targetBtnId = 'btn-online-qa-next-round-respondent';
+            } else if (spectatorView && !spectatorView.classList.contains('hidden')) {
+                targetBtnId = 'btn-online-qa-next-round-spectator';
+            }
+
+            if (targetBtnId) {
+                const btn = document.getElementById(targetBtnId);
+                if (btn) btn.classList.remove('hidden');
             }
         }
 
@@ -6298,99 +6726,12 @@ if (copyBtn) {
             const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
             if (!myPlayer || !roomData) return;
 
-            const isAsker = myPlayer.id === roomData.qa_asker_id;
-            const isRespondent = myPlayer.id === roomData.qa_respondent_id;
+            OS.qaRole = null;
+            if (myPlayer.id === roomData.qa_asker_id) OS.qaRole = 'asker';
+            else if (myPlayer.id === roomData.qa_respondent_id) OS.qaRole = 'respondent';
+            else OS.qaRole = 'spectator';
 
-            const askerView = document.getElementById('online-qa-asker-view');
-            const respondentView = document.getElementById('online-qa-respondent-view');
-            const spectatorView = document.getElementById('online-qa-spectator-view');
-            const roleBadge = document.getElementById('online-qa-role-badge');
-
-            if (askerView) askerView.classList.add('hidden');
-            if (respondentView) respondentView.classList.add('hidden');
-            if (spectatorView) spectatorView.classList.add('hidden');
-
-            if (isAsker && roomData.qa_phase !== 'done') {
-                if (askerView) askerView.classList.remove('hidden');
-                if (roleBadge) {
-                    roleBadge.textContent = '🎤 سائل';
-                    roleBadge.className = 'qa-role-badge asker';
-                }
-                const questionInput = document.getElementById('online-qa-question-input');
-                const sendBtn = document.getElementById('btn-online-qa-send-q');
-                if (questionInput && sendBtn) {
-                    if (roomData.qa_phase === 'asking' && !roomData.qa_question_submitted) {
-                        questionInput.disabled = false;
-                        sendBtn.disabled = false;
-                    } else {
-                        questionInput.disabled = true;
-                        sendBtn.disabled = true;
-                    }
-                }
-            } else if (isRespondent && roomData.qa_phase !== 'done') {
-                if (respondentView) respondentView.classList.remove('hidden');
-                if (roleBadge) {
-                    roleBadge.textContent = '💬 مجيب';
-                    roleBadge.className = 'qa-role-badge respondent';
-                }
-                const answerInput = document.getElementById('online-qa-answer-input');
-                const sendBtn = document.getElementById('btn-online-qa-send-a');
-                if (answerInput && sendBtn) {
-                    if (roomData.qa_phase === 'answering' && roomData.qa_question && !roomData.qa_answer_submitted) {
-                        answerInput.disabled = false;
-                        sendBtn.disabled = false;
-                    } else {
-                        answerInput.disabled = true;
-                        sendBtn.disabled = true;
-                    }
-                }
-                if (roomData.qa_question) {
-                    const receivedQ = document.getElementById('online-qa-received-q');
-                    if (receivedQ) receivedQ.textContent = `"${esc(roomData.qa_question)}"`;
-                }
-            } else {
-                if (spectatorView) spectatorView.classList.remove('hidden');
-                if (roleBadge) {
-                    roleBadge.textContent = '👀 متفرج';
-                    roleBadge.className = 'qa-role-badge spectator';
-                }
-            }
-
-            loadAndDisplayHistory(OS.roomId);
-        }
-
-        async function loadAndDisplayHistory(roomId) {
-            const history = await loadQAHistory(roomId);
-            const players = OS.gameData?.players || [];
-
-            displayQAHistory(history, 'qa-history-list', players);
-        }
-
-        function displayQAHistory(history, containerId, players) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            if (!history || history.length === 0) {
-                container.innerHTML = '<div class="text-slate-500 text-xs text-center py-2">لا توجد أسئلة سابقة</div>';
-                container.parentElement?.classList.remove('hidden');
-                return;
-            }
-
-            let html = '';
-            history.forEach(h => {
-                const asker = players?.find(p => p.id === h.asker_id)?.player_name || '???';
-                const respondent = players?.find(p => p.id === h.respondent_id)?.player_name || '???';
-                html += `
-                    <div class="qa-history-item">
-                        <span class="h-round">الجولة ${h.round_number + 1}</span>
-                        <span class="h-pair">${esc(asker)} → ${esc(respondent)}</span>
-                        <span class="h-q">❓ ${esc(h.question)}</span>
-                        <span class="h-a">💬 ${esc(h.answer)}</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-            container.parentElement?.classList.remove('hidden');
+            updateUIByPhase(roomData);
         }
 
         async function refreshPlayersList(roomId) {
@@ -6409,6 +6750,7 @@ if (copyBtn) {
             }
         }
 
+        // ===== بدء جولة أسئلة جديدة (بدون مؤقتات) =====
         async function startNewQARound(roomId) {
             const sb = OS.supabase;
             if (!sb || !roomId) return;
@@ -6437,13 +6779,14 @@ if (copyBtn) {
                 }
 
                 const currentRound = room.qa_round || 0;
-                const totalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
+                const totalRounds = room.qa_total_rounds || players.length;
 
                 if (currentRound >= totalRounds) {
                     console.log('✅ انتهت جميع الجولات، الانتقال للتصويت');
                     await sb.from('rooms').update({
                         status: 'voting',
                         qa_phase: 'done',
+                        qa_round_complete: true,
                         updated_at: new Date().toISOString()
                     }).eq('id', roomId);
 
@@ -6453,6 +6796,7 @@ if (copyBtn) {
                     return;
                 }
 
+                // تحديد السائل والمجيب بالتناوب
                 const n = players.length;
                 const askerIdx = currentRound % n;
                 const respondentIdx = (askerIdx + 1) % n;
@@ -6469,12 +6813,10 @@ if (copyBtn) {
                     qa_answer: null,
                     qa_answered: false,
                     qa_phase: 'asking',
-                    qa_asker_time_left: QA_CONFIG.ASKER_TIME,
-                    qa_respondent_time_left: QA_CONFIG.RESPONDENT_TIME,
-                    qa_start_time: new Date().toISOString(),
                     qa_question_submitted: false,
                     qa_answer_submitted: false,
                     qa_round_complete: false,
+                    qa_start_time: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 };
 
@@ -6499,8 +6841,6 @@ if (copyBtn) {
                 updateMyRole(updatedRoom);
                 await loadAndDisplayHistory(roomId);
 
-                startAskerTimer(roomId);
-
                 const myPlayer = updatedPlayers?.find(p => p.client_id === OS.clientId);
                 if (myPlayer && myPlayer.id === asker.id) {
                     const questionInput = document.getElementById('online-qa-question-input');
@@ -6522,334 +6862,7 @@ if (copyBtn) {
             }
         }
 
-        function startAskerTimer(roomId) {
-            const sb = OS.supabase;
-            if (!sb || !roomId) return;
-
-            let timeLeft = QA_CONFIG.ASKER_TIME;
-
-            if (OS._qaAskerTimer) {
-                clearInterval(OS._qaAskerTimer);
-                OS._qaAskerTimer = null;
-            }
-
-            OS._qaAskerTimer = setInterval(async () => {
-                timeLeft--;
-
-                await sb.from('rooms').update({
-                    qa_asker_time_left: timeLeft,
-                    updated_at: new Date().toISOString()
-                }).eq('id', roomId);
-
-                updateAskerTimerUI(timeLeft);
-
-                if (timeLeft <= 5) {
-                    playSound('timer_warning');
-                }
-
-                if (timeLeft <= 0) {
-                    clearInterval(OS._qaAskerTimer);
-                    OS._qaAskerTimer = null;
-                    console.log('⏰ انتهى وقت السائل');
-
-                    const { data: room } = await sb.from('rooms').select('qa_question_submitted').eq('id', roomId)
-                        .single();
-
-                    if (!room?.qa_question_submitted) {
-                        showToast('⏰ انتهى وقت السؤال! سيتم تخطي هذه الجولة', 'warning');
-                        await skipCurrentRound(roomId);
-                    } else {
-                        await sb.from('rooms').update({
-                            qa_phase: 'answering',
-                            qa_start_time: new Date().toISOString(),
-                            updated_at: new Date().toISOString()
-                        }).eq('id', roomId);
-                        startRespondentTimer(roomId);
-                    }
-                }
-            }, 1000);
-        }
-
-        function startRespondentTimer(roomId) {
-            const sb = OS.supabase;
-            if (!sb || !roomId) return;
-
-            let timeLeft = QA_CONFIG.RESPONDENT_TIME;
-
-            if (OS._qaRespondentTimer) {
-                clearInterval(OS._qaRespondentTimer);
-                OS._qaRespondentTimer = null;
-            }
-
-            OS._qaRespondentTimer = setInterval(async () => {
-                timeLeft--;
-
-                await sb.from('rooms').update({
-                    qa_respondent_time_left: timeLeft,
-                    updated_at: new Date().toISOString()
-                }).eq('id', roomId);
-
-                updateRespondentTimerUI(timeLeft);
-
-                if (timeLeft <= 5) {
-                    playSound('timer_warning');
-                }
-
-                if (timeLeft <= 0) {
-                    clearInterval(OS._qaRespondentTimer);
-                    OS._qaRespondentTimer = null;
-                    console.log('⏰ انتهى وقت المجيب');
-
-                    const { data: room } = await sb.from('rooms').select('qa_answer_submitted').eq('id', roomId)
-                        .single();
-
-                    if (!room?.qa_answer_submitted) {
-                        showToast('⏰ انتهى وقت الإجابة! سيتم تخطي هذه الجولة', 'warning');
-                        await skipCurrentRound(roomId);
-                    } else {
-                        await completeCurrentRound(roomId);
-                    }
-                }
-            }, 1000);
-        }
-
-        function updateAskerTimerUI(timeLeft) {
-            const timerEl = document.getElementById('online-qa-timer');
-            if (timerEl) {
-                timerEl.textContent = timeLeft;
-                if (timeLeft <= 10) {
-                    timerEl.className = 'timer-ring warning';
-                } else {
-                    timerEl.className = 'timer-ring';
-                }
-            }
-        }
-
-        function updateRespondentTimerUI(timeLeft) {
-            const timerEl = document.getElementById('online-qa-timer-respondent');
-            if (timerEl) {
-                timerEl.textContent = timeLeft;
-                if (timeLeft <= 10) {
-                    timerEl.className = 'timer-ring warning';
-                } else {
-                    timerEl.className = 'timer-ring';
-                }
-            }
-        }
-
-        async function skipCurrentRound(roomId) {
-            const sb = OS.supabase;
-            if (!sb || !roomId) return;
-
-            if (OS.isAdvancing) {
-                console.log('⏳ جاري تخطي الجولة بالفعل...');
-                return;
-            }
-            OS.isAdvancing = true;
-
-            try {
-                console.log('🔄 تخطي الجولة الحالية...');
-
-                const { data: room, error: roomErr } = await sb.from('rooms')
-                    .select('qa_round, qa_total_rounds')
-                    .eq('id', roomId)
-                    .single();
-
-                if (roomErr || !room) {
-                    console.error('❌ فشل جلب بيانات الغرفة:', roomErr);
-                    OS.isAdvancing = false;
-                    return;
-                }
-
-                const nextRound = (room.qa_round || 0) + 1;
-                const totalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
-
-                if (nextRound >= totalRounds) {
-                    console.log('✅ انتهت جميع الجولات، الانتقال للتصويت');
-                    await sb.from('rooms').update({
-                        status: 'voting',
-                        qa_phase: 'done',
-                        updated_at: new Date().toISOString()
-                    }).eq('id', roomId);
-
-                    showToast('🗳️ انتهت الأسئلة! الانتقال للتصويت', 'success');
-                    OS.isAdvancing = false;
-                    showOnlineVoting();
-                    return;
-                }
-
-                console.log(`🔄 تخطي إلى الجولة ${nextRound + 1}`);
-
-                await sb.from('rooms').update({
-                    qa_round: nextRound,
-                    qa_phase: 'waiting',
-                    qa_question: null,
-                    qa_answer: null,
-                    qa_answered: false,
-                    qa_asker_id: null,
-                    qa_respondent_id: null,
-                    qa_question_submitted: false,
-                    qa_answer_submitted: false,
-                    qa_round_complete: false,
-                    qa_asker_time_left: QA_CONFIG.ASKER_TIME,
-                    qa_respondent_time_left: QA_CONFIG.RESPONDENT_TIME,
-                    qa_start_time: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                }).eq('id', roomId);
-
-                showToast(`⏭️ تم تخطي الجولة! الانتقال للجولة ${nextRound + 1}`, 'info');
-
-                setTimeout(async () => {
-                    try {
-                        await startNewQARound(roomId);
-                    } catch (e) {
-                        console.error('❌ فشل بدء الجولة التالية:', e);
-                        showToast('❌ فشل بدء الجولة التالية', 'error');
-                    } finally {
-                        OS.isAdvancing = false;
-                    }
-                }, 1500);
-
-            } catch (e) {
-                console.error('❌ فشل تخطي الجولة:', e);
-                OS.isAdvancing = false;
-            }
-        }
-
-        async function completeCurrentRound(roomId) {
-            const sb = OS.supabase;
-            if (!sb || !roomId) return;
-
-            if (OS.isAdvancing) {
-                console.log('⏳ جاري إنهاء الجولة بالفعل...');
-                return;
-            }
-            OS.isAdvancing = true;
-
-            try {
-                console.log('🔄 إنهاء الجولة الحالية...');
-
-                const { data: room, error: roomErr } = await sb.from('rooms')
-                    .select('qa_round, qa_total_rounds, qa_question, qa_answer, qa_asker_id, qa_respondent_id')
-                    .eq('id', roomId)
-                    .single();
-
-                if (roomErr || !room) {
-                    console.error('❌ فشل جلب بيانات الغرفة:', roomErr);
-                    OS.isAdvancing = false;
-                    return;
-                }
-
-                await saveQAHistory(
-                    roomId,
-                    room.qa_round || 0,
-                    room.qa_asker_id,
-                    room.qa_respondent_id,
-                    room.qa_question,
-                    room.qa_answer
-                );
-
-                const nextRound = (room.qa_round || 0) + 1;
-                const totalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
-
-                if (nextRound >= totalRounds) {
-                    console.log('✅ انتهت جميع الجولات، الانتقال للتصويت');
-                    await sb.from('rooms').update({
-                        status: 'voting',
-                        qa_phase: 'done',
-                        qa_round_complete: true,
-                        updated_at: new Date().toISOString()
-                    }).eq('id', roomId);
-
-                    showToast('🗳️ انتهت الأسئلة! الانتقال للتصويت', 'success');
-                    hapticSuccessWithSound();
-
-                    setTimeout(() => {
-                        showOnlineVoting();
-                    }, 1000);
-
-                    OS.isAdvancing = false;
-                    return;
-                }
-
-                console.log(`🔄 بدء الجولة ${nextRound + 1}`);
-
-                await sb.from('rooms').update({
-                    qa_round: nextRound,
-                    qa_phase: 'waiting',
-                    qa_round_complete: false,
-                    qa_question: null,
-                    qa_answer: null,
-                    qa_answered: false,
-                    qa_asker_id: null,
-                    qa_respondent_id: null,
-                    qa_question_submitted: false,
-                    qa_answer_submitted: false,
-                    qa_asker_time_left: QA_CONFIG.ASKER_TIME,
-                    qa_respondent_time_left: QA_CONFIG.RESPONDENT_TIME,
-                    qa_start_time: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                }).eq('id', roomId);
-
-                showToast(`✅ تمت الإجابة! الانتقال للجولة ${nextRound + 1}`, 'success');
-
-                setTimeout(async () => {
-                    try {
-                        await startNewQARound(roomId);
-                    } catch (e) {
-                        console.error('❌ فشل بدء الجولة التالية:', e);
-                        showToast('❌ فشل بدء الجولة التالية', 'error');
-                    } finally {
-                        OS.isAdvancing = false;
-                    }
-                }, 1500);
-
-            } catch (e) {
-                console.error('❌ فشل إنهاء الجولة:', e);
-                showToast('❌ فشل إنهاء الجولة: ' + e.message, 'error');
-                OS.isAdvancing = false;
-            }
-        }
-
-        async function saveQAHistory(roomId, round, askerId, respondentId, question, answer) {
-            const sb = OS.supabase;
-            if (!sb) return;
-            try {
-                await sb.from('qa_history').insert({
-                    room_id: roomId,
-                    round_number: round,
-                    asker_id: askerId,
-                    respondent_id: respondentId,
-                    question: question || 'لم يتم طرح سؤال',
-                    answer: answer || 'لم يتم الإجابة',
-                    created_at: new Date().toISOString()
-                });
-                console.log(`📝 تم حفظ السؤال ${round + 1}:`, { question, answer });
-            } catch (e) {
-                console.error('❌ فشل حفظ السجل:', e);
-            }
-        }
-
-        async function loadQAHistory(roomId) {
-            const sb = OS.supabase;
-            if (!sb) return [];
-            try {
-                const { data, error } = await sb.from('qa_history')
-                    .select('*')
-                    .eq('room_id', roomId)
-                    .order('round_number', { ascending: true })
-                    .order('created_at', { ascending: true });
-                if (error) {
-                    console.error('❌ فشل جلب السجل:', error);
-                    return [];
-                }
-                return data || [];
-            } catch (e) {
-                console.error('❌ فشل جلب السجل:', e);
-                return [];
-            }
-        }
-
+        // ===== إرسال السؤال =====
         async function sendQuestion() {
             const sb = OS.supabase;
             if (!sb || !OS.roomId) {
@@ -6879,7 +6892,7 @@ if (copyBtn) {
                 console.log('📤 محاولة إرسال السؤال:', question);
 
                 const { data: room, error: roomErr } = await sb.from('rooms')
-                    .select('qa_asker_id, qa_question_submitted, qa_phase, status')
+                    .select('qa_asker_id, qa_question_submitted, qa_phase, status, qa_round')
                     .eq('id', OS.roomId)
                     .single();
 
@@ -6938,11 +6951,6 @@ if (copyBtn) {
                 questionInput.disabled = true;
                 document.getElementById('btn-online-qa-send-q').disabled = true;
 
-                if (OS._qaAskerTimer) {
-                    clearInterval(OS._qaAskerTimer);
-                    OS._qaAskerTimer = null;
-                }
-
                 const { data: updatedRoom } = await sb.from('rooms')
                     .select('*')
                     .eq('id', OS.roomId)
@@ -6952,13 +6960,6 @@ if (copyBtn) {
                     const spectatorQText = document.getElementById('qa-spectator-q-text');
                     if (spectatorQText) {
                         spectatorQText.textContent = `"${esc(question)}"`;
-                        spectatorQText.className = 'text-slate-200 font-medium pr-1';
-                    }
-
-                    const qStatus = document.getElementById('qa-spectator-q-status');
-                    if (qStatus) {
-                        qStatus.textContent = '✅ تم السؤال';
-                        qStatus.className = 'text-[10px] text-cyan-400 font-bold';
                     }
 
                     const receivedQ = document.getElementById('online-qa-received-q');
@@ -6968,23 +6969,17 @@ if (copyBtn) {
 
                     const answerInput = document.getElementById('online-qa-answer-input');
                     const sendABtn = document.getElementById('btn-online-qa-send-a');
-                    if (answerInput && sendABtn) {
-                        answerInput.disabled = false;
-                        sendABtn.disabled = false;
-                        answerInput.focus();
+                    const respondentId = updatedRoom.qa_respondent_id;
+                    const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+
+                    if (myPlayer && myPlayer.id === respondentId) {
+                        if (answerInput) answerInput.disabled = false;
+                        if (sendABtn) sendABtn.disabled = false;
+                        if (answerInput) answerInput.focus();
                     }
 
-                    const statusEl = document.getElementById('qa-round-status');
-                    if (statusEl) {
-                        const respondentName = getPlayerName(updatedRoom.qa_respondent_id);
-                        statusEl.textContent = `💬 ${respondentName || 'المجيب'} يجيب على السؤال`;
-                        statusEl.className = 'text-center text-sm font-bold text-emerald-400 py-1';
-                    }
-
-                    startRespondentTimer(OS.roomId);
+                    updateRoleBadge(updatedRoom);
                 }
-
-                updateMyRole(updatedRoom || room);
 
             } catch (e) {
                 console.error('❌ خطأ غير متوقع في إرسال السؤال:', e);
@@ -6998,6 +6993,7 @@ if (copyBtn) {
             }
         }
 
+        // ===== إرسال الإجابة =====
         async function sendAnswer() {
             const sb = OS.supabase;
             if (!sb || !OS.roomId) {
@@ -7027,7 +7023,7 @@ if (copyBtn) {
                 console.log('📤 محاولة إرسال الإجابة:', answer);
 
                 const { data: room, error: roomErr } = await sb.from('rooms')
-                    .select('qa_respondent_id, qa_answer_submitted, qa_question, qa_phase, status')
+                    .select('qa_respondent_id, qa_answer_submitted, qa_question, qa_phase, status, qa_round, qa_asker_id')
                     .eq('id', OS.roomId)
                     .single();
 
@@ -7073,6 +7069,7 @@ if (copyBtn) {
                         qa_answered: true,
                         qa_answer_submitted: true,
                         qa_phase: 'done',
+                        qa_round_complete: true,
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', OS.roomId);
@@ -7093,10 +7090,14 @@ if (copyBtn) {
                 answerInput.disabled = true;
                 document.getElementById('btn-online-qa-send-a').disabled = true;
 
-                if (OS._qaRespondentTimer) {
-                    clearInterval(OS._qaRespondentTimer);
-                    OS._qaRespondentTimer = null;
-                }
+                await saveQAHistory(
+                    OS.roomId,
+                    room.qa_round || 0,
+                    room.qa_asker_id,
+                    room.qa_respondent_id,
+                    room.qa_question,
+                    answer
+                );
 
                 const { data: updatedRoom } = await sb.from('rooms')
                     .select('*')
@@ -7107,43 +7108,23 @@ if (copyBtn) {
                     const spectatorAText = document.getElementById('qa-spectator-a-text');
                     if (spectatorAText) {
                         spectatorAText.textContent = `"${esc(answer)}"`;
-                        spectatorAText.className = 'text-slate-200 font-medium pr-1';
+                        spectatorAText.className = 'text-xs font-semibold text-slate-200';
                     }
 
-                    const aStatus = document.getElementById('qa-spectator-status-tag');
-                    if (aStatus) {
-                        aStatus.textContent = '✅ تمت الإجابة';
-                        aStatus.className = 'text-[10px] text-emerald-400 font-bold';
-                    }
-
-                    const responseBox = document.getElementById('qa-asker-response-box');
                     const responseText = document.getElementById('qa-asker-response-text');
-                    if (responseBox && responseText) {
-                        responseBox.classList.remove('hidden');
+                    if (responseText) {
                         responseText.textContent = `"${esc(answer)}"`;
                     }
-
-                    const statusEl = document.getElementById('qa-round-status');
-                    if (statusEl) {
-                        statusEl.innerHTML = `<i class="fa-solid fa-check-circle text-green-400 ml-1"></i> تمت الإجابة! جاري الانتقال...`;
-                        statusEl.className = 'text-center text-sm font-bold text-green-400 py-1';
+                    const responseBox = document.getElementById('qa-asker-response-box');
+                    if (responseBox) {
+                        responseBox.classList.remove('hidden');
                     }
 
-                    await saveQAHistory(
-                        OS.roomId,
-                        updatedRoom.qa_round || 0,
-                        updatedRoom.qa_asker_id,
-                        updatedRoom.qa_respondent_id,
-                        updatedRoom.qa_question,
-                        answer
-                    );
-
-                    await loadAndDisplayHistory(OS.roomId);
-
-                    await completeCurrentRound(OS.roomId);
+                    updateRoleBadge(updatedRoom);
+                    showNextRoundButton();
                 }
 
-                updateMyRole(updatedRoom || room);
+                await loadAndDisplayHistory(OS.roomId);
 
             } catch (e) {
                 console.error('❌ خطأ غير متوقع في إرسال الإجابة:', e);
@@ -7157,6 +7138,136 @@ if (copyBtn) {
             }
         }
 
+        // ===== الانتقال إلى الجولة التالية (يدوياً) =====
+        async function advanceToNextRound() {
+            const sb = OS.supabase;
+            if (!sb || !OS.roomId) return;
+
+            if (OS.isAdvancing) {
+                console.log('⏳ جاري التقدم بالفعل...');
+                return;
+            }
+
+            const { data: room, error: roomErr } = await sb.from('rooms')
+                .select('qa_round_complete, qa_round, qa_total_rounds')
+                .eq('id', OS.roomId)
+                .single();
+
+            if (roomErr || !room) {
+                showToast('❌ خطأ في جلب بيانات الغرفة', 'error');
+                return;
+            }
+
+            if (!room.qa_round_complete) {
+                showToast('⚠️ الجولة الحالية لم تكتمل بعد! انتظر الإجابة.', 'warning');
+                return;
+            }
+
+            if (ButtonManager.isDisabled('btn-online-qa-next-round')) return;
+            ButtonManager.disable('btn-online-qa-next-round', 'جاري التقدم...');
+
+            try {
+                const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
+                nextBtns.forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.add('hidden');
+                });
+
+                await startNewQARound(OS.roomId);
+
+            } catch (e) {
+                console.error('❌ فشل التقدم للجولة التالية:', e);
+                showToast('❌ فشل التقدم: ' + e.message, 'error');
+            } finally {
+                ButtonManager.enable('btn-online-qa-next-round');
+                const { data: checkRoom } = await sb.from('rooms')
+                    .select('qa_round_complete')
+                    .eq('id', OS.roomId)
+                    .single();
+                if (checkRoom && checkRoom.qa_round_complete) {
+                    showNextRoundButton();
+                }
+            }
+        }
+
+        // ===== حفظ سجل الأسئلة =====
+        async function saveQAHistory(roomId, round, askerId, respondentId, question, answer) {
+            const sb = OS.supabase;
+            if (!sb) return;
+            try {
+                await sb.from('qa_history').insert({
+                    room_id: roomId,
+                    round_number: round,
+                    asker_id: askerId,
+                    respondent_id: respondentId,
+                    question: question || 'لم يتم طرح سؤال',
+                    answer: answer || 'لم يتم الإجابة',
+                    created_at: new Date().toISOString()
+                });
+                console.log(`📝 تم حفظ السؤال ${round + 1}:`, { question, answer });
+            } catch (e) {
+                console.error('❌ فشل حفظ السجل:', e);
+            }
+        }
+
+        // ===== تحميل سجل الأسئلة =====
+        async function loadQAHistory(roomId) {
+            const sb = OS.supabase;
+            if (!sb) return [];
+            try {
+                const { data, error } = await sb.from('qa_history')
+                    .select('*')
+                    .eq('room_id', roomId)
+                    .order('round_number', { ascending: true })
+                    .order('created_at', { ascending: true });
+                if (error) {
+                    console.error('❌ فشل جلب السجل:', error);
+                    return [];
+                }
+                return data || [];
+            } catch (e) {
+                console.error('❌ فشل جلب السجل:', e);
+                return [];
+            }
+        }
+
+        // ===== عرض سجل الأسئلة =====
+        function displayQAHistory(history, containerId, players) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!history || history.length === 0) {
+                container.innerHTML = '<div class="text-slate-500 text-xs text-center py-2">لا توجد جولات سابقة</div>';
+                return;
+            }
+
+            let html = '';
+            history.forEach(h => {
+                const asker = players?.find(p => p.id === h.asker_id)?.player_name || '???';
+                const respondent = players?.find(p => p.id === h.respondent_id)?.player_name || '???';
+                html += `
+                    <div class="bg-slate-900/60 p-3 rounded-2xl border border-slate-800 space-y-2 text-xs">
+                        <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 border-b border-slate-800/80 pb-1.5">
+                            <span>الجولة ${h.round_number + 1}</span>
+                            <span class="text-slate-500">مكتملة</span>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-cyan-300 font-bold"><strong class="text-slate-400 font-normal">سأل ${esc(asker)} ${esc(respondent)}:</strong> "${esc(h.question)}"</p>
+                            <p class="text-purple-300"><strong class="text-slate-400 font-normal">أجاب ${esc(respondent)}:</strong> "${esc(h.answer)}"</p>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        async function loadAndDisplayHistory(roomId) {
+            const history = await loadQAHistory(roomId);
+            const players = OS.gameData?.players || [];
+            displayQAHistory(history, 'qa-history-list', players);
+        }
+
+        // ===== عرض شاشة الأسئلة =====
         async function showOnlineQA() {
             showScreen('online-qa');
             const sb = OS.supabase;
@@ -7179,6 +7290,31 @@ if (copyBtn) {
 
                 OS.gameData = { room, players };
 
+                const roundDisplay = document.getElementById('online-qa-round-display');
+                if (roundDisplay) {
+                    const currentRound = room.qa_round || 0;
+                    const totalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
+                    roundDisplay.textContent = `الجولة ${currentRound + 1} من ${totalRounds}`;
+                }
+
+                const askerName = getPlayerName(room.qa_asker_id);
+                const respondentName = getPlayerName(room.qa_respondent_id);
+
+                const askerNameEl = document.getElementById('qa-asker-name');
+                if (askerNameEl) askerNameEl.textContent = askerName || '—';
+
+                const respondentNameEl = document.getElementById('qa-respondent-name');
+                if (respondentNameEl) respondentNameEl.textContent = respondentName || '—';
+
+                if (askerName) {
+                    const avatar = document.getElementById('qa-asker-avatar');
+                    if (avatar) avatar.textContent = askerName.charAt(0).toUpperCase();
+                }
+                if (respondentName) {
+                    const avatar = document.getElementById('qa-respondent-avatar');
+                    if (avatar) avatar.textContent = respondentName.charAt(0).toUpperCase();
+                }
+
                 await loadAndDisplayHistory(OS.roomId);
 
                 updateMyRole(room);
@@ -7192,6 +7328,14 @@ if (copyBtn) {
                 if (sendABtn) {
                     sendABtn.onclick = sendAnswer;
                 }
+
+                const nextBtns = ['btn-online-qa-next-round', 'btn-online-qa-next-round-respondent', 'btn-online-qa-next-round-spectator'];
+                nextBtns.forEach(id => {
+                    const btn = document.getElementById(id);
+                    if (btn) {
+                        btn.onclick = advanceToNextRound;
+                    }
+                });
 
                 const questionInput = document.getElementById('online-qa-question-input');
                 if (questionInput) {
@@ -7217,14 +7361,6 @@ if (copyBtn) {
                 if (leaveBtn) {
                     leaveBtn.onclick = async () => {
                         TimerManager.clearAll();
-                        if (OS._qaAskerTimer) {
-                            clearInterval(OS._qaAskerTimer);
-                            OS._qaAskerTimer = null;
-                        }
-                        if (OS._qaRespondentTimer) {
-                            clearInterval(OS._qaRespondentTimer);
-                            OS._qaRespondentTimer = null;
-                        }
                         await leaveOnlineRoom();
                         showScreen('online-room');
                         renderOnlineRoom();
@@ -7233,22 +7369,8 @@ if (copyBtn) {
                     };
                 }
 
-                const voteBtn = document.getElementById('btn-online-qa-to-vote');
-                if (OS.isHost && room.qa_phase === 'done') {
-                    voteBtn.classList.remove('hidden');
-                    voteBtn.onclick = async () => {
-                        if (ButtonManager.isDisabled('btn-online-qa-to-vote')) return;
-                        ButtonManager.disable('btn-online-qa-to-vote', 'جاري الانتقال...');
-                        await sb.from('rooms').update({
-                            status: 'voting',
-                            updated_at: new Date().toISOString()
-                        }).eq('id', OS.roomId);
-                        showToast('🗳️ بدء التصويت!', 'success');
-                        hapticSuccessWithSound();
-                        ButtonManager.enable('btn-online-qa-to-vote');
-                    };
-                } else {
-                    voteBtn.classList.add('hidden');
+                if (room.qa_round_complete) {
+                    showNextRoundButton();
                 }
 
             } catch (e) {
@@ -7257,48 +7379,91 @@ if (copyBtn) {
             }
         }
 
+        // ===== تحديث شاشة الأسئلة عند التغيير =====
         function refreshQAView(room) {
+            if (!room) return;
+
             const players = room.room_players || [];
             const myPlayer = players.find(p => p.client_id === OS.clientId);
             if (!myPlayer) return;
 
-            const askerId = room.qa_asker_id;
-            const respondentId = room.qa_respondent_id;
-            if (!askerId || !respondentId) return;
+            const roundDisplay = document.getElementById('online-qa-round-display');
+            if (roundDisplay) {
+                const currentRound = room.qa_round || 0;
+                const totalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
+                roundDisplay.textContent = `الجولة ${currentRound + 1} من ${totalRounds}`;
+            }
 
-            const asker = players.find(p => p.id === askerId);
-            const respondent = players.find(p => p.id === respondentId);
-            if (!asker || !respondent) return;
+            const askerName = getPlayerName(room.qa_asker_id);
+            const respondentName = getPlayerName(room.qa_respondent_id);
 
-            const isAsker = myPlayer.id === asker.id;
-            const isRespondent = myPlayer.id === respondent.id;
+            const askerNameEl = document.getElementById('qa-asker-name');
+            if (askerNameEl) askerNameEl.textContent = askerName || '—';
 
-            document.getElementById('qa-asker-name').textContent = asker.player_name;
-            document.getElementById('qa-respondent-name').textContent = respondent.player_name;
-            document.getElementById('qa-asker-avatar').textContent = asker.player_name.charAt(0).toUpperCase();
-            document.getElementById('qa-respondent-avatar').textContent = respondent.player_name.charAt(0).toUpperCase();
+            const respondentNameEl = document.getElementById('qa-respondent-name');
+            if (respondentNameEl) respondentNameEl.textContent = respondentName || '—';
+
+            if (askerName) {
+                const avatar = document.getElementById('qa-asker-avatar');
+                if (avatar) avatar.textContent = askerName.charAt(0).toUpperCase();
+            }
+            if (respondentName) {
+                const avatar = document.getElementById('qa-respondent-avatar');
+                if (avatar) avatar.textContent = respondentName.charAt(0).toUpperCase();
+            }
 
             if (room.qa_question) {
-                if (isAsker) {
-                    if (room.qa_answer && room.qa_answered) {
-                        document.getElementById('qa-asker-response-text').textContent = `"${esc(room.qa_answer)}"`;
-                        document.getElementById('qa-asker-response-box').classList.remove('hidden');
-                    }
-                }
-                if (isRespondent) {
-                    document.getElementById('online-qa-received-q').textContent = `"${esc(room.qa_question)}"`;
-                    document.getElementById('online-qa-answer-input').disabled = false;
-                    document.getElementById('btn-online-qa-send-a').disabled = false;
-                }
-                if (!isAsker && !isRespondent) {
-                    document.getElementById('qa-spectator-q-text').textContent = `"${esc(room.qa_question)}"`;
-                    if (room.qa_answer && room.qa_answered) {
-                        document.getElementById('qa-spectator-a-text').textContent = `"${esc(room.qa_answer)}"`;
-                        document.getElementById('qa-spectator-status-tag').textContent = 'تمت الإجابة ✓';
-                        document.getElementById('qa-spectator-status-tag').className = 'text-[10px] text-emerald-400 font-bold';
-                    }
-                }
+                const spectatorQText = document.getElementById('qa-spectator-q-text');
+                if (spectatorQText) spectatorQText.textContent = `"${esc(room.qa_question)}"`;
+
+                const receivedQ = document.getElementById('online-qa-received-q');
+                if (receivedQ) receivedQ.textContent = `"${esc(room.qa_question)}"`;
             }
+
+            if (room.qa_answer && room.qa_answered) {
+                const spectatorAText = document.getElementById('qa-spectator-a-text');
+                if (spectatorAText) {
+                    spectatorAText.textContent = `"${esc(room.qa_answer)}"`;
+                    spectatorAText.className = 'text-xs font-semibold text-slate-200';
+                }
+
+                const responseText = document.getElementById('qa-asker-response-text');
+                if (responseText) responseText.textContent = `"${esc(room.qa_answer)}"`;
+
+                const responseBox = document.getElementById('qa-asker-response-box');
+                if (responseBox) responseBox.classList.remove('hidden');
+            }
+
+            updateMyRole(room);
+
+            if (room.qa_round_complete) {
+                showNextRoundButton();
+            }
+
+            const askerLabel = document.getElementById('qa-respondent-asker-label');
+            if (askerLabel && askerName) {
+                askerLabel.textContent = `${askerName} يسألك:`;
+            }
+
+            const specAskerLabel = document.getElementById('qa-spectator-asker-label');
+            if (specAskerLabel && askerName && respondentName) {
+                specAskerLabel.textContent = `${askerName} يسأل ${respondentName}:`;
+            }
+            const specRespondentLabel = document.getElementById('qa-spectator-respondent-label');
+            if (specRespondentLabel && respondentName) {
+                specRespondentLabel.textContent = `${respondentName} يجيب:`;
+            }
+
+            loadAndDisplayHistory(OS.roomId);
+        }
+
+        // ===== دالة تبديل سجل الأسئلة =====
+        function toggleQAHistory() {
+            const content = document.getElementById('history-content');
+            const arrow = document.getElementById('history-arrow');
+
+            if (content) content.classList.toggle('hidden');
+            if (arrow) arrow.classList.toggle('rotated');
         }
 
         // ==============================================================
@@ -7334,7 +7499,8 @@ if (copyBtn) {
             }
 
             if (existingVote) {
-                instruction.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت بالفعل. في انتظار الآخرين...`;
+                instruction.innerHTML =
+                `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت بالفعل. في انتظار الآخرين...`;
                 optionsDiv.innerHTML = '';
                 await refreshVotingView(room, players);
                 return;
@@ -7854,6 +8020,9 @@ if (copyBtn) {
                         qa_phase: 'waiting',
                         qa_round: 0,
                         qa_total_rounds: QA_CONFIG.TOTAL_ROUNDS,
+                        qa_question_submitted: false,
+                        qa_answer_submitted: false,
+                        qa_round_complete: false,
                         sc_chosen: null,
                         sc_correct: false,
                         updated_at: new Date().toISOString()
@@ -7872,6 +8041,8 @@ if (copyBtn) {
 
                     OS.usedWords = [];
                     OS._qaRealtimeSetup = false;
+                    OS.revealFlipped = false;
+                    OS.revealReadyClicked = false;
                     lastPhase = 'lobby';
                     lastQaData = null;
                     lastVoteData = null;
@@ -7923,6 +8094,8 @@ if (copyBtn) {
                 OS.myPlayerId = null;
                 OS.gameData = null;
                 OS._qaRealtimeSetup = false;
+                OS.revealFlipped = false;
+                OS.revealReadyClicked = false;
                 if (OS.currentPhase !== 'lobby') {
                     showScreen('online-lobby');
                 }
@@ -8005,14 +8178,16 @@ if (copyBtn) {
         }
 
         function updateSetupUI() {
-    const n = S.players.length;
-    document.getElementById('setup-count-badge').textContent = n + ' لاعب' + (n !== 1 ? 'ين' : '');
-    document.getElementById('setup-hint').textContent = n < CFG.MIN_PLAYERS ? `الحد الأدنى ${CFG.MIN_PLAYERS} لاعبين (أضفت ${n})` : ` ${n} لاعبين جاهزين`;
-    document.getElementById('setup-hint').innerHTML = n < CFG.MIN_PLAYERS ? 
-        `الحد الأدنى ${CFG.MIN_PLAYERS} لاعبين (أضفت ${n})` : 
-        `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> ${n} لاعبين جاهزين`;
-    document.getElementById('btn-setup-start').disabled = n < CFG.MIN_PLAYERS || !S.selectedCategory || !S.selectedMode;
-}
+            const n = S.players.length;
+            document.getElementById('setup-count-badge').textContent = n + ' لاعب' + (n !== 1 ? 'ين' : '');
+            document.getElementById('setup-hint').textContent = n < CFG.MIN_PLAYERS ? `الحد الأدنى ${CFG.MIN_PLAYERS} لاعبين (أضفت ${n})` :
+                ` ${n} لاعبين جاهزين`;
+            document.getElementById('setup-hint').innerHTML = n < CFG.MIN_PLAYERS ?
+                `الحد الأدنى ${CFG.MIN_PLAYERS} لاعبين (أضفت ${n})` :
+                `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> ${n} لاعبين جاهزين`;
+            document.getElementById('btn-setup-start').disabled = n < CFG.MIN_PLAYERS || !S.selectedCategory || !S
+            .selectedMode;
+        }
 
         // ===== دوال اللعبة المحلية =====
         function startNewRound() {
@@ -8252,7 +8427,8 @@ if (copyBtn) {
         function advanceVoter() {
             const nxt = S.currentVoterIdx + 1;
             if (nxt >= S.players.length) {
-                document.getElementById('voting-progress').innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> اكتمل التصويت!`;
+                document.getElementById('voting-progress').innerHTML =
+                    `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> اكتمل التصويت!`;
                 document.getElementById('voting-options').innerHTML = '';
                 document.getElementById('voting-voter-name').textContent = 'تم تسجيل جميع الأصوات';
                 const doneBtn = document.getElementById('btn-voting-done');
@@ -8544,6 +8720,8 @@ if (copyBtn) {
                 OS.authUser = { username: player.player_name };
                 OS.hasRevealed = player.has_revealed || false;
                 OS.isReady = true;
+                OS.revealFlipped = false;
+                OS.revealReadyClicked = false;
 
                 if (room.status !== 'lobby') {
                     const { data: allPlayers } = await sb.from('room_players').select('*').eq('room_id', roomId);
@@ -8559,13 +8737,23 @@ if (copyBtn) {
                 }
 
                 if (room.status === 'qa') {
-                    TimerManager.clearAll();
-                    if (room.qa_question && !room.qa_answered) {
-                        const startTime = room.qa_start_time ? new Date(room.qa_start_time).getTime() : Date.now();
-                        const duration = 90;
-                        const endTime = startTime + (duration * 1000);
-                        const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
-                        if (remaining > 0) {}
+                    OS.qaRound = room.qa_round || 0;
+                    OS.qaTotalRounds = room.qa_total_rounds || QA_CONFIG.TOTAL_ROUNDS;
+                    OS.qaAskerId = room.qa_asker_id;
+                    OS.qaRespondentId = room.qa_respondent_id;
+                    OS.qaQuestionText = room.qa_question;
+                    OS.qaAnswerText = room.qa_answer;
+                    OS.qaAnswered = room.qa_answered || false;
+                    OS.qaPhase = room.qa_phase || 'waiting';
+                    OS.qaQuestionSubmitted = room.qa_question_submitted || false;
+                    OS.qaAnswerSubmitted = room.qa_answer_submitted || false;
+                    OS.qaRoundComplete = room.qa_round_complete || false;
+
+                    const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+                    if (myPlayer) {
+                        if (myPlayer.id === room.qa_asker_id) OS.qaRole = 'asker';
+                        else if (myPlayer.id === room.qa_respondent_id) OS.qaRole = 'respondent';
+                        else OS.qaRole = 'spectator';
                     }
                 }
 
@@ -8722,7 +8910,6 @@ if (copyBtn) {
                 });
             }
 
-            // أيقونة الحساب الشخصي
             const profileAvatar = document.getElementById('profile-avatar');
             const profileNameDisplay = document.getElementById('profile-name-display');
             if (profileAvatar) {
@@ -8738,7 +8925,6 @@ if (copyBtn) {
                 });
             }
 
-            // أزرار مودال الملف الشخصي
             const profileCloseBtn = document.getElementById('profile-close-btn');
             if (profileCloseBtn) {
                 profileCloseBtn.addEventListener('click', () => { hideProfileModal();
@@ -8771,7 +8957,6 @@ if (copyBtn) {
                 logoutBtn.addEventListener('click', handleLogout);
             }
 
-            // باقي الأزرار
             const btnLandingPlay = document.getElementById('btn-landing-play');
             if (btnLandingPlay) {
                 btnLandingPlay.addEventListener('click', () => {
@@ -9106,10 +9291,8 @@ if (copyBtn) {
                 hapticAndSound('click');
             };
 
-            // ربط أحداث المصادقة
             bindAuthEvents();
 
-            // ربط أزرار الـ vis و ply
             window.selectVisibility = function(type) {
                 OS.visibility = type;
                 document.querySelectorAll('.vis-btn').forEach(btn => {
@@ -9138,6 +9321,8 @@ if (copyBtn) {
                 hapticAndSound('click');
             };
 
+            window.toggleQAHistory = toggleQAHistory;
+
             window.closeCustomAlert = closeCustomAlert;
             window.confirmModalAction = confirmModalAction;
             window.confirmDeleteAllRooms = confirmDeleteAllRooms;
@@ -9159,7 +9344,6 @@ if (copyBtn) {
             showScreen('landing');
             if (window.lucide) lucide.createIcons();
 
-            // تهيئة نظام الصوت
             SoundManager.init();
 
             const sb = initSupabase();
@@ -9183,10 +9367,11 @@ if (copyBtn) {
 
             console.log('🔮 برا السالفة v12.0 — النسخة النهائية المكملة');
             console.log('✅ جميع التحسينات المطلوبة تم تطبيقها');
-            console.log('✅ نظام الأسئلة يعمل مع تحديثات فورية ومؤقتات 90 ثانية');
+            console.log('✅ نظام الأسئلة يعمل بدون مؤقتات مع أزرار انتقال يدوية');
             console.log('✅ الملف الشخصي بتصميم احترافي جديد');
             console.log('✅ المصادقة تعمل مع Toast بدلاً من التنبيهات الداخلية');
             console.log('✅ المؤثرات الصوتية مفعلة');
+            console.log('✅ شاشة الكشف بتصميم 3D الجديد مع شريط تقدم');
             console.log('✅ اللعبة جاهزة للاستخدام');
         }
 
