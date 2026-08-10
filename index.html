@@ -2156,6 +2156,46 @@
                 height: 10px;
             }
         }
+        /* ===== إصلاح شاشة الإعداد المحلي - توحيد قسم الفئات ===== */
+#screen-setup .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+#screen-setup .cat-card-option {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 2px solid rgba(255, 255, 255, 0.08) !important;
+    color: #8892a6 !important;
+    transition: all 0.3s ease;
+    border-radius: 16px;
+}
+
+#screen-setup .cat-card-option:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+#screen-setup .cat-card-option.selected {
+    background: rgba(0, 224, 255, 0.08) !important;
+    border-color: #00e0ff !important;
+    color: #e6ecf7 !important;
+    box-shadow: 0 0 25px rgba(0, 224, 255, 0.08);
+}
+
+#screen-setup .cat-card-option i {
+    font-size: 1.4rem;
+    display: block;
+}
+
+/* إصلاح الشبكة */
+#screen-setup .grid-auto-fill {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+}
+
     </style>
 </head>
 <body>
@@ -5056,35 +5096,38 @@
                 }
 
                 const copyBtn = document.getElementById('btn-copy-code');
-                if (copyBtn) {
-                    copyBtn.onclick = () => {
-                        const code = room.code;
-                        navigator.clipboard.writeText(code).then(() => {
-                            showToast('✅ تم نسخ الكود: ' + code, 'success');
-                            hapticAndSound('click');
-                            copyBtn.className =
-                                'fa-regular fa-check text-emerald-400 cursor-pointer transition-all text-sm hover:scale-110 ml-2';
-                            setTimeout(() => {
-                                copyBtn.className =
-                                    'fa-regular fa-copy text-slate-500 hover:text-cyan-400 cursor-pointer transition-all text-sm hover:scale-110 ml-2';
-                            }, 2000);
-                        }).catch(() => {
-                            const temp = document.createElement('input');
-                            temp.value = code;
-                            document.body.appendChild(temp);
-                            temp.select();
-                            document.execCommand('copy');
-                            temp.remove();
-                            showToast('✅ تم نسخ الكود: ' + code, 'success');
-                            copyBtn.className =
-                                'fa-regular fa-circle-check text-emerald-400 cursor-pointer transition-all text-sm hover:scale-110 ml-2';
-                            setTimeout(() => {
-                                copyBtn.className =
-                                    'fa-regular fa-copy text-slate-500 hover:text-cyan-400 cursor-pointer transition-all text-sm hover:scale-110 ml-2';
-                            }, 2000);
-                        });
-                    };
-                }
+if (copyBtn) {
+    copyBtn.onclick = () => {
+        const code = room.code;
+        navigator.clipboard.writeText(code).then(() => {
+            showToast('✅ تم نسخ الكود: ' + code, 'success');
+            hapticAndSound('click');
+            // تغيير الأيقونة إلى أيقونة نجاح واضحة
+            copyBtn.className = 'fa-solid fa-check text-emerald-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+            copyBtn.style.textShadow = '0 0 20px rgba(16,185,129,0.3)';
+            setTimeout(() => {
+                // العودة للأيقونة الأصلية
+                copyBtn.className = 'fa-regular fa-copy text-slate-400 hover:text-cyan-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+                copyBtn.style.textShadow = 'none';
+            }, 2500);
+        }).catch(() => {
+            // طريقة بديلة للنسخ
+            const temp = document.createElement('input');
+            temp.value = code;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            temp.remove();
+            showToast('✅ تم نسخ الكود: ' + code, 'success');
+            copyBtn.className = 'fa-solid fa-check text-emerald-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+            copyBtn.style.textShadow = '0 0 20px rgba(16,185,129,0.3)';
+            setTimeout(() => {
+                copyBtn.className = 'fa-regular fa-copy text-slate-400 hover:text-cyan-400 cursor-pointer transition-all text-base hover:scale-110 ml-2';
+                copyBtn.style.textShadow = 'none';
+            }, 2500);
+        });
+    };
+}
                 document.getElementById('online-room-player-count').textContent = `${players.length} لاعب`;
 
                 const list = document.getElementById('online-player-list');
@@ -5165,7 +5208,7 @@
                     `⏳ في انتظار ${players.length - readyCount} لاعبين للاستعداد (${readyCount}/${players.length})`;
             } else {
                 startBtn.disabled = false;
-                hostHint.textContent = '✅ جميع اللاعبين جاهزون! اضغط للبدء';
+                hostHint.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> جميع اللاعبين جاهزون! اضغط للبدء`;
             }
         }
 
@@ -7082,7 +7125,7 @@
 
                     const statusEl = document.getElementById('qa-round-status');
                     if (statusEl) {
-                        statusEl.textContent = '✅ تمت الإجابة! جاري الانتقال...';
+                        statusEl.innerHTML = `<i class="fa-solid fa-check-circle text-green-400 ml-1"></i> تمت الإجابة! جاري الانتقال...`;
                         statusEl.className = 'text-center text-sm font-bold text-green-400 py-1';
                     }
 
@@ -7291,7 +7334,7 @@
             }
 
             if (existingVote) {
-                instruction.textContent = '✅ لقد صوّت بالفعل. في انتظار الآخرين...';
+                instruction.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت بالفعل. في انتظار الآخرين...`;
                 optionsDiv.innerHTML = '';
                 await refreshVotingView(room, players);
                 return;
@@ -7404,7 +7447,7 @@
             const doneBtn = document.getElementById('btn-online-voting-done');
 
             if (allVoted) {
-                statusDiv.textContent = '✅ الجميع صوّت! اكشف النتيجة.';
+                statusDiv.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> الجميع صوّت! اكشف النتيجة.`;
                 if (OS.isHost) {
                     doneBtn.classList.remove('hidden');
                 }
@@ -7962,12 +8005,14 @@
         }
 
         function updateSetupUI() {
-            const n = S.players.length;
-            document.getElementById('setup-count-badge').textContent = n + ' لاعب' + (n !== 1 ? 'ين' : '');
-            document.getElementById('setup-hint').textContent = n < CFG.MIN_PLAYERS ? `الحد الأدنى ${CFG.MIN_PLAYERS} لاعبين (أضفت ${n})` :
-                `✅ ${n} لاعبين جاهزين`;
-            document.getElementById('btn-setup-start').disabled = n < CFG.MIN_PLAYERS || !S.selectedCategory || !S.selectedMode;
-        }
+    const n = S.players.length;
+    document.getElementById('setup-count-badge').textContent = n + ' لاعب' + (n !== 1 ? 'ين' : '');
+    document.getElementById('setup-hint').textContent = n < CFG.MIN_PLAYERS ? `الحد الأدنى ${CFG.MIN_PLAYERS} لاعبين (أضفت ${n})` : ` ${n} لاعبين جاهزين`;
+    document.getElementById('setup-hint').innerHTML = n < CFG.MIN_PLAYERS ? 
+        `الحد الأدنى ${CFG.MIN_PLAYERS} لاعبين (أضفت ${n})` : 
+        `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> ${n} لاعبين جاهزين`;
+    document.getElementById('btn-setup-start').disabled = n < CFG.MIN_PLAYERS || !S.selectedCategory || !S.selectedMode;
+}
 
         // ===== دوال اللعبة المحلية =====
         function startNewRound() {
@@ -8207,7 +8252,7 @@
         function advanceVoter() {
             const nxt = S.currentVoterIdx + 1;
             if (nxt >= S.players.length) {
-                document.getElementById('voting-progress').textContent = '✅ اكتمل التصويت!';
+                document.getElementById('voting-progress').innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> اكتمل التصويت!`;
                 document.getElementById('voting-options').innerHTML = '';
                 document.getElementById('voting-voter-name').textContent = 'تم تسجيل جميع الأصوات';
                 const doneBtn = document.getElementById('btn-voting-done');
