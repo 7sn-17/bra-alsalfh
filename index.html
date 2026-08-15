@@ -5815,240 +5815,384 @@ async function validateStoredUser() {
         let pollingInterval = null;
 
         function handleRoomUpdate(payload) {
-            const newData = payload.new;
-            if (!newData) return;
+    const newData = payload.new;
+    if (!newData) return;
 
-            const newTimestamp = new Date(newData.updated_at).getTime();
-            if (OS.lastUpdateTimestamp && newTimestamp <= OS.lastUpdateTimestamp) {
-                console.log('⏳ تحديث أقدم أو مكرر، تم تجاهله');
-                return;
-            }
-            OS.lastUpdateTimestamp = newTimestamp;
+    const newTimestamp = new Date(newData.updated_at).getTime();
+    if (OS.lastUpdateTimestamp && newTimestamp <= OS.lastUpdateTimestamp) {
+        console.log('⏳ تحديث أقدم أو مكرر، تم تجاهله');
+        return;
+    }
+    OS.lastUpdateTimestamp = newTimestamp;
 
-            OS.gameData = { ...OS.gameData, room: newData };
-            const phase = newData.status;
-            if (phase !== OS.currentPhase) {
-                OS.currentPhase = phase;
-                switch (phase) {
-                    case 'lobby':
-                        renderOnlineRoom();
-                        break;
-                    case 'reveal':
-                        showOnlineReveal();
-                        break;
-                    case 'qa':
-                        showOnlineQA();
-                        break;
-                    case 'voting':
-                        showOnlineVoting();
-                        break;
-                    case 'suspense':
-                        showOnlineSuspense();
-                        break;
-                    case 'secondchance':
-                        showOnlineSecondChance();
-                        break;
-                    case 'leaderboard':
-                        showOnlineLeaderboard();
-                        break;
-                }
-            }
-            if (phase === 'lobby') renderOnlineRoom();
-
-            if (phase === 'qa' && document.getElementById('screen-online-qa')?.classList.contains('active')) {
-                handleQaUpdate(newData);
-            }
-
-            if (phase === 'reveal' && document.getElementById('screen-online-reveal')?.classList.contains('active')) {
-                updateRevealUI(newData);
-            }
+    OS.gameData = { ...OS.gameData, room: newData };
+    const phase = newData.status;
+    if (phase !== OS.currentPhase) {
+        console.log(`🔄 تغيير المرحلة: ${OS.currentPhase} → ${phase}`);
+        OS.currentPhase = phase;
+        // التأكد من تحديث الشاشة في جميع الأحوال
+        switch (phase) {
+            case 'lobby':
+                renderOnlineRoom();
+                showScreen('online-room');
+                break;
+            case 'reveal':
+                showOnlineReveal();
+                break;
+            case 'qa':
+                showOnlineQA();
+                break;
+            case 'voting':
+                showOnlineVoting();
+                break;
+            case 'suspense':
+                showOnlineSuspense();
+                break;
+            case 'secondchance':
+                showOnlineSecondChance();
+                break;
+            case 'leaderboard':
+                showOnlineLeaderboard();
+                break;
+            default:
+                console.warn('⚠️ مرحلة غير معروفة:', phase);
         }
+    }
+
+    // إذا كنا في مرحلة التصويت، قم بتحديث الواجهة بشكل إضافي
+    if (phase === 'voting' && document.getElementById('screen-online-voting')?.classList.contains('active')) {
+        refreshVotingView(newData, OS.gameData?.players || []);
+    }
+
+    // تحديث بيانات الجولة في مرحلة الأسئلة
+    if (phase === 'qa' && document.getElementById('screen-online-qa')?.classList.contains('active')) {
+        handleQaUpdate(newData);
+    }
+}
 
         function handlePlayerUpdate(payload) {
-            console.log('🔄 Player update detected:', payload);
+    console.log('🔄 Player update detected:', payload);
 
-            if (OS.roomId && OS.supabase) {
-                OS.supabase.from('room_players').select('*').eq('room_id', OS.roomId)
-                    .then(({ data, error }) => {
-                        if (!error && data) {
-                            OS.gameData = { ...OS.gameData, players: data };
-                            console.log('👥 Updated players:', data.length);
-
-                            if (OS.currentPhase === 'lobby') {
-                                renderOnlineRoom();
-                                document.getElementById('online-room-player-count').textContent = `${data.length} لاعب`;
-                                if (OS.isHost) {
-                                    hostUpdateUIControls(data, OS.gameData?.room);
-                                }
+    // ==========================================================
+    // 🔥 المشكلة 5: معالجة مغادرة لاعب في منتصف التصويت
+    // ==========================================================
+    if (payload.eventType === 'DELETE') {
+        const removed = payload.old;
+        console.log('🚪 Player left:', removed?.player_name);
+        
+        if (removed && removed.id === OS.myPlayerId) {
+            showToast('⚠️ تم إخراجك من الغرفة', 'warning');
+            leaveOnlineRoom();
+            return;
+        }
+        
+        // إذا كان اللاعب قد صوت في الجولة الحالية
+        if (removed && OS.currentPhase === 'voting' && OS.gameData?.room) {
+            const round = OS.gameData.room.current_round || 0;
+            OS.supabase.from('votes')
+                .select('voter_id')
+                .eq('room_id', OS.roomId)
+                .eq('round_number', round)
+                .then(async ({ data: votes }) => {
+                    if (votes) {
+                        const voters = votes.map(v => v.voter_id);
+                        // تحديث قائمة اللاعبين
+                        const { data: freshPlayers } = await OS.supabase
+                            .from('room_players')
+                            .select('*')
+                            .eq('room_id', OS.roomId);
+                        if (freshPlayers) {
+                            // إذا أصبح عدد اللاعبين أقل من الحد الأدنى، نرجع للوبي
+                            if (freshPlayers.length < CFG.MIN_PLAYERS) {
+                                showToast('⚠️ عدد اللاعبين أقل من 3، العودة للوبي', 'warning');
+                                await OS.supabase.from('rooms')
+                                    .update({ status: 'lobby', updated_at: new Date().toISOString() })
+                                    .eq('id', OS.roomId);
+                                return;
                             }
-
-                            if (OS.currentPhase === 'reveal') {
-                                renderOnlineRoom();
-                                updateRevealUI(OS.gameData?.room);
-                                if (OS.isHost) {
-                                    hostCheckRevealComplete(data, OS.gameData?.room);
-                                }
-                            }
-
-                            if (OS.currentPhase === 'qa') {
-                                if (OS.isHost) {
-                                    hostCheckReadyForNextRound(OS.roomId);
-                                }
-                                if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
-                                    refreshQAView(OS.gameData?.room);
-                                }
-                            }
-
-                            if (OS.currentPhase === 'voting') {
-                                const round = OS.gameData?.room?.current_round || 0;
-                                OS.supabase.from('votes').select('voter_id').eq('room_id', OS.roomId).eq(
-                                    'round_number', round)
-                                    .then(({ data: votes }) => {
-                                        if (votes) {
-                                            refreshVotingView(OS.gameData.room, data);
-                                        }
-                                    });
-                                if (OS.isHost) {
-                                    hostCheckVotingComplete(data, OS.gameData?.room);
-                                }
+                            
+                            // تحديث واجهة التصويت
+                            refreshVotingView(OS.gameData.room, freshPlayers);
+                            
+                            // تحديث عداد الجاهزية
+                            updateReadyCountUI(OS.gameData.room, freshPlayers);
+                            
+                            // إذا كان اللاعب المغادر هو المضيف، نقل المضيفية
+                            if (removed.client_id === OS.gameData.room.host_id) {
+                                transferHost(OS.roomId, removed.client_id);
                             }
                         }
-                    });
-            }
-
-            if (payload.eventType === 'DELETE') {
-                const removed = payload.old;
-                console.log('🚪 Player left:', removed?.player_name);
-                if (removed && removed.id === OS.myPlayerId) {
-                    showToast('⚠️ تم إخراجك من الغرفة', 'warning');
-                    leaveOnlineRoom();
-                    return;
-                }
-                if (removed && OS.gameData?.room) {
-                    const room = OS.gameData.room;
-                    if (room.host_id === removed.client_id) {
-                        transferHost(room.id, removed.client_id);
                     }
-                }
-            }
-
-            if (payload.eventType === 'INSERT') {
-                const added = payload.new;
-                console.log('👋 Player joined:', added?.player_name);
-                showToast(`👋 ${added?.player_name || 'لاعب'} انضم إلى الغرفة!`, 'success');
-                playSound('click');
+                });
+        }
+        
+        if (removed && OS.gameData?.room) {
+            const room = OS.gameData.room;
+            if (room.host_id === removed.client_id) {
+                transferHost(room.id, removed.client_id);
             }
         }
+        return;
+    }
+
+    // معالجة باقي الأحداث
+    if (OS.roomId && OS.supabase) {
+        OS.supabase.from('room_players').select('*').eq('room_id', OS.roomId)
+            .then(({ data, error }) => {
+                if (!error && data) {
+                    OS.gameData = { ...OS.gameData, players: data };
+                    console.log('👥 Updated players:', data.length);
+
+                    if (OS.currentPhase === 'lobby') {
+                        renderOnlineRoom();
+                        document.getElementById('online-room-player-count').textContent = `${data.length} لاعب`;
+                        if (OS.isHost) {
+                            hostUpdateUIControls(data, OS.gameData?.room);
+                        }
+                    }
+
+                    if (OS.currentPhase === 'reveal') {
+                        renderOnlineRoom();
+                        updateRevealUI(OS.gameData?.room);
+                        if (OS.isHost) {
+                            hostCheckRevealComplete(data, OS.gameData?.room);
+                        }
+                    }
+
+                    if (OS.currentPhase === 'qa') {
+                        if (OS.isHost) {
+                            hostCheckReadyForNextRound(OS.roomId);
+                        }
+                        if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
+                            refreshQAView(OS.gameData?.room);
+                        }
+                    }
+
+                    if (OS.currentPhase === 'voting') {
+                        const round = OS.gameData?.room?.current_round || 0;
+                        OS.supabase.from('votes').select('voter_id').eq('room_id', OS.roomId).eq(
+                            'round_number', round)
+                            .then(({ data: votes }) => {
+                                if (votes) {
+                                    refreshVotingView(OS.gameData.room, data);
+                                    updateReadyCountUI(OS.gameData.room, data);
+                                }
+                            });
+                        if (OS.isHost) {
+                            hostCheckVotingComplete(data, OS.gameData?.room);
+                        }
+                    }
+                }
+            });
+    }
+
+    if (payload.eventType === 'INSERT') {
+        const added = payload.new;
+        console.log('👋 Player joined:', added?.player_name);
+        showToast(`👋 ${added?.player_name || 'لاعب'} انضم إلى الغرفة!`, 'success');
+        playSound('click');
+    }
+}
 
         // ===== نظام الـ Polling الاحتياطي =====
         function startPolling(roomId) {
-            if (pollingInterval) clearInterval(pollingInterval);
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+    }
 
-            pollingInterval = setInterval(async () => {
-                if (!OS.roomId || !OS.supabase) return;
-
-                const activeScreens = ['online-room', 'online-reveal', 'online-qa', 'online-voting', 'online-suspense',
-                    'online-secondchance', 'online-leaderboard'
-                ];
-                const isGameScreen = activeScreens.some(id => document.getElementById(`screen-${id}`)?.classList
-                    .contains('active'));
-                if (!isGameScreen) return;
-
-                try {
-                    const { data: room, error } = await OS.supabase
-                        .from('rooms')
-                        .select('*, room_players(*)')
-                        .eq('id', OS.roomId)
-                        .single();
-
-                    if (error || !room) return;
-
-                    OS.gameData = { room, players: room.room_players || [] };
-
-                    if (room.status !== lastPhase) {
-                        lastPhase = room.status;
-                        console.log('🔄 Polling detected phase change:', room.status);
-                        handlePhaseChange(room);
-                        return;
-                    }
-
-                    if (room.status === 'qa') {
-                        const qaChanged = (
-                            room.qa_question !== lastQaData?.question ||
-                            room.qa_answer !== lastQaData?.answer ||
-                            room.qa_answered !== lastQaData?.answered ||
-                            room.qa_asker_id !== lastQaData?.askerId ||
-                            room.qa_respondent_id !== lastQaData?.respondentId ||
-                            room.qa_phase !== lastQaData?.phase ||
-                            room.qa_question_submitted !== lastQaData?.questionSubmitted ||
-                            room.qa_answer_submitted !== lastQaData?.answerSubmitted ||
-                            room.qa_round_complete !== lastQaData?.roundComplete ||
-                            room.qa_total_rounds !== lastQaData?.totalRounds
-                        );
-                        if (qaChanged) {
-                            lastQaData = {
-                                question: room.qa_question,
-                                answer: room.qa_answer,
-                                answered: room.qa_answered,
-                                askerId: room.qa_asker_id,
-                                respondentId: room.qa_respondent_id,
-                                phase: room.qa_phase,
-                                askerTimeLeft: room.qa_asker_time_left,
-                                respondentTimeLeft: room.qa_respondent_time_left,
-                                questionSubmitted: room.qa_question_submitted,
-                                answerSubmitted: room.qa_answer_submitted,
-                                roundComplete: room.qa_round_complete,
-                                totalRounds: room.qa_total_rounds
-                            };
-                            console.log('🔄 QA data changed, refreshing...');
-                            if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
-                                refreshQAView(room);
-                            }
-                        }
-                    }
-
-                    if (room.status === 'voting') {
-                        const round = room.current_round || 0;
-                        const { data: votes } = await OS.supabase
-                            .from('votes')
-                            .select('voter_id, target_id')
-                            .eq('room_id', OS.roomId)
-                            .eq('round_number', round);
-
-                        const voteData = votes ? votes.map(v => `${v.voter_id}-${v.target_id}`).join(',') : '';
-                        if (voteData !== lastVoteData) {
-                            lastVoteData = voteData;
-                            console.log('🔄 Vote data changed, refreshing...');
-                            if (document.getElementById('screen-online-voting')?.classList.contains('active')) {
-                                refreshVotingView(room, room.room_players || []);
-                            }
-                        }
-                    }
-
-                    if (room.status === 'secondchance') {
-                        if (room.sc_chosen !== lastScData?.chosen || room.sc_correct !== lastScData?.correct) {
-                            lastScData = {
-                                chosen: room.sc_chosen,
-                                correct: room.sc_correct
-                            };
-                            console.log('🔄 Second chance data changed, refreshing...');
-                            if (document.getElementById('screen-online-secondchance')?.classList.contains(
-                                'active')) {
-                                refreshSCView(room);
-                            }
-                        }
-                    }
-
-                    if (room.status === 'reveal' && document.getElementById('screen-online-reveal')?.classList
-                        .contains('active')) {
-                        updateRevealUI(room);
-                    }
-
-                } catch (e) {
-                    console.error('Polling error:', e);
-                }
-            }, 3000);
+    pollingInterval = setInterval(async () => {
+        if (!OS.roomId || !OS.supabase) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+            return;
         }
+
+        const activeScreens = ['online-room', 'online-reveal', 'online-qa', 'online-voting', 'online-suspense',
+            'online-secondchance', 'online-leaderboard'
+        ];
+        const isGameScreen = activeScreens.some(id => document.getElementById(`screen-${id}`)?.classList
+            .contains('active'));
+        if (!isGameScreen) return;
+
+        try {
+            const { data: room, error } = await OS.supabase
+                .from('rooms')
+                .select('*, room_players(*)')
+                .eq('id', OS.roomId)
+                .single();
+
+            if (error || !room) return;
+
+            OS.gameData = { room, players: room.room_players || [] };
+
+            // ==========================================================
+            // 1. تغيير المرحلة
+            // ==========================================================
+            if (room.status !== lastPhase) {
+                lastPhase = room.status;
+                console.log('🔄 Polling detected phase change:', room.status);
+                handlePhaseChange(room);
+                return;
+            }
+
+            // ==========================================================
+            // 2. مرحلة الأسئلة (QA)
+            // ==========================================================
+            if (room.status === 'qa') {
+                const qaChanged = (
+                    room.qa_question !== lastQaData?.question ||
+                    room.qa_answer !== lastQaData?.answer ||
+                    room.qa_answered !== lastQaData?.answered ||
+                    room.qa_asker_id !== lastQaData?.askerId ||
+                    room.qa_respondent_id !== lastQaData?.respondentId ||
+                    room.qa_phase !== lastQaData?.phase ||
+                    room.qa_question_submitted !== lastQaData?.questionSubmitted ||
+                    room.qa_answer_submitted !== lastQaData?.answerSubmitted ||
+                    room.qa_round_complete !== lastQaData?.roundComplete ||
+                    room.qa_total_rounds !== lastQaData?.totalRounds
+                );
+                if (qaChanged) {
+                    lastQaData = {
+                        question: room.qa_question,
+                        answer: room.qa_answer,
+                        answered: room.qa_answered,
+                        askerId: room.qa_asker_id,
+                        respondentId: room.qa_respondent_id,
+                        phase: room.qa_phase,
+                        askerTimeLeft: room.qa_asker_time_left,
+                        respondentTimeLeft: room.qa_respondent_time_left,
+                        questionSubmitted: room.qa_question_submitted,
+                        answerSubmitted: room.qa_answer_submitted,
+                        roundComplete: room.qa_round_complete,
+                        totalRounds: room.qa_total_rounds
+                    };
+                    console.log('🔄 QA data changed, refreshing...');
+                    if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
+                        refreshQAView(room);
+                    }
+                }
+            }
+
+            // ==========================================================
+            // 3. مرحلة التصويت (Voting) - 🔥 التعديل 1
+            // ==========================================================
+            if (room.status === 'voting') {
+                const round = room.current_round || 0;
+                const { data: votes } = await OS.supabase
+                    .from('votes')
+                    .select('voter_id, target_id')
+                    .eq('room_id', OS.roomId)
+                    .eq('round_number', round);
+
+                const voteData = votes ? votes.map(v => `${v.voter_id}-${v.target_id}`).join(',') : '';
+                if (voteData !== lastVoteData) {
+                    lastVoteData = voteData;
+                    console.log('🔄 Vote data changed, refreshing...');
+                    if (document.getElementById('screen-online-voting')?.classList.contains('active')) {
+                        refreshVotingView(room, room.room_players || []);
+                        // تحديث عداد الجاهزية وعرض زر الجاهزية
+                        showReadyForResultButton(room, room.room_players || []);
+                        updateReadyCountUI(room, room.room_players || []);
+                    }
+                }
+            }
+
+            // ==========================================================
+            // 4. مرحلة فرصة الإنقاذ (Second Chance)
+            // ==========================================================
+            if (room.status === 'secondchance') {
+                if (room.sc_chosen !== lastScData?.chosen || room.sc_correct !== lastScData?.correct) {
+                    lastScData = {
+                        chosen: room.sc_chosen,
+                        correct: room.sc_correct
+                    };
+                    console.log('🔄 Second chance data changed, refreshing...');
+                    if (document.getElementById('screen-online-secondchance')?.classList.contains(
+                        'active')) {
+                        refreshSCView(room);
+                    }
+                }
+            }
+
+            // ==========================================================
+            // 5. مرحلة الكشف (Reveal) - 🔥 التعديل 4
+            // ==========================================================
+            if (room.status === 'reveal') {
+                if (document.getElementById('screen-online-reveal')?.classList.contains('active')) {
+                    updateRevealUI(room);
+                    // تحديث شريط التقدم وعداد الجاهزية
+                    const players = room.room_players || [];
+                    const revealedCount = players.filter(p => p.has_revealed === true).length;
+                    const progressBar = document.getElementById('reveal-progress-bar');
+                    if (progressBar) {
+                        const percent = players.length > 0 ? Math.round((revealedCount / players.length) * 100) : 0;
+                        progressBar.style.width = percent + '%';
+                    }
+                    const readyCountEl = document.getElementById('reveal-ready-count');
+                    if (readyCountEl) {
+                        readyCountEl.textContent = `${revealedCount} / ${players.length} جاهزون`;
+                    }
+                }
+            }
+
+            // ==========================================================
+            // 6. مرحلة التشويق (Suspense) - 🔥 التعديل 2
+            // ==========================================================
+            if (room.status === 'suspense') {
+                const isSuspenseScreen = document.getElementById('screen-online-suspense')?.classList.contains('active');
+                if (isSuspenseScreen) {
+                    const players = room.room_players || [];
+                    const readyCount = players.filter(p => p.ready_for_result === true).length;
+                    const counter = document.getElementById('suspense-ready-counter');
+                    if (counter) {
+                        counter.textContent = `جاهز ${readyCount} من ${players.length}`;
+                    }
+                    // إذا كان الجميع جاهزين والمضيف موجود، ننتقل تلقائياً
+                    if (readyCount === players.length && players.length > 0 && OS.isHost) {
+                        console.log('✅ Polling: جميع اللاعبين جاهزين في suspense، الهوست ينتقل...');
+                        await OS.supabase.from('rooms').update({
+                            status: 'secondchance',
+                            updated_at: new Date().toISOString()
+                        }).eq('id', OS.roomId);
+                    }
+                }
+            }
+
+            // ==========================================================
+            // 7. مرحلة اللوبي (Lobby) - 🔥 التعديل 3
+            // ==========================================================
+            if (room.status === 'lobby') {
+                const isLobbyScreen = document.getElementById('screen-online-room')?.classList.contains('active');
+                if (isLobbyScreen) {
+                    const players = room.room_players || [];
+                    const list = document.getElementById('online-player-list');
+                    if (list) {
+                        list.innerHTML = players.map(p => {
+                            const isMe = p.client_id === OS.clientId;
+                            const idx = players.indexOf(p);
+                            let cls = 'player-card ready';
+                            if (p.client_id === room.host_id) cls += ' host';
+                            if (isMe) cls += ' me';
+                            const label = p.client_id === room.host_id ? `<i class="fa-solid fa-crown text-xs"></i>` : '';
+                            const meLabel = isMe ? ' (أنت)' : '';
+                            return `<div class="${cls}">
+                                    ${avHTML(p.player_name, idx, 'sm')}
+                                    <span class="text-sm font-bold text-slate-200 flex-1">${esc(p.player_name)}${meLabel}</span>
+                                    ${label ? `<span class="text-xs">${label}</span>` : ''}
+                                    <span class="status-dot ready"></span>
+                                </div>`;
+                        }).join('');
+                    }
+                    document.getElementById('online-room-player-count').textContent = `${players.length} لاعب`;
+                }
+            }
+
+        } catch (e) {
+            console.error('Polling error:', e);
+        }
+    }, 3000);
+}
 
         function handlePhaseChange(room) {
             OS.currentPhase = room.status;
@@ -6342,6 +6486,11 @@ async function validateStoredUser() {
                 const sb = OS.supabase;
                 if (!sb) return;
 
+// في بداية جولة جديدة (عند الانتقال من reveal إلى qa)
+await sb.from('room_players')
+    .update({ ready_for_result: false })
+    .eq('room_id', room.id);
+
                 await sb.from('rooms').update({
                     status: 'qa',
                     qa_phase: 'waiting',
@@ -6447,111 +6596,140 @@ async function validateStoredUser() {
         }
 
         function handleQaUpdate(roomData) {
-            if (!roomData) return;
+    if (!roomData) return;
 
-            const phase = roomData.qa_phase;
-            const round = roomData.qa_round || 0;
-            const totalRounds = roomData.qa_total_rounds || OS.gameData?.players?.length || QA_CONFIG.TOTAL_ROUNDS;
-            const questionSubmitted = roomData.qa_question_submitted || false;
-            const answerSubmitted = roomData.qa_answer_submitted || false;
-            const roundComplete = roomData.qa_round_complete || false;
+    const phase = roomData.qa_phase;
+    const round = roomData.qa_round || 0;
+    const totalRounds = roomData.qa_total_rounds || OS.gameData?.players?.length || QA_CONFIG.TOTAL_ROUNDS;
+    const questionSubmitted = roomData.qa_question_submitted || false;
+    const answerSubmitted = roomData.qa_answer_submitted || false;
+    const roundComplete = roomData.qa_round_complete || false;
 
-            // تحديث شارة الجولة
-            const roundDisplay = document.getElementById('online-qa-round-display');
-            if (roundDisplay) {
-                const displayRound = Math.min(round + 1, totalRounds);
-                roundDisplay.textContent = `الجولة ${displayRound} من ${totalRounds}`;
-            }
+    // تحديث شارة الجولة
+    const roundDisplay = document.getElementById('online-qa-round-display');
+    if (roundDisplay) {
+        const displayRound = Math.min(round + 1, totalRounds);
+        roundDisplay.textContent = `الجولة ${displayRound} من ${totalRounds}`;
+    }
 
-            // تحديث أسماء السائل والمجيب
-            const askerName = getPlayerName(roomData.qa_asker_id);
-            const respondentName = getPlayerName(roomData.qa_respondent_id);
+    // تحديث أسماء السائل والمجيب
+    const askerName = getPlayerName(roomData.qa_asker_id);
+    const respondentName = getPlayerName(roomData.qa_respondent_id);
 
-            const askerNameEl = document.getElementById('qa-asker-name');
-            if (askerNameEl) askerNameEl.textContent = askerName || '—';
+    const askerNameEl = document.getElementById('qa-asker-name');
+    if (askerNameEl) askerNameEl.textContent = askerName || '—';
 
-            const respondentNameEl = document.getElementById('qa-respondent-name');
-            if (respondentNameEl) respondentNameEl.textContent = respondentName || '—';
+    const respondentNameEl = document.getElementById('qa-respondent-name');
+    if (respondentNameEl) respondentNameEl.textContent = respondentName || '—';
 
-            if (askerName) {
-                const avatar = document.getElementById('qa-asker-avatar');
-                if (avatar) avatar.textContent = askerName.charAt(0).toUpperCase();
-            }
-            if (respondentName) {
-                const avatar = document.getElementById('qa-respondent-avatar');
-                if (avatar) avatar.textContent = respondentName.charAt(0).toUpperCase();
-            }
+    if (askerName) {
+        const avatar = document.getElementById('qa-asker-avatar');
+        if (avatar) avatar.textContent = askerName.charAt(0).toUpperCase();
+    }
+    if (respondentName) {
+        const avatar = document.getElementById('qa-respondent-avatar');
+        if (avatar) avatar.textContent = respondentName.charAt(0).toUpperCase();
+    }
 
-            const askerLabel = document.getElementById('qa-respondent-asker-label');
-            if (askerLabel && askerName) {
-                askerLabel.textContent = `${askerName} يسألك:`;
-            }
+    const askerLabel = document.getElementById('qa-respondent-asker-label');
+    if (askerLabel && askerName) {
+        askerLabel.textContent = `${askerName} يسألك:`;
+    }
 
-            const specAskerLabel = document.getElementById('qa-spectator-asker-label');
-            if (specAskerLabel && askerName && respondentName) {
-                specAskerLabel.textContent = `${askerName} يسأل ${respondentName}:`;
-            }
-            const specRespondentLabel = document.getElementById('qa-spectator-respondent-label');
-            if (specRespondentLabel && respondentName) {
-                specRespondentLabel.textContent = `${respondentName} يجيب:`;
-            }
+    const specAskerLabel = document.getElementById('qa-spectator-asker-label');
+    if (specAskerLabel && askerName && respondentName) {
+        specAskerLabel.textContent = `${askerName} يسأل ${respondentName}:`;
+    }
+    const specRespondentLabel = document.getElementById('qa-spectator-respondent-label');
+    if (specRespondentLabel && respondentName) {
+        specRespondentLabel.textContent = `${respondentName} يجيب:`;
+    }
 
-            // تحديث نص السؤال
-            if (roomData.qa_question) {
-                const qText = document.getElementById('qa-spectator-q-text');
-                if (qText) qText.textContent = `"${esc(roomData.qa_question)}"`;
+    // ==========================================================
+    // 🔥 المشكلة 8: تحديث حقل الإجابة للمجيب
+    // ==========================================================
+    const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+    
+    // تحديث نص السؤال
+    if (roomData.qa_question) {
+        const qText = document.getElementById('qa-spectator-q-text');
+        if (qText) qText.textContent = `"${esc(roomData.qa_question)}"`;
 
-                const receivedQ = document.getElementById('online-qa-received-q');
-                if (receivedQ) receivedQ.textContent = `"${esc(roomData.qa_question)}"`;
+        const receivedQ = document.getElementById('online-qa-received-q');
+        if (receivedQ) receivedQ.textContent = `"${esc(roomData.qa_question)}"`;
 
-                const askerQInput = document.getElementById('online-qa-question-input');
-                if (askerQInput && !askerQInput.value) {
-                    askerQInput.value = roomData.qa_question;
+        const askerQInput = document.getElementById('online-qa-question-input');
+        if (askerQInput && !askerQInput.value) {
+            askerQInput.value = roomData.qa_question;
+        }
+        
+        // 🔥 إذا كان اللاعب هو المجيب، فعّل حقل الإجابة
+        if (myPlayer && myPlayer.id === roomData.qa_respondent_id) {
+            const answerInput = document.getElementById('online-qa-answer-input');
+            const sendABtn = document.getElementById('btn-online-qa-send-a');
+            
+            if (!answerSubmitted && !roundComplete) {
+                if (answerInput) {
+                    answerInput.disabled = false;
+                    answerInput.focus();
                 }
-            }
-
-            // تحديث نص الإجابة (يظهر فقط للسائل)
-            if (roomData.qa_answer && roomData.qa_answered) {
-                const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
-                const isAsker = myPlayer && myPlayer.id === roomData.qa_asker_id;
-
-                const aText = document.getElementById('qa-spectator-a-text');
-                if (aText) {
-                    aText.textContent = `"${esc(roomData.qa_answer)}"`;
-                    aText.className = 'text-xs font-semibold text-slate-200';
+                if (sendABtn) {
+                    sendABtn.disabled = false;
+                    sendABtn.innerHTML = `<i class="fa-solid fa-reply"></i> <span>إرسال الإجابة</span>`;
                 }
-
-                // إظهار الإجابة فقط للسائل
-                const responseBox = document.getElementById('qa-asker-response-box');
-                const responseText = document.getElementById('qa-asker-response-text');
-                if (responseBox && responseText) {
-                    if (isAsker) {
-                        responseBox.classList.remove('hidden');
-                        responseText.textContent = `"${esc(roomData.qa_answer)}"`;
-                    } else {
-                        responseBox.classList.add('hidden');
+            } else {
+                if (answerInput) answerInput.disabled = true;
+                if (sendABtn) {
+                    sendABtn.disabled = true;
+                    if (answerSubmitted) {
+                        sendABtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>تم الإرسال ✓</span>`;
                     }
                 }
             }
+        }
+    }
 
-            // تحديث حالة الأزرار بناءً على مرحلة الجولة
-            updateUIByPhase(roomData);
+    // تحديث نص الإجابة (يظهر فقط للسائل)
+    if (roomData.qa_answer && roomData.qa_answered) {
+        const isAsker = myPlayer && myPlayer.id === roomData.qa_asker_id;
 
-            // تحديث دور اللاعب الحالي
-            updateMyRole(roomData);
+        const aText = document.getElementById('qa-spectator-a-text');
+        if (aText) {
+            aText.textContent = `"${esc(roomData.qa_answer)}"`;
+            aText.className = 'text-xs font-semibold text-slate-200';
+        }
 
-            // تحديث سجل الأسئلة
-            if (roomData.qa_answered || roomData.qa_round_complete) {
-                loadAndDisplayHistory(OS.roomId);
-            }
-
-            // إظهار زر "جاهز للجولة التالية" إذا اكتملت الجولة
-            if (roundComplete) {
-                showNextRoundReadyButton(roomData);
+        // إظهار الإجابة فقط للسائل
+        const responseBox = document.getElementById('qa-asker-response-box');
+        const responseText = document.getElementById('qa-asker-response-text');
+        if (responseBox && responseText) {
+            if (isAsker) {
+                responseBox.classList.remove('hidden');
+                responseText.textContent = `"${esc(roomData.qa_answer)}"`;
             } else {
-                hideNextRoundReadyButton();
+                responseBox.classList.add('hidden');
             }
         }
+    }
+
+    // تحديث حالة الأزرار بناءً على مرحلة الجولة
+    updateUIByPhase(roomData);
+
+    // تحديث دور اللاعب الحالي
+    updateMyRole(roomData);
+
+    // تحديث سجل الأسئلة
+    if (roomData.qa_answered || roomData.qa_round_complete) {
+        loadAndDisplayHistory(OS.roomId);
+    }
+
+    // إظهار زر "جاهز للجولة التالية" إذا اكتملت الجولة
+    if (roundComplete) {
+        showNextRoundReadyButton(roomData);
+    } else {
+        hideNextRoundReadyButton();
+    }
+}
 
         function updateUIByPhase(roomData) {
             const phase = roomData.qa_phase;
@@ -7292,23 +7470,25 @@ async function validateStoredUser() {
 
         // ===== حفظ سجل الأسئلة =====
         async function saveQAHistory(roomId, round, askerId, respondentId, question, answer) {
-            const sb = OS.supabase;
-            if (!sb) return;
-            try {
-                await sb.from('qa_history').insert({
-                    room_id: roomId,
-                    round_number: round,
-                    asker_id: askerId,
-                    respondent_id: respondentId,
-                    question: question || 'لم يتم طرح سؤال',
-                    answer: answer || 'لم يتم الإجابة',
-                    created_at: new Date().toISOString()
-                });
-                console.log(`📝 تم حفظ السؤال ${round + 1}:`, { question, answer });
-            } catch (e) {
-                console.error('❌ فشل حفظ السجل:', e);
-            }
-        }
+    const sb = OS.supabase;
+    if (!sb) return;
+    try {
+        await sb.from('qa_history').insert({
+            room_id: roomId,
+            round_number: round,
+            asker_id: askerId,
+            respondent_id: respondentId,
+            question: question || 'لم يتم طرح سؤال',
+            answer: answer || 'لم يتم الإجابة',
+            created_at: new Date().toISOString()
+        });
+        console.log(`📝 تم حفظ السؤال ${round + 1}:`, { question, answer });
+    } catch (e) {
+        console.error('❌ فشل حفظ السجل:', e);
+        // 🔥 الحل: لا نعرض خطأ للمستخدم
+        // نكتفي بتسجيل الخطأ في الكونسول
+    }
+}
 
         // ===== تحميل سجل الأسئلة =====
         async function loadQAHistory(roomId) {
@@ -7576,302 +7756,559 @@ async function validateStoredUser() {
         // ==============================================================
 
         async function showOnlineVoting() {
-            showScreen('online-voting');
-            const sb = OS.supabase;
-            if (!sb || !OS.roomId) return;
+    showScreen('online-voting');
+    const sb = OS.supabase;
+    if (!sb || !OS.roomId) return;
 
-            const room = OS.gameData?.room;
-            const players = OS.gameData?.players || [];
-            const myPlayer = players.find(p => p.client_id === OS.clientId);
-            if (!myPlayer || !room) return;
+    const room = OS.gameData?.room;
+    const players = OS.gameData?.players || [];
+    const myPlayer = players.find(p => p.client_id === OS.clientId);
+    if (!myPlayer || !room) return;
 
-            const round = room.current_round || 0;
-            const instruction = document.getElementById('online-voting-instruction');
-            const optionsDiv = document.getElementById('online-voting-options');
-            const statusDiv = document.getElementById('online-voting-status');
-            const doneBtn = document.getElementById('btn-online-voting-done');
+    const round = room.current_round || 0;
+    const instruction = document.getElementById('online-voting-instruction');
+    const optionsDiv = document.getElementById('online-voting-options');
+    const statusDiv = document.getElementById('online-voting-status');
+    const doneBtn = document.getElementById('btn-online-voting-done');
 
-            const { data: existingVote } = await sb.from('votes')
-                .select('*')
-                .eq('room_id', room.id)
-                .eq('round_number', round)
-                .eq('voter_id', OS.myPlayerId)
-                .maybeSingle();
+    // التحقق من وجود تصويت سابق
+    const { data: existingVote } = await sb.from('votes')
+        .select('*')
+        .eq('room_id', room.id)
+        .eq('round_number', round)
+        .eq('voter_id', OS.myPlayerId)
+        .maybeSingle();
 
-            if (OS._voteInterval) {
-                clearInterval(OS._voteInterval);
-                OS._voteInterval = null;
-            }
+    // إيقاف أي مؤقت سابق
+    if (OS._voteInterval) {
+        clearInterval(OS._voteInterval);
+        OS._voteInterval = null;
+    }
 
-            if (existingVote) {
-                instruction.innerHTML =
-                    `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت بالفعل. في انتظار الآخرين...`;
-                optionsDiv.innerHTML = '';
-                await refreshVotingView(room, players);
-                return;
-            }
+    if (existingVote) {
+        instruction.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت. في انتظار الآخرين...`;
+        optionsDiv.innerHTML = '';
+        await refreshVotingView(room, players);
+        // إظهار زر الجاهزية إذا كان اللاعب قد صوّت
+        showReadyForResultButton(room, players);
+        return;
+    }
 
-            instruction.textContent = `صوّت على من تعتقد أنه برا السالفة (جولة ${round+1})`;
+    instruction.textContent = `صوّت على من تعتقد أنه برا السالفة (جولة ${round+1})`;
 
-            optionsDiv.innerHTML = players
-                .filter(p => p.id !== OS.myPlayerId)
-                .map((p, i) => `
-                    <div class="vote-opt-option bg-white/[0.025] border-2 border-white/5 rounded-2xl p-4 cursor-pointer transition-all hover:border-rose-500 hover:bg-rose-500/5 text-center min-h-[46px] flex items-center justify-center gap-3 font-bold text-white" 
-                         data-target="${p.id}" tabindex="0" role="button">
-                        ${avHTML(p.player_name, i, 'sm')} <span>${esc(p.player_name)}</span>
-                    </div>
-                `).join('');
+    optionsDiv.innerHTML = players
+        .filter(p => p.id !== OS.myPlayerId)
+        .map((p, i) => `
+            <div class="vote-opt-option bg-white/[0.025] border-2 border-white/5 rounded-2xl p-4 cursor-pointer transition-all hover:border-rose-500 hover:bg-rose-500/5 text-center min-h-[46px] flex items-center justify-center gap-3 font-bold text-white" 
+                 data-target="${p.id}" tabindex="0" role="button">
+                ${avHTML(p.player_name, i, 'sm')} <span>${esc(p.player_name)}</span>
+            </div>
+        `).join('');
 
-            statusDiv.textContent = 'اختر لاعباً للتصويت عليه';
-            doneBtn.classList.add('hidden');
+    statusDiv.textContent = 'اختر لاعباً للتصويت عليه';
+    doneBtn.classList.add('hidden');
 
-            optionsDiv.querySelectorAll('.vote-opt-option').forEach(el => {
-                el.addEventListener('click', async () => {
-                    const targetId = el.dataset.target;
-
-                    optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
-                        opt.style.pointerEvents = 'none';
-                        opt.style.opacity = '0.5';
-                    });
-
-                    try {
-                        const { error } = await sb.from('votes').insert({
-                            room_id: room.id,
-                            round_number: round,
-                            voter_id: OS.myPlayerId,
-                            target_id: targetId,
-                            created_at: new Date().toISOString()
-                        });
-
-                        if (error) {
-                            showAlert('❌ فشل التصويت: ' + error.message, 'error');
-                            optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
-                                opt.style.pointerEvents = 'auto';
-                                opt.style.opacity = '1';
-                            });
-                            return;
-                        }
-
-                        hapticSuccessWithSound();
-                        playSound('vote');
-                        showToast('✅ تم تسجيل تصويتك!', 'success');
-                        instruction.textContent = '✅ لقد صوّت بالفعل. في انتظار الآخرين...';
-                        optionsDiv.innerHTML = '';
-                        await refreshVotingView(room, players);
-
-                        if (OS.isHost) {
-                            setTimeout(() => {
-                                hostCheckVotingComplete(players, room);
-                            }, 500);
-                        }
-
-                    } catch (e) {
-                        console.error('Vote error:', e);
-                        showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
-                        optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
-                            opt.style.pointerEvents = 'auto';
-                            opt.style.opacity = '1';
-                        });
-                    }
-                });
-                el.addEventListener('keydown', e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        el.click();
-                    }
-                });
+    // معالج التصويت
+    optionsDiv.querySelectorAll('.vote-opt-option').forEach(el => {
+        el.addEventListener('click', async () => {
+            const targetId = el.dataset.target;
+            optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                opt.style.opacity = '0.5';
             });
 
-            if (OS.isHost) {
-                doneBtn.classList.remove('hidden');
-                doneBtn.textContent = '⚡ تسريع النتيجة';
-                doneBtn.onclick = async () => {
-                    if (ButtonManager.isDisabled('btn-online-voting-done')) return;
-                    ButtonManager.disable('btn-online-voting-done', 'جاري الكشف...');
-                    await sb.from('rooms').update({
-                        status: 'suspense',
-                        updated_at: new Date().toISOString()
-                    }).eq('id', room.id);
-                    showToast('🔮 جارٍ كشف النتيجة...', 'success');
-                    hapticSuccessWithSound();
-                    ButtonManager.enable('btn-online-voting-done');
-                };
+            try {
+                const { error } = await sb.from('votes').insert({
+                    room_id: room.id,
+                    round_number: round,
+                    voter_id: OS.myPlayerId,
+                    target_id: targetId,
+                    created_at: new Date().toISOString()
+                });
+
+                if (error) {
+                    showAlert('❌ فشل التصويت: ' + error.message, 'error');
+                    optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
+                        opt.style.pointerEvents = 'auto';
+                        opt.style.opacity = '1';
+                    });
+                    return;
+                }
+
+                hapticSuccessWithSound();
+                playSound('vote');
+                showToast('✅ تم تسجيل تصويتك!', 'success');
+                instruction.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> لقد صوّت. في انتظار الآخرين...`;
+                optionsDiv.innerHTML = '';
+                await refreshVotingView(room, players);
+                // إظهار زر الجاهزية بعد التصويت
+                showReadyForResultButton(room, players);
+
+                if (OS.isHost) {
+                    // تحديث فوري للتحقق من جاهزية الجميع
+                    setTimeout(() => {
+                        hostCheckVotingComplete(players, room);
+                    }, 500);
+                }
+
+            } catch (e) {
+                console.error('Vote error:', e);
+                showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                optionsDiv.querySelectorAll('.vote-opt-option').forEach(opt => {
+                    opt.style.pointerEvents = 'auto';
+                    opt.style.opacity = '1';
+                });
             }
+        });
+        el.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                el.click();
+            }
+        });
+    });
+
+    // زر "تسريع النتيجة" للمضيف (يبقى كخيار احتياطي)
+    if (OS.isHost) {
+        doneBtn.classList.remove('hidden');
+        doneBtn.textContent = '⚡ تسريع النتيجة';
+        // في دالة showOnlineVoting، عند تعريف doneBtn.onclick
+doneBtn.onclick = async () => {
+    if (ButtonManager.isDisabled('btn-online-voting-done')) return;
+    
+    // 🔥 الحل: رسالة تأكيد
+    showCustomModal(
+        '⚠️ تسريع النتيجة',
+        'سيتم كشف النتيجة دون انتظار جاهزية جميع اللاعبين. هل أنت متأكد؟',
+        'warning',
+        'نعم، كشف النتيجة',
+        'إلغاء',
+        async () => {
+            ButtonManager.disable('btn-online-voting-done', 'جاري الكشف...');
+            await sb.from('rooms').update({
+                status: 'suspense',
+                updated_at: new Date().toISOString()
+            }).eq('id', room.id);
+            showToast('🔮 جارٍ كشف النتيجة...', 'success');
+            hapticSuccessWithSound();
+            ButtonManager.enable('btn-online-voting-done');
         }
+    );
+};
+    }
+
+    // بدء تحديث دوري للواجهة
+    OS._voteInterval = setInterval(async () => {
+        if (!OS.roomId) return;
+        const { data: freshPlayers } = await sb.from('room_players').select('*').eq('room_id', OS.roomId);
+        if (freshPlayers) {
+            OS.gameData = { ...OS.gameData, players: freshPlayers };
+            // تحديث عداد الجاهزية
+            updateReadyCountUI(room, freshPlayers);
+        }
+        // التحقق من اكتمال التصويت
+        await refreshVotingView(room, freshPlayers || players);
+        // إعادة عرض زر الجاهزية إذا لزم الأمر
+        showReadyForResultButton(room, freshPlayers || players);
+    }, 3000);
+}
+
+// دالة إظهار زر الجاهزية للاعب بعد التصويت
+async function showReadyForResultButton(room, players) {
+    const myPlayer = players.find(p => p.client_id === OS.clientId);
+    if (!myPlayer) return;
+
+    const round = room.current_round || 0;
+    const sb = OS.supabase;
+    if (!sb) return;
+
+    // التحقق من أن اللاعب قد صوّت
+    const { data: vote } = await sb.from('votes')
+        .select('id')
+        .eq('room_id', room.id)
+        .eq('round_number', round)
+        .eq('voter_id', OS.myPlayerId)
+        .maybeSingle();
+
+    if (!vote) return; // لم يصوت بعد
+
+    // التحقق من وجود زر الجاهزية بالفعل
+    let readyBtn = document.getElementById('btn-ready-for-result');
+    if (!readyBtn) {
+        const container = document.getElementById('online-voting-options');
+        if (!container) return;
+        // إضافة زر الجاهزية أسفل خيارات التصويت
+        readyBtn = document.createElement('button');
+        readyBtn.id = 'btn-ready-for-result';
+        readyBtn.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2 mt-4';
+        readyBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>جاهز للنتيجة</span>`;
+        container.parentNode.insertBefore(readyBtn, container.nextSibling);
+    }
+
+    // تحديث حالة الزر بناءً على جاهزية اللاعب
+    if (myPlayer.ready_for_result) {
+        readyBtn.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
+        readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>جاهز ✓</span>`;
+        readyBtn.disabled = true;
+    } else {
+        readyBtn.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2';
+        readyBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>جاهز للنتيجة</span>`;
+        readyBtn.disabled = false;
+        readyBtn.onclick = async () => {
+            if (ButtonManager.isDisabled('btn-ready-for-result')) return;
+            ButtonManager.disable('btn-ready-for-result', 'جاري التجهيز...');
+            try {
+                await sb.from('room_players')
+                    .update({ ready_for_result: true })
+                    .eq('id', OS.myPlayerId);
+                hapticSuccessWithSound();
+                showToast('✅ تم تسجيل جاهزيتك!', 'success');
+                // تحديث الواجهة
+                await refreshVotingView(room, players);
+                if (OS.isHost) {
+                    hostCheckVotingComplete(players, room);
+                }
+            } catch (e) {
+                showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                console.error(e);
+            } finally {
+                ButtonManager.enable('btn-ready-for-result');
+            }
+        };
+    }
+
+    // تحديث عداد الجاهزية
+    updateReadyCountUI(room, players);
+}
+
+function updateReadyCountUI(room, players) {
+    const readyCount = players.filter(p => p.ready_for_result === true).length;
+    const total = players.length;
+    const statusDiv = document.getElementById('online-voting-status');
+    if (statusDiv) {
+        if (readyCount === total) {
+            statusDiv.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> الجميع جاهز!`;
+        } else {
+            statusDiv.textContent = `⏳ جاهزية النتيجة: ${readyCount}/${total}`;
+        }
+    }
+}
 
         async function refreshVotingView(room, players) {
-            const round = room.current_round || 0;
-            const myPlayer = players.find(p => p.client_id === OS.clientId);
-            if (!myPlayer) return;
+    const round = room.current_round || 0;
+    const myPlayer = players.find(p => p.client_id === OS.clientId);
+    if (!myPlayer) return;
 
-            const { data: votes } = await OS.supabase
-                .from('votes')
-                .select('voter_id, target_id')
-                .eq('room_id', OS.roomId)
-                .eq('round_number', round);
+    const sb = OS.supabase;
+    if (!sb) return;
 
-            const votedIds = votes ? votes.map(v => v.voter_id) : [];
-            const allPlayers = players.map(p => p.id);
-            const allVoted = allPlayers.every(id => votedIds.includes(id));
+    const { data: votes } = await sb
+        .from('votes')
+        .select('voter_id, target_id')
+        .eq('room_id', OS.roomId)
+        .eq('round_number', round);
 
-            const statusDiv = document.getElementById('online-voting-status');
-            const doneBtn = document.getElementById('btn-online-voting-done');
+    const votedIds = votes ? votes.map(v => v.voter_id) : [];
+    const allPlayers = players.map(p => p.id);
+    const allVoted = allPlayers.every(id => votedIds.includes(id));
 
-            if (allVoted) {
-                statusDiv.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> الجميع صوّت! اكشف النتيجة.`;
-                if (OS.isHost) {
-                    doneBtn.classList.remove('hidden');
-                }
-            } else {
-                statusDiv.textContent = `⏳ في انتظار تصويت الجميع... (${votedIds.length}/${allPlayers.length})`;
-                doneBtn.classList.add('hidden');
-            }
+    const statusDiv = document.getElementById('online-voting-status');
+    const doneBtn = document.getElementById('btn-online-voting-done');
+
+    if (allVoted) {
+        // جميع اللاعبين صوتوا، نعرض زر الجاهزية
+        if (statusDiv) {
+            statusDiv.innerHTML = `<i class="fa-solid fa-check-circle text-emerald-400 ml-1"></i> الجميع صوّت! انتظر الجاهزية...`;
         }
-
-        async function hostCheckVotingComplete(players, room) {
-            if (!OS.isHost || !room || OS.stageLock) return;
-            if (room.status !== 'voting') return;
-
-            const round = room.current_round || 0;
-            const sb = OS.supabase;
-            if (!sb) return;
-
-            const { data: votes } = await sb.from('votes')
-                .select('voter_id')
-                .eq('room_id', room.id)
-                .eq('round_number', round);
-
-            const votedIds = votes ? votes.map(v => v.voter_id) : [];
-            const allVoted = players.every(p => votedIds.includes(p.id));
-
-            if (!allVoted) {
-                const statusDiv = document.getElementById('online-voting-status');
-                if (statusDiv) {
-                    statusDiv.textContent = `⏳ في انتظار تصويت الجميع... (${votedIds.length}/${players.length})`;
-                }
-                return;
-            }
-
-            console.log('🎯 جميع اللاعبين صوّتوا، الهوست ينتقل للتشويق...');
-            OS.stageLock = true;
-
-            try {
+        // عرض زر الجاهزية لكل لاعب إذا لم يظهر بعد
+        showReadyForResultButton(room, players);
+        // تحديث عداد الجاهزية
+        updateReadyCountUI(room, players);
+        // إذا كان المضيف، نعرض زر "تسريع النتيجة" كخيار احتياطي
+        if (OS.isHost) {
+            doneBtn.classList.remove('hidden');
+            doneBtn.textContent = '⚡ تسريع النتيجة';
+            doneBtn.onclick = async () => {
+                if (ButtonManager.isDisabled('btn-online-voting-done')) return;
+                ButtonManager.disable('btn-online-voting-done', 'جاري الكشف...');
                 await sb.from('rooms').update({
                     status: 'suspense',
                     updated_at: new Date().toISOString()
                 }).eq('id', room.id);
-
-                let retries = 0;
-                let confirmed = false;
-                while (retries < 10 && !confirmed) {
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                    const { data: check } = await sb.from('rooms').select('status').eq('id', room.id).single();
-                    if (check && check.status === 'suspense') {
-                        confirmed = true;
-                        break;
-                    }
-                    retries++;
-                }
-
-                if (confirmed) {
-                    showToast('🔮 جارٍ كشف النتيجة...', 'success');
-                    hapticSuccessWithSound();
-                    OS.currentPhase = 'suspense';
-                    lastPhase = 'suspense';
-                    showOnlineSuspense();
-                } else {
-                    showAlert('⚠️ فشل الانتقال لمرحلة التشويق', 'warning');
-                }
-            } catch (e) {
-                console.error('hostCheckVotingComplete error:', e);
-                showAlert('❌ فشل الانتقال للمرحلة التالية: ' + e.message, 'error');
-            } finally {
-                OS.stageLock = false;
-            }
+                showToast('🔮 جارٍ كشف النتيجة...', 'success');
+                hapticSuccessWithSound();
+                ButtonManager.enable('btn-online-voting-done');
+            };
+        } else {
+            doneBtn.classList.add('hidden');
         }
+    } else {
+        if (statusDiv) {
+            statusDiv.textContent = `⏳ في انتظار تصويت الجميع... (${votedIds.length}/${allPlayers.length})`;
+        }
+        doneBtn.classList.add('hidden');
+        // إخفاء زر الجاهزية إذا لم يكتمل التصويت
+        const readyBtn = document.getElementById('btn-ready-for-result');
+        if (readyBtn) readyBtn.remove();
+    }
+}
+
+        async function hostCheckVotingComplete(players, room) {
+    if (!OS.isHost || !room || OS.stageLock) return;
+    if (room.status !== 'voting') return;
+
+    const round = room.current_round || 0;
+    const sb = OS.supabase;
+    if (!sb) return;
+
+    // ==========================================================
+    // 🔥 التعديل التاسع: إعادة تعيين ready_for_result للجميع 
+    //    عند بداية التصويت (مرة واحدة فقط)
+    // ==========================================================
+    // نتحقق إذا كنا قد أعدنا التعيين مسبقاً في هذه الجولة
+    if (!window._votingResetDone) {
+        await sb.from('room_players')
+            .update({ ready_for_result: false })
+            .eq('room_id', room.id);
+        window._votingResetDone = true;
+        console.log('✅ تم إعادة تعيين ready_for_result لجميع اللاعبين');
+    }
+
+    // التحقق من أن جميع اللاعبين قد صوّتوا
+    const { data: votes } = await sb.from('votes')
+        .select('voter_id')
+        .eq('room_id', room.id)
+        .eq('round_number', round);
+    const votedIds = votes ? votes.map(v => v.voter_id) : [];
+    const allVoted = players.every(p => votedIds.includes(p.id));
+
+    if (!allVoted) {
+        // تحديث واجهة المستخدم بعدد المصوتين
+        const statusDiv = document.getElementById('online-voting-status');
+        if (statusDiv) {
+            statusDiv.textContent = `⏳ في انتظار تصويت الجميع... (${votedIds.length}/${players.length})`;
+        }
+        return;
+    }
+
+    // التحقق من جاهزية جميع اللاعبين (ready_for_result)
+    const allReady = players.every(p => p.ready_for_result === true);
+    if (!allReady) {
+        const readyCount = players.filter(p => p.ready_for_result === true).length;
+        const statusDiv = document.getElementById('online-voting-status');
+        if (statusDiv) {
+            statusDiv.textContent = `⏳ في انتظار جاهزية الجميع... (${readyCount}/${players.length})`;
+        }
+        return;
+    }
+
+    // جميع اللاعبين صوتوا وجاهزين => الانتقال إلى suspense
+    console.log('🎯 جميع اللاعبين صوتوا وجاهزين، الهوست ينتقل للتشويق...');
+    OS.stageLock = true;
+
+    try {
+        await sb.from('rooms').update({
+            status: 'suspense',
+            updated_at: new Date().toISOString()
+        }).eq('id', room.id);
+
+        let retries = 0;
+        let confirmed = false;
+        while (retries < 10 && !confirmed) {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            const { data: check } = await sb.from('rooms').select('status').eq('id', room.id).single();
+            if (check && check.status === 'suspense') {
+                confirmed = true;
+                break;
+            }
+            retries++;
+        }
+
+        if (confirmed) {
+            showToast('🔮 جارٍ كشف النتيجة...', 'success');
+            hapticSuccessWithSound();
+            OS.currentPhase = 'suspense';
+            lastPhase = 'suspense';
+            // إعادة تعيين العلم للجولة القادمة
+            window._votingResetDone = false;
+            showOnlineSuspense();
+        } else {
+            showAlert('⚠️ فشل الانتقال لمرحلة التشويق', 'warning');
+        }
+    } catch (e) {
+        console.error('hostCheckVotingComplete error:', e);
+        showAlert('❌ فشل الانتقال للمرحلة التالية: ' + e.message, 'error');
+    } finally {
+        OS.stageLock = false;
+    }
+}
 
         // ==============================================================
         // ===== مرحلة التشويق =====
         // ==============================================================
 
         async function showOnlineSuspense() {
-            showScreen('online-suspense');
-            const sb = OS.supabase;
-            if (!sb || !OS.roomId) return;
+    showScreen('online-suspense');
+    const sb = OS.supabase;
+    if (!sb || !OS.roomId) return;
 
-            const room = OS.gameData?.room;
-            const players = OS.gameData?.players || [];
-            if (!room) return;
+    const room = OS.gameData?.room;
+    const players = OS.gameData?.players || [];
+    if (!room) return;
 
-            const round = room.current_round || 0;
-            const content = document.getElementById('online-suspense-content');
-            const headline = document.getElementById('online-suspense-headline');
-            const continueBtn = document.getElementById('btn-online-suspense-continue');
+    const round = room.current_round || 0;
+    const content = document.getElementById('online-suspense-content');
+    const headline = document.getElementById('online-suspense-headline');
+    const continueBtn = document.getElementById('btn-online-suspense-continue');
 
-            const { data: votes } = await sb.from('votes').select('*').eq('room_id', room.id).eq('round_number', round);
+    // إخفاء زر المتابعة مؤقتاً
+    continueBtn.classList.add('hidden');
 
-            if (!votes || votes.length === 0) {
-                content.innerHTML = '<p class="text-[#8892a6]">لا توجد أصوات مسجلة...</p>';
-                return;
-            }
+    // إيقاف أي مؤقت سابق في مرحلة التشويق
+    if (OS._suspenseInterval) {
+        clearInterval(OS._suspenseInterval);
+        OS._suspenseInterval = null;
+    }
 
-            const counts = {};
-            votes.forEach(v => { counts[v.target_id] = (counts[v.target_id] || 0) + 1; });
-            let maxCount = 0,
-                maxTarget = null;
-            for (const [id, c] of Object.entries(counts)) {
-                if (c > maxCount) { maxCount = c;
-                    maxTarget = id; }
-            }
+    // حساب النتيجة
+    const { data: votes } = await sb.from('votes').select('*').eq('room_id', room.id).eq('round_number', round);
+    if (!votes || votes.length === 0) {
+        content.innerHTML = '<p class="text-[#8892a6]">لا توجد أصوات مسجلة...</p>';
+        return;
+    }
 
-            const oddPlayer = players.find(p => p.is_odd === true);
-            const oddName = oddPlayer ? oddPlayer.player_name : '???';
-            const targetPlayer = players.find(p => p.id === maxTarget);
-            const targetName = targetPlayer ? targetPlayer.player_name : '???';
-            const isOddCaught = (maxTarget === oddPlayer?.id);
+    // حساب الأصوات
+    const counts = {};
+    votes.forEach(v => { counts[v.target_id] = (counts[v.target_id] || 0) + 1; });
+    let maxCount = 0, maxTarget = null;
+    for (const [id, c] of Object.entries(counts)) {
+        if (c > maxCount) { maxCount = c; maxTarget = id; }
+    }
 
-            headline.textContent = isOddCaught ? '🔮 تم كشف برا السالفة!' : '😈 برا السالفة نجا!';
+    const oddPlayer = players.find(p => p.is_odd === true);
+    const oddName = oddPlayer ? oddPlayer.player_name : '???';
+    const targetPlayer = players.find(p => p.id === maxTarget);
+    const targetName = targetPlayer ? targetPlayer.player_name : '???';
+    const isOddCaught = (maxTarget === oddPlayer?.id);
 
-            content.innerHTML = `
-                <div class="glass-panel rounded-2xl p-6 text-center">
-                    <p class="text-[#8892a6]">اللاعب الأكثر تصويتاً:</p>
-                    <h1 class="text-rose-500 font-black text-3xl mt-2">${esc(targetName)} (${maxCount} صوت)</h1>
-                </div>
-                <div class="glass-panel rounded-2xl p-6 text-center border-2 ${isOddCaught?'border-lime-400':'border-rose-500'}">
-                    <p class="text-[#8892a6]">${isOddCaught?'✅ تم الكشف!':'❌ لم يتم الكشف!'}</p>
-                    <h1 class="${isOddCaught?'text-lime-400':'text-rose-500'} font-black text-2xl mt-2">برا السالفة كان: ${esc(oddName)}</h1>
-                    <p class="text-[#8892a6] text-sm mt-2">الكلمة السرية: <span class="text-cyan-400 font-bold">${esc(room.secret_word||'???')}</span></p>
-                </div>
-            `;
+    headline.textContent = isOddCaught ? '🔮 تم كشف برا السالفة!' : '😈 برا السالفة نجا!';
 
-            if (isOddCaught) {
-                continueBtn.textContent = '🎯 فرصة الإنقاذ';
-                continueBtn.classList.remove('hidden');
-                continueBtn.onclick = async () => {
-                    if (ButtonManager.isDisabled('btn-online-suspense-continue')) return;
-                    ButtonManager.disable('btn-online-suspense-continue', 'جاري الانتقال...');
-                    await sb.from('rooms').update({ status: 'secondchance', updated_at: new Date().toISOString() }).eq(
-                        'id', room.id);
-                    showToast('🎯 فرصة الإنقاذ!', 'success');
-                    hapticSuccessWithSound();
-                    ButtonManager.enable('btn-online-suspense-continue');
-                };
-            } else {
-                continueBtn.textContent = '🏆 عرض النتائج';
-                continueBtn.classList.remove('hidden');
-                continueBtn.onclick = async () => {
-                    if (ButtonManager.isDisabled('btn-online-suspense-continue')) return;
-                    ButtonManager.disable('btn-online-suspense-continue', 'جاري الانتقال...');
-                    await sb.from('rooms').update({ status: 'leaderboard', updated_at: new Date().toISOString() }).eq(
-                        'id', room.id);
-                    showToast('🏆 النتائج النهائية!', 'success');
-                    hapticSuccessWithSound();
-                    ButtonManager.enable('btn-online-suspense-continue');
-                };
-            }
+    // تنظيف المحتوى القديم
+    content.innerHTML = `
+        <div class="glass-panel rounded-2xl p-6 text-center">
+            <p class="text-[#8892a6]">اللاعب الأكثر تصويتاً:</p>
+            <h1 class="text-rose-500 font-black text-3xl mt-2">${esc(targetName)} (${maxCount} صوت)</h1>
+        </div>
+        <div class="glass-panel rounded-2xl p-6 text-center border-2 ${isOddCaught?'border-lime-400':'border-rose-500'}">
+            <p class="text-[#8892a6]">${isOddCaught?'✅ تم الكشف!':'❌ لم يتم الكشف!'}</p>
+            <h1 class="${isOddCaught?'text-lime-400':'text-rose-500'} font-black text-2xl mt-2">برا السالفة كان: ${esc(oddName)}</h1>
+            <p class="text-[#8892a6] text-sm mt-2">الكلمة السرية: <span class="text-cyan-400 font-bold">${esc(room.secret_word||'???')}</span></p>
+        </div>
+    `;
 
-            continueBtn.classList.remove('hidden');
+    if (isOddCaught) {
+        // إذا تم كشفه، نضيف زر جاهزية لفرصة الإنقاذ
+        const readyBtn = document.createElement('button');
+        readyBtn.id = 'btn-suspense-ready';
+        readyBtn.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-cyan-400 text-slate-950 shadow-lg shadow-cyan-400/20 active:scale-95 transition-all flex items-center justify-center gap-2 mt-4';
+        readyBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>جاهز لفرصة الإنقاذ</span>`;
+        content.appendChild(readyBtn);
+
+        // ==========================================================
+        // 🔥 المشكلة 4: التحقق من وجود عداد الجاهزية قبل إنشائه
+        // ==========================================================
+        let counter = document.getElementById('suspense-ready-counter');
+        if (!counter) {
+            counter = document.createElement('p');
+            counter.id = 'suspense-ready-counter';
+            counter.className = 'text-xs text-slate-400 text-center mt-2';
+            content.appendChild(counter);
+        } else {
+            // إذا كان موجوداً، نعيد تعيين محتواه
+            counter.textContent = '';
         }
+
+        // التحقق من جاهزية اللاعب
+        const myPlayer = players.find(p => p.client_id === OS.clientId);
+        if (myPlayer && myPlayer.ready_for_result) {
+            readyBtn.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
+            readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>جاهز ✓</span>`;
+            readyBtn.disabled = true;
+        } else {
+            readyBtn.onclick = async () => {
+                if (ButtonManager.isDisabled('btn-suspense-ready')) return;
+                ButtonManager.disable('btn-suspense-ready', 'جاري التجهيز...');
+                try {
+                    await sb.from('room_players')
+                        .update({ ready_for_result: true })
+                        .eq('id', OS.myPlayerId);
+                    hapticSuccessWithSound();
+                    showToast('✅ تم تسجيل جاهزيتك!', 'success');
+                    readyBtn.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 cursor-default';
+                    readyBtn.innerHTML = `<i class="fa-solid fa-check-circle"></i> <span>جاهز ✓</span>`;
+                    readyBtn.disabled = true;
+                    ButtonManager.enable('btn-suspense-ready');
+
+                    // تحديث العداد
+                    updateSuspenseCounter();
+
+                    // التحقق من جاهزية الجميع
+                    if (OS.isHost) {
+                        setTimeout(async () => {
+                            const { data: freshPlayers } = await sb.from('room_players').select('*').eq('room_id', OS.roomId);
+                            if (freshPlayers && freshPlayers.every(p => p.ready_for_result === true)) {
+                                await sb.from('rooms').update({
+                                    status: 'secondchance',
+                                    updated_at: new Date().toISOString()
+                                }).eq('id', room.id);
+                                showToast('🎯 الجميع جاهز!', 'success');
+                            }
+                        }, 500);
+                    }
+                } catch (e) {
+                    showToast('❌ حدث خطأ، حاول مرة أخرى', 'error');
+                    console.error(e);
+                    ButtonManager.enable('btn-suspense-ready');
+                }
+            };
+        }
+
+        // دالة تحديث عداد الجاهزية
+        const updateSuspenseCounter = async () => {
+            try {
+                const { data: freshPlayers } = await sb.from('room_players').select('*').eq('room_id', OS.roomId);
+                if (freshPlayers) {
+                    const readyCount = freshPlayers.filter(p => p.ready_for_result === true).length;
+                    const counterEl = document.getElementById('suspense-ready-counter');
+                    if (counterEl) {
+                        counterEl.textContent = `جاهز ${readyCount} من ${freshPlayers.length}`;
+                    }
+                }
+            } catch (e) {
+                console.error('Error updating counter:', e);
+            }
+        };
+
+        // تحديث العداد فوراً
+        updateSuspenseCounter();
+
+        // تحديث العداد دورياً
+        OS._suspenseInterval = setInterval(updateSuspenseCounter, 3000);
+
+    } else {
+        // إذا لم يتم كشفه، ننتقل مباشرة للنتائج
+        continueBtn.textContent = '🏆 عرض النتائج';
+        continueBtn.classList.remove('hidden');
+        continueBtn.onclick = async () => {
+            if (ButtonManager.isDisabled('btn-online-suspense-continue')) return;
+            ButtonManager.disable('btn-online-suspense-continue', 'جاري الانتقال...');
+            await sb.from('rooms').update({ status: 'leaderboard', updated_at: new Date().toISOString() }).eq('id', room.id);
+            showToast('🏆 النتائج النهائية!', 'success');
+            hapticSuccessWithSound();
+            ButtonManager.enable('btn-online-suspense-continue');
+        };
+    }
+}
 
         // ==============================================================
         // ===== مرحلة فرصة الإنقاذ =====
@@ -8106,67 +8543,73 @@ async function validateStoredUser() {
             const leaveBtn = document.getElementById('btn-online-lb-leave');
 
             newRoundBtn.onclick = async () => {
-                if (ButtonManager.isDisabled('btn-online-lb-newround')) return;
-                ButtonManager.disable('btn-online-lb-newround', 'جاري التحضير...');
+    if (ButtonManager.isDisabled('btn-online-lb-newround')) return;
+    ButtonManager.disable('btn-online-lb-newround', 'جاري التحضير...');
 
-                try {
-                    await sb.from('rooms').update({
-                        status: 'lobby',
-                        secret_word: null,
-                        odd_player_id: null,
-                        odd_word: null,
-                        current_round: 0,
-                        total_rounds: 6,
-                        qa_question: null,
-                        qa_answer: null,
-                        qa_answered: false,
-                        qa_asker_id: null,
-                        qa_respondent_id: null,
-                        qa_phase: 'waiting',
-                        qa_round: 0,
-                        qa_total_rounds: QA_CONFIG.TOTAL_ROUNDS,
-                        qa_question_submitted: false,
-                        qa_answer_submitted: false,
-                        qa_round_complete: false,
-                        sc_chosen: null,
-                        sc_correct: false,
-                        updated_at: new Date().toISOString()
-                    }).eq('id', OS.roomId);
+    try {
+        // 🔥 الحل: إعادة تعيين ready_for_result
+        await sb.from('room_players')
+            .update({ ready_for_result: false })
+            .eq('room_id', OS.roomId);
 
-                    await sb.from('room_players')
-                        .update({
-                            is_ready: false,
-                            is_odd: false,
-                            has_revealed: false,
-                            ready_for_next_round: false
-                        })
-                        .eq('room_id', OS.roomId);
+        await sb.from('rooms').update({
+            status: 'lobby',
+            secret_word: null,
+            odd_player_id: null,
+            odd_word: null,
+            current_round: 0,
+            total_rounds: 6,
+            qa_question: null,
+            qa_answer: null,
+            qa_answered: false,
+            qa_asker_id: null,
+            qa_respondent_id: null,
+            qa_phase: 'waiting',
+            qa_round: 0,
+            qa_total_rounds: QA_CONFIG.TOTAL_ROUNDS,
+            qa_question_submitted: false,
+            qa_answer_submitted: false,
+            qa_round_complete: false,
+            sc_chosen: null,
+            sc_correct: false,
+            updated_at: new Date().toISOString()
+        }).eq('id', OS.roomId);
 
-                    await sb.from('votes').delete().eq('room_id', OS.roomId);
-                    await sb.from('qa_history').delete().eq('room_id', OS.roomId);
+        await sb.from('room_players')
+            .update({
+                is_ready: false,
+                is_odd: false,
+                has_revealed: false,
+                ready_for_next_round: false
+            })
+            .eq('room_id', OS.roomId);
 
-                    OS.usedWords = [];
-                    OS._qaRealtimeSetup = false;
-                    OS.revealFlipped = false;
-                    OS.revealReadyClicked = false;
-                    OS.readyForNextRound = false;
-                    lastPhase = 'lobby';
-                    lastQaData = null;
-                    lastVoteData = null;
-                    lastScData = null;
+        await sb.from('votes').delete().eq('room_id', OS.roomId);
+        await sb.from('qa_history').delete().eq('room_id', OS.roomId);
 
-                    showToast('🔄 جولة جديدة!', 'success');
-                    hapticSuccessWithSound();
-                    renderOnlineRoom();
-                    showScreen('online-room');
+        OS.usedWords = [];
+        OS._qaRealtimeSetup = false;
+        OS.revealFlipped = false;
+        OS.revealReadyClicked = false;
+        OS.readyForNextRound = false;
+        window._votingResetDone = false; // 🔥 إعادة تعيين علم التصويت
+        lastPhase = 'lobby';
+        lastQaData = null;
+        lastVoteData = null;
+        lastScData = null;
 
-                } catch (e) {
-                    console.error('New round error:', e);
-                    showToast('❌ فشل بدء جولة جديدة: ' + e.message, 'error');
-                } finally {
-                    ButtonManager.enable('btn-online-lb-newround');
-                }
-            };
+        showToast('🔄 جولة جديدة!', 'success');
+        hapticSuccessWithSound();
+        renderOnlineRoom();
+        showScreen('online-room');
+
+    } catch (e) {
+        console.error('New round error:', e);
+        showToast('❌ فشل بدء جولة جديدة: ' + e.message, 'error');
+    } finally {
+        ButtonManager.enable('btn-online-lb-newround');
+    }
+};
 
             leaveBtn.onclick = () => { leaveOnlineRoom(); };
             if (window.lucide) lucide.createIcons();
@@ -8784,143 +9227,181 @@ async function validateStoredUser() {
         // ==============================================================
 
         async function attemptReconnect() {
-            const storedUser = getStoredUser();
-if (!storedUser) return false;
+    const storedUser = getStoredUser();
+    if (!storedUser) return false;
 
-// تحقق من صحة المستخدم في قاعدة البيانات
-const valid = await validateStoredUser();
-if (!valid) {
-    // المستخدم غير موجود، نخرج من محاولة إعادة الاتصال
-    return false;
-}
+    // تحقق من صحة المستخدم في قاعدة البيانات
+    const valid = await validateStoredUser();
+    if (!valid) {
+        // المستخدم غير موجود، نخرج من محاولة إعادة الاتصال
+        return false;
+    }
 
-            OS.authUser = { username: storedUser.username };
-            OS.playerName = storedUser.username;
-            localStorage.setItem('barra_player_name', storedUser.username);
-            updateProfileUI();
+    OS.authUser = { username: storedUser.username };
+    OS.playerName = storedUser.username;
+    localStorage.setItem('barra_player_name', storedUser.username);
+    updateProfileUI();
 
-            const sb = OS.supabase || initSupabase();
-            if (!sb) return false;
+    const sb = OS.supabase || initSupabase();
+    if (!sb) return false;
 
-            const roomId = localStorage.getItem('barra_room_id');
-            if (!roomId) return false;
+    const roomId = localStorage.getItem('barra_room_id');
+    if (!roomId) return false;
 
-            const overlay = document.getElementById('reconnect-overlay');
-            if (overlay) overlay.classList.add('active');
+    const overlay = document.getElementById('reconnect-overlay');
+    if (overlay) overlay.classList.add('active');
 
-            try {
-                const { data: room, error: roomErr } = await sb.from('rooms').select('*').eq('id', roomId).maybeSingle();
-                if (roomErr || !room) {
-                    localStorage.removeItem('barra_room_id');
-                    if (overlay) overlay.classList.remove('active');
-                    return false;
-                }
+    try {
+        const { data: room, error: roomErr } = await sb.from('rooms').select('*').eq('id', roomId).maybeSingle();
+        if (roomErr || !room) {
+            localStorage.removeItem('barra_room_id');
+            if (overlay) overlay.classList.remove('active');
+            return false;
+        }
 
-                const clientId = getClientId();
-                const { data: player, error: playerErr } = await sb.from('room_players').select('*').eq('room_id', roomId)
-                    .eq('client_id', clientId).maybeSingle();
-                if (playerErr || !player) {
-                    localStorage.removeItem('barra_room_id');
-                    if (overlay) overlay.classList.remove('active');
-                    return false;
-                }
+        const clientId = getClientId();
+        const { data: player, error: playerErr } = await sb.from('room_players').select('*').eq('room_id', roomId)
+            .eq('client_id', clientId).maybeSingle();
+        if (playerErr || !player) {
+            localStorage.removeItem('barra_room_id');
+            if (overlay) overlay.classList.remove('active');
+            return false;
+        }
 
-                OS.roomId = room.id;
-                OS.roomCode = room.code;
-                OS.isHost = (room.host_id === clientId);
-                OS.myPlayerId = player.id;
-                OS.clientId = clientId;
-                OS.currentPhase = room.status || 'lobby';
-                OS.playerName = player.player_name;
-                OS.authUser = { username: player.player_name };
-                OS.hasRevealed = player.has_revealed || false;
-                OS.isReady = true;
-                OS.revealFlipped = false;
-                OS.revealReadyClicked = false;
-                OS.readyForNextRound = player.ready_for_next_round || false;
-                OS.hostCategory = room.category;
-                OS.hostMode = room.mode;
+        OS.roomId = room.id;
+        OS.roomCode = room.code;
+        OS.isHost = (room.host_id === clientId);
+        OS.myPlayerId = player.id;
+        OS.clientId = clientId;
+        OS.currentPhase = room.status || 'lobby';
+        OS.playerName = player.player_name;
+        OS.authUser = { username: player.player_name };
+        OS.hasRevealed = player.has_revealed || false;
+        OS.isReady = true;
+        OS.revealFlipped = false;
+        OS.revealReadyClicked = false;
+        OS.readyForNextRound = player.ready_for_next_round || false;
+        OS.hostCategory = room.category;
+        OS.hostMode = room.mode;
+        OS.ready_for_result = player.ready_for_result || false;
 
-                if (room.status !== 'lobby') {
-                    const { data: allPlayers } = await sb.from('room_players').select('*').eq('room_id', roomId);
-                    OS.gameData = { room, players: allPlayers || [] };
-                }
+        if (room.status !== 'lobby') {
+            const { data: allPlayers } = await sb.from('room_players').select('*').eq('room_id', roomId);
+            OS.gameData = { room, players: allPlayers || [] };
+        }
 
-                subscribeToRoom(room.id);
-                subscribeToPlayers(room.id);
+        subscribeToRoom(room.id);
+        subscribeToPlayers(room.id);
 
-                if (OS.refreshInterval) {
-                    clearInterval(OS.refreshInterval);
-                    OS.refreshInterval = null;
-                }
+        if (OS.refreshInterval) {
+            clearInterval(OS.refreshInterval);
+            OS.refreshInterval = null;
+        }
 
-                // استعادة بيانات QA
-                if (room.status === 'qa') {
-                    OS.qaRound = room.qa_round || 0;
-                    OS.qaTotalRounds = room.qa_total_rounds || room.total_rounds || OS.gameData?.players?.length || QA_CONFIG.TOTAL_ROUNDS;
-                    OS.qaAskerId = room.qa_asker_id;
-                    OS.qaRespondentId = room.qa_respondent_id;
-                    OS.qaQuestionText = room.qa_question;
-                    OS.qaAnswerText = room.qa_answer;
-                    OS.qaAnswered = room.qa_answered || false;
-                    OS.qaPhase = room.qa_phase || 'waiting';
-                    OS.qaQuestionSubmitted = room.qa_question_submitted || false;
-                    OS.qaAnswerSubmitted = room.qa_answer_submitted || false;
-                    OS.qaRoundComplete = room.qa_round_complete || false;
+        // ==========================================================
+        // 🔥 المشكلة 10: استعادة بيانات QA وتحديث الواجهة
+        // ==========================================================
+        if (room.status === 'qa') {
+            OS.qaRound = room.qa_round || 0;
+            OS.qaTotalRounds = room.qa_total_rounds || room.total_rounds || OS.gameData?.players?.length || QA_CONFIG.TOTAL_ROUNDS;
+            OS.qaAskerId = room.qa_asker_id;
+            OS.qaRespondentId = room.qa_respondent_id;
+            OS.qaQuestionText = room.qa_question;
+            OS.qaAnswerText = room.qa_answer;
+            OS.qaAnswered = room.qa_answered || false;
+            OS.qaPhase = room.qa_phase || 'waiting';
+            OS.qaQuestionSubmitted = room.qa_question_submitted || false;
+            OS.qaAnswerSubmitted = room.qa_answer_submitted || false;
+            OS.qaRoundComplete = room.qa_round_complete || false;
 
-                    const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
-                    if (myPlayer) {
-                        if (myPlayer.id === room.qa_asker_id) OS.qaRole = 'asker';
-                        else if (myPlayer.id === room.qa_respondent_id) OS.qaRole = 'respondent';
-                        else OS.qaRole = 'spectator';
+            const myPlayer = OS.gameData?.players?.find(p => p.client_id === OS.clientId);
+            if (myPlayer) {
+                if (myPlayer.id === room.qa_asker_id) OS.qaRole = 'asker';
+                else if (myPlayer.id === room.qa_respondent_id) OS.qaRole = 'respondent';
+                else OS.qaRole = 'spectator';
+            }
+            OS._qaRealtimeSetup = false;
+            
+            // 🔥 تحديث واجهة الأسئلة بعد الاستعادة مباشرة
+            // نستخدم setTimeout للتأكد من أن الشاشة قد تم تحميلها
+            setTimeout(() => {
+                if (document.getElementById('screen-online-qa')?.classList.contains('active')) {
+                    refreshQAView(room);
+                    // تحديث دور اللاعب
+                    updateMyRole(room);
+                    // تحديث شارة الجولة
+                    const roundDisplay = document.getElementById('online-qa-round-display');
+                    if (roundDisplay) {
+                        const totalRounds = room.qa_total_rounds || OS.gameData?.players?.length || QA_CONFIG.TOTAL_ROUNDS;
+                        const displayRound = Math.min((room.qa_round || 0) + 1, totalRounds);
+                        roundDisplay.textContent = `الجولة ${displayRound} من ${totalRounds}`;
                     }
-                    OS._qaRealtimeSetup = false;
+                    // إذا كانت الجولة مكتملة، أظهر زر الجاهزية
+                    if (room.qa_round_complete) {
+                        showNextRoundReadyButton(room);
+                    }
                 }
+            }, 300);
+        }
 
-                if (room.used_words) {
-                    try { OS.usedWords = JSON.parse(room.used_words) || []; } catch (e) { OS.usedWords = []; }
-                }
+        if (room.used_words) {
+            try { OS.usedWords = JSON.parse(room.used_words) || []; } catch (e) { OS.usedWords = []; }
+        }
 
-                switch (OS.currentPhase) {
-                    case 'lobby':
-                        renderOnlineRoom();
-                        showScreen('online-room');
-                        break;
-                    case 'reveal':
-                        showOnlineReveal();
-                        break;
-                    case 'qa':
-                        showOnlineQA();
-                        break;
-                    case 'voting':
-                        showOnlineVoting();
-                        break;
-                    case 'suspense':
-                        showOnlineSuspense();
-                        break;
-                    case 'secondchance':
-                        showOnlineSecondChance();
-                        break;
-                    case 'leaderboard':
-                        showOnlineLeaderboard();
-                        break;
-                    default:
-                        renderOnlineRoom();
-                        showScreen('online-room');
-                }
+        // استعادة بيانات التصويت
+        if (room.status === 'voting') {
+            OS._voteInterval = null;
+            window._votingResetDone = false;
+        }
 
-                OS.stateRestored = true;
-                if (overlay) overlay.classList.remove('active');
-                showToast(`✅ تم استعادة الجلسة في "${room.name}"`, 'success');
-                hapticSuccessWithSound();
-                return true;
-
-            } catch (e) {
-                console.error('Reconnect error:', e);
-                if (overlay) overlay.classList.remove('active');
-                return false;
+        // استعادة بيانات التشويق
+        if (room.status === 'suspense' || room.status === 'secondchance') {
+            if (OS._suspenseInterval) {
+                clearInterval(OS._suspenseInterval);
+                OS._suspenseInterval = null;
             }
         }
+
+        switch (OS.currentPhase) {
+            case 'lobby':
+                renderOnlineRoom();
+                showScreen('online-room');
+                break;
+            case 'reveal':
+                showOnlineReveal();
+                break;
+            case 'qa':
+                showOnlineQA();
+                break;
+            case 'voting':
+                showOnlineVoting();
+                break;
+            case 'suspense':
+                showOnlineSuspense();
+                break;
+            case 'secondchance':
+                showOnlineSecondChance();
+                break;
+            case 'leaderboard':
+                showOnlineLeaderboard();
+                break;
+            default:
+                renderOnlineRoom();
+                showScreen('online-room');
+        }
+
+        OS.stateRestored = true;
+        if (overlay) overlay.classList.remove('active');
+        showToast(`✅ تم استعادة الجلسة في "${room.name}"`, 'success');
+        hapticSuccessWithSound();
+        return true;
+
+    } catch (e) {
+        console.error('Reconnect error:', e);
+        if (overlay) overlay.classList.remove('active');
+        return false;
+    }
+}
 
         // ==============================================================
         // ===== كونفيتي =====
